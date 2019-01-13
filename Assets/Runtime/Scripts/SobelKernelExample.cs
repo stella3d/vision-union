@@ -24,8 +24,8 @@ public class SobelKernelExample : MonoBehaviour
 	MeshRenderer m_YKernelRenderer;
 	
 	[SerializeField]
-	[Range(32, 1000f)]
-	float m_Threshold = 128f;
+	[Range(0, 255)]
+	short m_Threshold = 128;
 	
 	NativeArray<Color24> m_InputTextureData;
 	
@@ -35,13 +35,9 @@ public class SobelKernelExample : MonoBehaviour
 	NativeArray<short> m_SobelTextureDataX;
 	NativeArray<short> m_SobelTextureDataY;
 
-	JobHandle m_IntensityJobHandle;
 	JobHandle m_GrayScaleJobHandle;
-	JobHandle m_GrayScale8JobHandle;
 	JobHandle m_JobHandle;
 	
-	JobHandle m_EndingByteJobHandle;
-
 
 	void Start()
 	{
@@ -50,6 +46,8 @@ public class SobelKernelExample : MonoBehaviour
 		
 		m_GrayScaleTexture8 = new Texture2D(m_Texture.width, m_Texture.height, TextureFormat.Alpha8, false) 
 			{alphaIsTransparency = true};
+
+		m_TextureOneRenderer.material.mainTexture = m_GrayScaleTexture8;
 		
 		m_SobelTextureDataX = new NativeArray<short>(m_InputTextureData.Length, Allocator.Persistent);
 		m_SobelTextureDataY = new NativeArray<short>(m_InputTextureData.Length, Allocator.Persistent);
@@ -69,8 +67,8 @@ public class SobelKernelExample : MonoBehaviour
 			InputTexture = m_InputTextureData,
 			Grayscale = m_GrayTextureData8,
 		};
-
-		m_GrayScale8JobHandle = grayscale8Job.Schedule(m_InputTextureData.Length, 4096);
+		
+		m_GrayScaleJobHandle = grayscale8Job.Schedule(m_InputTextureData.Length, 4096);
 	}
 
 	void OnDestroy()
@@ -83,44 +81,24 @@ public class SobelKernelExample : MonoBehaviour
 	
 	void Update ()
 	{
-		if (Time.frameCount < 4)
+		if (Time.frameCount < 20)
 			return;
 		
-		if (Time.frameCount == 4)
-		{
-			m_IntensityJobHandle.Complete();
-			m_EndingByteJobHandle.Complete();
-		
-			m_GrayScaleTexture8.LoadRawTextureData(m_GrayTextureData8);
-			m_GrayScaleTexture8.Apply();
-
-			m_TextureOneRenderer.material.mainTexture = m_GrayScaleTexture8;
-			m_XKernelRenderer.material.mainTexture = m_SobelTextureX;
-			m_YKernelRenderer.material.mainTexture = m_SobelTextureY;
-			return;
-		}
-
-		if (Time.frameCount < 60)
-			return;
-
 		if (!m_ScheduledLastUpdate)
 		{
-			
+			m_GrayScaleJobHandle.Complete();
+			m_GrayScaleTexture8.LoadRawTextureData(m_GrayTextureData8);
+			m_GrayScaleTexture8.Apply();
 			m_ScheduledLastUpdate = true;
 		}
 		else
 		{
-			m_EndingByteJobHandle.Complete();
-			m_IntensityJobHandle.Complete();
 			m_ScheduledLastUpdate = false;
 			
 			m_SobelTextureX.LoadRawTextureData(m_SobelTextureDataX);
 			m_SobelTextureX.Apply();
 			m_SobelTextureY.LoadRawTextureData(m_SobelTextureDataY);
 			m_SobelTextureY.Apply();
-			
-			m_GrayScaleTexture8.LoadRawTextureData(m_GrayTextureData8);
-			m_GrayScaleTexture8.Apply();
 		}
 	}
 }

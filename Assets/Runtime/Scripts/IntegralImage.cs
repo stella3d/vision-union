@@ -129,7 +129,7 @@ public struct IntegralImageFromGrayscaleByteJob : IJob
 }
 
 [BurstCompile]
-public struct GrayscaleFromColor24Job : IJob, IJobParallelFor
+public struct GrayscaleFromColor24Job : IJobParallelFor
 {
     [ReadOnly]
     public NativeArray<Color24> InputTexture;
@@ -169,7 +169,7 @@ public struct Grayscale8FromColor24Job : IJobParallelFor
     {
         var p = InputTexture[index];
         // use the luminosity 
-        Grayscale[index] = Convert.ToByte((p.r * 0.21f + p.g * 0.72f + p.b * 0.07f) / 3);
+        Grayscale[index] = Convert.ToByte((p.r * 0.21f + p.g * 0.72f + p.b * 0.07f) / 3f);
     }
 }
 
