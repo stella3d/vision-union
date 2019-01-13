@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using BurstVision;
 using Unity.Collections;
 using UnityEngine;
 
@@ -37,6 +38,24 @@ public static class DebugUtils
             }
 
             s_String.AppendLine(matrix[rowIndex + width - 1].ToString());    // end of row, no comma
+        }
+        
+        Debug.Log(s_String);
+    }
+    
+    public static void Print(this Kernel kernel)
+    {
+        s_String.Length = 0;
+        var matrix = kernel.Data;
+        for (int y = 0; y < kernel.Height; y++)
+        {
+            var rowIndex = y * kernel.Width;
+            for (int x = 0; x < kernel.Width - 1; x++)
+            {
+                s_String.AppendFormat("{0}, ", matrix[rowIndex + x]);
+            }
+
+            s_String.AppendLine(matrix[rowIndex + kernel.Width - 1].ToString());    // end of row, no comma
         }
         
         Debug.Log(s_String);

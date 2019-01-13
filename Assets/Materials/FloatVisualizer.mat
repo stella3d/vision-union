@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: RedFloatGrayscale
+  m_Name: FloatVisualizer
   m_Shader: {fileID: 4800000, guid: e2a7e1650db94b5e85cf3fb44f570d37, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4

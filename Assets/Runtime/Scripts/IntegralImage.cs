@@ -174,42 +174,6 @@ public struct Grayscale8FromColor24Job : IJobParallelFor
 }
 
 [BurstCompile]
-public struct AverageIntensity3x3Job : IJob
-{
-    public int width;
-    public int height;
-    
-    [ReadOnly]
-    public NativeArray<float> Integral;
-    
-    [WriteOnly]
-    public NativeArray<float> Intensities;
-
-    // ((x + 1, y + 1) - (x + 1, 0)) - ((0, y) - (0, 0))
-    public void Execute()
-    {
-        var zeroPixel = Integral[0];
-        for (int i = 1; i < height - 1; i++)
-        {
-            var rowIndex = i * width;
-            var bottomYIndex = rowIndex + width;
-            var bottomYIndexPlusOne = bottomYIndex + 1;
-            
-            var areaBottomRowStart = Integral[bottomYIndex];
-            
-            for (int n = 1; n < width - 1; n++)
-            {
-                var areaRightColumnStart = Integral[n];
-                var areaBottomRight = Integral[bottomYIndexPlusOne + n];
-
-                var intensitySum = areaBottomRight - areaRightColumnStart - areaBottomRowStart - zeroPixel;
-                Intensities[rowIndex + n] = intensitySum / 9;
-            }
-        }
-    }
-}
-
-[BurstCompile]
 // TODO - does this actually work ?
 public struct AverageIntensity3x3IntJob : IJob
 {
@@ -220,29 +184,52 @@ public struct AverageIntensity3x3IntJob : IJob
     public NativeArray<int> Integral;
     
     [WriteOnly]
-    public NativeArray<int> Intensities;
+    public NativeArray<float> Intensities;
 
     // ((x + 1, y + 1) - (x + 1, 0)) - ((0, y) - (0, 0))
     public void Execute()
     {
-        var zeroPixel = Integral[0];
-        for (int i = 1; i < height - 1; i++)
-        {
-            var rowIndex = i * width;
-            var bottomYIndex = rowIndex + width;
-            var bottomYIndexPlusOne = bottomYIndex + 1;
-            
-            var areaBottomRowStart = Integral[bottomYIndex];
-            
-            for (int n = 1; n < width - 1; n++)
-            {
-                var areaRightColumnStart = Integral[n];
-                var areaBottomRight = Integral[bottomYIndexPlusOne + n];
+        Operations.Average3x3(Integral, Intensities, width, height);
+    }
+}
 
-                var intensitySum = areaBottomRight - areaRightColumnStart - areaBottomRowStart - zeroPixel;
-                Intensities[rowIndex + n] = intensitySum / 9;
-            }
-        }
+[BurstCompile]
+public struct MaxPool2x2GrayscaleJob : IJob
+{
+    public int width;
+    public int height;
+    
+    [ReadOnly]
+    public NativeArray<byte> Input;
+    
+    [WriteOnly]
+    public NativeArray<byte> Output;
+
+    // ((x + 1, y + 1) - (x + 1, 0)) - ((0, y) - (0, 0))
+    public void Execute()
+    {
+        //Input.CopyTo(Output);
+        //Output.CopyFrom(Input);
+        Operations.MaxPool2x2(Input, Output, width, height);
+    }
+}
+
+[BurstCompile]
+public struct MeanPool2x2GrayscaleJob : IJob
+{
+    public int width;
+    public int height;
+    
+    [ReadOnly]
+    public NativeArray<byte> Input;
+    
+    [WriteOnly]
+    public NativeArray<byte> Output;
+
+    // ((x + 1, y + 1) - (x + 1, 0)) - ((0, y) - (0, 0))
+    public void Execute()
+    {
+        Operations.MeanPool2x2(Input, Output, width, height);
     }
 }
 

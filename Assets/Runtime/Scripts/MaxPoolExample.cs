@@ -4,15 +4,13 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
-public class IntegralImageExample : MonoBehaviour
+public class MaxPoolExample : MonoBehaviour
 {
 	[SerializeField]
 	Texture2D m_Texture;
 	
-	[SerializeField]
-	Texture2D m_GrayScaleTexture;
+	Texture2D m_DownsampledTexture;
 	
-	[SerializeField]
 	Texture2D m_GrayScaleTexture8;
 
 	[SerializeField]
@@ -31,6 +29,7 @@ public class IntegralImageExample : MonoBehaviour
 	// Alpha-8 texture with grayscale color encoded in alpha channel
 	NativeArray<byte> m_GrayTextureData8;
 	NativeArray<byte> m_SobelTextureData8;
+	NativeArray<byte> m_GrayscaleDownsampled2x2;
 	
 	NativeArray<int> m_IntegralImageDataInt;
 	NativeArray<float> m_MeanIntensity3x3;
@@ -51,10 +50,14 @@ public class IntegralImageExample : MonoBehaviour
 	{
 		m_InputTextureData = m_Texture.GetRawTextureData<Color24>();
 		m_GrayTextureData8 = new NativeArray<byte>(m_InputTextureData.Length, Allocator.Persistent);
+		
+		m_GrayscaleDownsampled2x2 = new NativeArray<byte>(m_InputTextureData.Length, Allocator.Persistent);
+		
 		m_SobelTextureData8 = new NativeArray<byte>(m_InputTextureData.Length, Allocator.Persistent);
 		
-		m_GrayScaleTexture = new Texture2D(m_Texture.width, m_Texture.height, TextureFormat.RFloat, false) 
+		m_DownsampledTexture = new Texture2D(m_Texture.width, m_Texture.height, TextureFormat.Alpha8, false) 
 			{alphaIsTransparency = true};
+		
 		m_GrayScaleTexture8 = new Texture2D(m_Texture.width, m_Texture.height, TextureFormat.Alpha8, false) 
 				{alphaIsTransparency = true};
 
@@ -75,10 +78,10 @@ public class IntegralImageExample : MonoBehaviour
 			height = m_Texture.height
 		};
 		
-		var meanIntJob = new AverageIntensity3x3IntJob()
+		var meanIntJob = new MeanPool2x2GrayscaleJob()
 		{
-			Integral = m_IntegralImageDataInt,
-			Intensities = m_MeanIntensity3x3,
+			Input = m_GrayTextureData8,
+			Output = m_GrayscaleDownsampled2x2,
 			height = m_Texture.height,
 			width = m_Texture.width
 		};
@@ -92,6 +95,8 @@ public class IntegralImageExample : MonoBehaviour
 
 	void OnDestroy()
 	{
+		if(m_GrayscaleDownsampled2x2.IsCreated)
+			m_GrayscaleDownsampled2x2.Dispose();
 		if(m_IntegralImageDataInt.IsCreated)
 			m_IntegralImageDataInt.Dispose();
 		if(m_MeanIntensity3x3.IsCreated)
@@ -110,13 +115,13 @@ public class IntegralImageExample : MonoBehaviour
 			m_IntensityJobHandle.Complete();
 			m_EndingByteJobHandle.Complete();
 		
-			m_GrayScaleTexture.LoadRawTextureData(m_MeanIntensity3x3);
-			m_GrayScaleTexture.Apply();
+			m_DownsampledTexture.LoadRawTextureData(m_GrayscaleDownsampled2x2);
+			m_DownsampledTexture.Apply();
 		
 			m_GrayScaleTexture8.LoadRawTextureData(m_GrayTextureData8);
 			m_GrayScaleTexture8.Apply();
 
-			m_TextureOneRenderer.material.mainTexture = m_GrayScaleTexture;
+			m_TextureOneRenderer.material.mainTexture = m_DownsampledTexture;
 			m_TextureTwoRenderer.material.mainTexture = m_GrayScaleTexture8;
 			return;
 		}
@@ -134,18 +139,20 @@ public class IntegralImageExample : MonoBehaviour
 				Grayscale = m_GrayTextureData8,
 				SobelOut = m_SobelTextureData8
 			};
-
-			var avgJob = new AverageIntensity3x3IntJob()
+			
+			var sobelHandle = sobelJob.Schedule(m_GrayScale8JobHandle);
+			m_EndingByteJobHandle = sobelHandle;
+			
+			var meanIntJob = new MeanPool2x2GrayscaleJob()
 			{
-				Integral = m_IntegralImageDataInt,
-				Intensities = m_MeanIntensity3x3,
+				Input = m_SobelTextureData8,
+				Output = m_GrayscaleDownsampled2x2,
 				height = m_Texture.height,
 				width = m_Texture.width
 			};
 
-			m_EndingByteJobHandle = sobelJob.Schedule(m_GrayScale8JobHandle);
-			m_IntensityJobHandle = avgJob.Schedule(m_GrayScale8JobHandle);
-			
+			m_EndingByteJobHandle = meanIntJob.Schedule(m_EndingByteJobHandle);
+
 			m_ScheduledLastUpdate = true;
 		}
 		else
@@ -154,21 +161,11 @@ public class IntegralImageExample : MonoBehaviour
 			m_IntensityJobHandle.Complete();
 			m_ScheduledLastUpdate = false;
 			
-			m_GrayScaleTexture.LoadRawTextureData(m_MeanIntensity3x3);
-			m_GrayScaleTexture.Apply();
+			m_DownsampledTexture.LoadRawTextureData(m_GrayscaleDownsampled2x2);
+			m_DownsampledTexture.Apply();
 			
 			m_GrayScaleTexture8.LoadRawTextureData(m_SobelTextureData8);
 			m_GrayScaleTexture8.Apply();
 		}
-
-
-
-		
-		//Debug.Log("trying sobel...");
-		
-		//Sobel.Execute(m_GrayTextureData8, m_SobelTextureData8, m_Texture.width, m_Texture.height);
-		
-		//m_GrayScaleTexture8.LoadRawTextureData(m_SobelTextureData8);
-		//m_GrayScaleTexture8.Apply();
 	}
 }
