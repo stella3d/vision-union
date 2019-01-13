@@ -29,8 +29,8 @@ public class SobelKernelExample : MonoBehaviour
 	MeshRenderer m_SobelOutputRenderer;
 	
 	[SerializeField]
-	[Range(0, 255)]
-	short m_Threshold = 128;
+	[Range(0, 1)]
+	float m_Threshold = 0.69f;
 	
 	NativeArray<Color24> m_InputTextureData;
 	
@@ -77,8 +77,8 @@ public class SobelKernelExample : MonoBehaviour
 		
 		m_SobelOutputRenderer.material.mainTexture = m_SobelTexture;
 		
-		m_KernelX = new Kernel<short>(ShortKernels.Sobel.X);
-		m_KernelY = new Kernel<short>(ShortKernels.Sobel.Y);
+		m_KernelX = new Kernel<short>(Kernels.Sobel.X);
+		m_KernelY = new Kernel<short>(Kernels.Sobel.Y);
 
 		var grayscale8Job = new Grayscale8FromColor24Job()
 		{
@@ -114,6 +114,17 @@ public class SobelKernelExample : MonoBehaviour
 			KernelOperations.Run(m_GrayTextureData8, m_SobelTextureDataX, m_KernelX,
 				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
 			
+			/*
+			var kX = new Kernel<short>(Kernels.Sobel.xHorizontal);
+			var kY = new Kernel<short>(Kernels.Sobel.xVertical);
+			
+			KernelOperations.RunHorizontal1D(m_GrayTextureData8, m_SobelTextureDataX, kX,
+				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
+
+			KernelOperations.RunVertical1D(m_SobelTextureDataX, m_SobelTextureDataX, kY,
+				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
+			*/
+			
 			m_SobelTextureX.LoadRawTextureData(m_SobelTextureDataX);
 			m_SobelTextureX.Apply();
 			return;
@@ -124,30 +135,32 @@ public class SobelKernelExample : MonoBehaviour
 			KernelOperations.Run(m_GrayTextureData8, m_SobelTextureDataY, m_KernelY,
 				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
 			
+			/*
+			var kX = new Kernel<short>(Kernels.Sobel.yHorizontal);
+			var kY = new Kernel<short>(Kernels.Sobel.yVertical);
+			
+			KernelOperations.RunHorizontal1D(m_GrayTextureData8, m_SobelTextureDataY, kX,
+				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
+
+			KernelOperations.RunVertical1D(m_SobelTextureDataY, m_SobelTextureDataY, kY,
+				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
+			*/
+			
 			m_SobelTextureY.LoadRawTextureData(m_SobelTextureDataY);
 			m_SobelTextureY.Apply();
-			
-			Operations.SobelCombine(m_SobelTextureDataX, m_SobelTextureDataY, m_SobelTextureDataCombined);
-			m_SobelTexture.LoadRawTextureData(m_SobelTextureDataCombined);
-			m_SobelTexture.Apply();
 			return;
 		}
 		
 		if (!m_ScheduledLastUpdate)
 		{
-			m_GrayScaleJobHandle.Complete();
-			m_GrayScaleTexture8.LoadRawTextureData(m_GrayTextureData8);
-			m_GrayScaleTexture8.Apply();
 			m_ScheduledLastUpdate = true;
+			Operations.SobelCombine(m_SobelTextureDataX, m_SobelTextureDataY, m_SobelTextureDataCombined, m_Threshold);
+			m_SobelTexture.LoadRawTextureData(m_SobelTextureDataCombined);
+			m_SobelTexture.Apply();
 		}
 		else
 		{
-			//m_ScheduledLastUpdate = false;
+			m_ScheduledLastUpdate = false;
 		}
-	}
-
-	public class SobelJobPair
-	{
-		
 	}
 }

@@ -636,7 +636,7 @@ MonoBehaviour:
   m_XKernelRenderer: {fileID: 822451716}
   m_YKernelRenderer: {fileID: 1357394442}
   m_SobelOutputRenderer: {fileID: 4805399}
-  m_Threshold: 128
+  m_Threshold: 0.69
 --- !u!4 &2007451220
 Transform:
   m_ObjectHideFlags: 0

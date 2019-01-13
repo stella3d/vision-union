@@ -40,17 +40,4 @@ namespace BurstVision
             Data.Dispose();
         }
     }
-    
-    public struct PreparedKernel
-    {
-        public short width;
-        public short height;
-        public NativeArray<KernelPixel> data;
-    }
-    
-    public struct KernelPixel
-    {
-        public int multiplier;
-        public int bufferOffset;
-    }
 }

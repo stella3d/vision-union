@@ -174,7 +174,6 @@ public struct Grayscale8FromColor24Job : IJobParallelFor
 }
 
 [BurstCompile]
-// TODO - does this actually work ?
 public struct AverageIntensity3x3IntJob : IJob
 {
     public int width;
@@ -208,8 +207,6 @@ public struct MaxPool2x2GrayscaleJob : IJob
     // ((x + 1, y + 1) - (x + 1, 0)) - ((0, y) - (0, 0))
     public void Execute()
     {
-        //Input.CopyTo(Output);
-        //Output.CopyFrom(Input);
         Operations.MaxPool2x2(Input, Output, width, height);
     }
 }

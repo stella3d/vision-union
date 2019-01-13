@@ -272,23 +272,6 @@ namespace BurstVision
             }
         }
         
-        public static void RunKernel<T>(NativeArray<byte> pixelBuffer, NativeArray<short> pixelOut,
-            Kernel<T> kernel, int width, int height)
-            where T: struct
-        {
-            var xPad = (kernel.Width - 1) / 2;
-            var yPad = (kernel.Height - 1) / 2;
-            for (int i = yPad; i < height - yPad; i++)
-            {
-                var rowIndex = i * width;
-                
-                for (int n = xPad; n < width - xPad; n++)
-                {
-                    var index = rowIndex + n;
-                }
-            }
-        }
-        
         public static void Sobel(byte[] pixelBuffer, byte[] pixelOut, float threshold, 
             int width, int height, byte overThresholdPixel = Byte.MaxValue)
         {
@@ -427,71 +410,16 @@ namespace BurstVision
                 }
             }
         }
-        
-        public static void For2D(NativeArray<float> pixelBuffer, NativeArray<float> pixelOut, 
-            Action<int> forEachIndex, 
-            int width, int height)
-        {
-            for (var i = 1; i < height - 1; i += 2)
-            {
-                var rowIndex = i * width;
-                for (var n = 1; n < width - 1; n += 2)
-                {
-                    var index = rowIndex + n;
-                }
-            }
-        }
 
-        public static void NaiveConvolve(int height, int width, int kernelWidth, int kernelHeight,
-            NativeArray<byte> kernel, NativeArray<byte> input, NativeArray<byte> output)
-        {
-            var kCenterX = (kernelWidth - 1) / 2;
-            var kCenterY = (kernelHeight - 1) / 2;
-            
-            for (var i = 1; i < height - 1; i += 2)
-            {
-                var rowIndex = i * width;
-                for (var n = 1; n < width - 1; n += 2)
-                {
-                    var index = rowIndex + n;
-                }
-            }
-            
-            for(var i=0; i < height; ++i)              // rows
-            {
-                for(var j=0; j < width; ++j)          // columns
-                {
-                    for(var m=0; m < kernelWidth; ++m)     // kernel rows
-                    {
-                        var mm = kernelWidth - 1 - m;      // row index of flipped kernel
-
-                        for(var n=0; n < kernelHeight; ++n) // kernel columns
-                        {
-                            var nn = kernelHeight - 1 - n;  // column index of flipped kernel
-
-                            // index of input signal, used for checking boundary
-                            var ii = i + (kCenterY - mm);
-                            var jj = j + (kCenterX - nn);
-
-                            //ignore input samples which are out of bound
-                            //if( ii >= 0 && ii < height && jj >= 0 && jj < width )
-                            //    output[i][j] += input[ii][jj] * kernel[mm][nn];
-                                
-                        }
-                    }
-                }
-            }
-        }
-        
-        
         public static void SobelCombine(NativeArray<float> xImage, NativeArray<float> yImage,
-            NativeArray<float> combined)
+            NativeArray<float> combined, float threshold)
         {
             for (int i = 0; i < xImage.Length; i++)
             {
                 var x = xImage[i];
                 var y = yImage[i];
-                combined[i] = math.sqrt(x * x + y * y) / 2f;
+                var value = math.sqrt(x * x + y * y);
+                combined[i] = math.select(255f, 0f, value > threshold);
             }
         }
     }
