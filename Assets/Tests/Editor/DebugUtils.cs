@@ -43,7 +43,8 @@ public static class DebugUtils
         Debug.Log(s_String);
     }
     
-    public static void Print(this Kernel kernel)
+    public static void Print<T>(this Kernel<T> kernel) 
+        where T: struct
     {
         s_String.Length = 0;
         var matrix = kernel.Data;

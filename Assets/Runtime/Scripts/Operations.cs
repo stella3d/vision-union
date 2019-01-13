@@ -272,10 +272,9 @@ namespace BurstVision
             }
         }
         
-        public static void RunKernel(NativeArray<byte> pixelBuffer, NativeArray<byte> pixelOut,
-            Kernel kernel,
-            NativeArray<short> intermediate,
-            int width, int height)
+        public static void RunKernel<T>(NativeArray<byte> pixelBuffer, NativeArray<short> pixelOut,
+            Kernel<T> kernel, int width, int height)
+            where T: struct
         {
             var xPad = (kernel.Width - 1) / 2;
             var yPad = (kernel.Height - 1) / 2;
@@ -286,9 +285,6 @@ namespace BurstVision
                 for (int n = xPad; n < width - xPad; n++)
                 {
                     var index = rowIndex + n;
-             
-
-            
                 }
             }
         }

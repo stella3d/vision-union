@@ -14,17 +14,40 @@ public class KernelTests
 	[Test]
 	public void ContructFrom2dInput()
 	{
-		var sY = new Kernel(ShortKernels.Sobel.Vertical, Allocator.Temp);
+		var sY = new Kernel<short>(ShortKernels.Sobel.X, Allocator.Temp);
 		sY.Print();
-		AssertFlatRepresentationValid(ShortKernels.Sobel.Vertical, sY.Data);
+		AssertFlatRepresentationValid(ShortKernels.Sobel.X, sY.Data);
 		sY.Dispose();
 		
-		var sX = new Kernel(ShortKernels.Sobel.Horizontal, Allocator.Temp);
+		var sX = new Kernel<short>(ShortKernels.Sobel.Y, Allocator.Temp);
 		sX.Print();
-		AssertFlatRepresentationValid(ShortKernels.Sobel.Horizontal, sX.Data);
+		AssertFlatRepresentationValid(ShortKernels.Sobel.Y, sX.Data);
 		sX.Dispose();
 	}
-
+	
+	[Test]
+	public void ContructFrom1dInput_Horizontal()
+	{
+		var kernelLength = ShortKernels.Sobel.yHorizontal.Length;
+		var sX = new Kernel<short>(ShortKernels.Sobel.yHorizontal, true, Allocator.Temp);
+		sX.Print();
+		Assert.AreEqual(1, sX.Height);
+		Assert.AreEqual(kernelLength, sX.Width);
+		Assert.AreEqual(kernelLength, sX.Data.Length);
+		sX.Dispose();
+	}
+	
+	[Test]
+	public void ContructFrom1dInput_Vertical()
+	{
+		var kernelLength = ShortKernels.Sobel.yHorizontal.Length;
+		var sY = new Kernel<short>(ShortKernels.Sobel.yVertical, false, Allocator.Temp);
+		sY.Print();
+		Assert.AreEqual(1, sY.Width);
+		Assert.AreEqual(kernelLength, sY.Height);
+		Assert.AreEqual(kernelLength, sY.Data.Length);
+		sY.Dispose();
+	}
 
 	void AssertFlatRepresentationValid<T>(T[,] input2D, NativeArray<T> flat) 
 		where T: struct

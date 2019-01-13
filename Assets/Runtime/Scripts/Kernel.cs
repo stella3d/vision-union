@@ -3,19 +3,19 @@ using Unity.Collections;
 
 namespace BurstVision
 {
-    
-    public struct Kernel : IDisposable
+    public struct Kernel<T> : IDisposable
+        where T: struct
     {
         public readonly int Width;
         public readonly int Height;
-        public readonly NativeArray<short> Data;
+        public readonly NativeArray<T> Data;
 
-        public Kernel(short[,] input2D, Allocator allocator = Allocator.Persistent)
+        public Kernel(T[,] input2D, Allocator allocator = Allocator.Persistent)
         {
             Width = input2D.GetLength(0);
             Height = input2D.GetLength(1);
             
-            Data = new NativeArray<short>(Width * Height, allocator);
+            Data = new NativeArray<T>(Width * Height, allocator);
 
             var flatIndex = 0;
             for (var y = 0; y < Height; y++)
@@ -26,6 +26,13 @@ namespace BurstVision
                     flatIndex++;
                 }
             }
+        }
+        
+        public Kernel(T[] input, bool horizontal = true, Allocator allocator = Allocator.Persistent)
+        {
+            Data = new NativeArray<T>(input, allocator);
+            Width = horizontal ? input.Length : 1;
+            Height = horizontal ? 1 : input.Length;
         }
 
         public void Dispose()
@@ -41,12 +48,6 @@ namespace BurstVision
         public NativeArray<KernelPixel> data;
     }
     
-    public struct InputKernelPixel
-    {
-        public int multiplier;
-        public int bufferOffset;
-    }
-
     public struct KernelPixel
     {
         public int multiplier;
