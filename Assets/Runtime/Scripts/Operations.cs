@@ -482,6 +482,18 @@ namespace BurstVision
                 }
             }
         }
+        
+        
+        public static void SobelCombine(NativeArray<float> xImage, NativeArray<float> yImage,
+            NativeArray<float> combined)
+        {
+            for (int i = 0; i < xImage.Length; i++)
+            {
+                var x = xImage[i];
+                var y = yImage[i];
+                combined[i] = math.sqrt(x * x + y * y) / 2f;
+            }
+        }
     }
     
 }
