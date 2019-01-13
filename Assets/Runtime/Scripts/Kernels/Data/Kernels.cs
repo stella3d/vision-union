@@ -2,6 +2,13 @@ namespace BurstVision
 {
     public static class Kernels
     {
+        public static readonly short[,] Identity = 
+        {
+            {0, 0, 0},
+            {0, 1, 0},
+            {0, 0, 0}
+        };
+        
         public static class Sobel
         {
             public static readonly short[,] X = 
@@ -27,18 +34,39 @@ namespace BurstVision
             public static readonly short[] yHorizontal = { 1, 2, 1 };
         }
         
+        public static readonly short[,] Sharpen = 
+        {
+            {0, -1, 0},
+            {-1, 8, -1},
+            {0, -1, 0}
+        };
+        
+        public static readonly short[,] Emboss = 
+        {
+            {-2, -1, 0},
+            {-1, 1, 1},
+            {0, 1, 2}
+        };
+        
+        public static readonly short[,] Outline = 
+        {
+            {-1, -1, -1},
+            {-1, 8, -1},
+            {-1, -1, -1}
+        };
+        
         public static readonly float[,] BoxBlur = 
         {
-            {1/9f, 1/9f, 1/9f},
-            {1/9f, 1/9f, 1/9f},
-            {1/9f, 1/9f, 1/9f}
+            {1f/9f, 1f/9f, 1f/9f},
+            {1f/9f, 1f/9f, 1f/9f},
+            {1f/9f, 1f/9f, 1f/9f}
         };
         
         public static readonly float[,] GaussianBlurApproximate3x3 = 
         {
-            {1/16f, 2/16f, 1/16f},
-            {2/16f, 4/16f, 2/16f},
-            {1/16f, 2/16f, 1/16f}
+            {1f/16f, 2f/16f, 1f/16f},
+            {2f/16f, 4f/16f, 2f/16f},
+            {1f/16f, 2f/16f, 1f/16f}
         };
         
         public static readonly float[,] GaussianBlurApproximate5x5 = 

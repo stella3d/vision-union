@@ -169,7 +169,7 @@ public struct Grayscale8FromColor24Job : IJobParallelFor
     {
         var p = InputTexture[index];
         // use the luminosity 
-        Grayscale[index] = Convert.ToByte((p.r * 0.21f + p.g * 0.72f + p.b * 0.07f) / 3f);
+        Grayscale[index] = Convert.ToByte((p.r * 0.21f + p.g * 0.72f + p.b * 0.07f));
     }
 }
 

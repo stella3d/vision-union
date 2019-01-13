@@ -418,8 +418,10 @@ namespace BurstVision
             {
                 var x = xImage[i];
                 var y = yImage[i];
-                var value = math.sqrt(x * x + y * y);
-                combined[i] = math.select(255f, 0f, value > threshold);
+                
+                //var value = math.sqrt(x * x + y * y);
+                var value = math.abs(x) + math.abs(y);
+                combined[i] = math.clamp(value, 0f, 1f);
             }
         }
     }

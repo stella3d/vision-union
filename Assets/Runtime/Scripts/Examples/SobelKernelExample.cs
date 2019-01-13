@@ -47,7 +47,12 @@ public class SobelKernelExample : MonoBehaviour
 	Kernel<short> m_KernelX;
 	Kernel<short> m_KernelY;
 	
+	Kernel<short> m_KernelOutline;
+	
+	Kernel<float> m_KernelBoxBlur;
+	Kernel<float> m_KernelGaussianBlur;
 
+	
 	void Start()
 	{
 		m_InputTextureData = m_Texture.GetRawTextureData<Color24>();
@@ -79,6 +84,11 @@ public class SobelKernelExample : MonoBehaviour
 		
 		m_KernelX = new Kernel<short>(Kernels.Sobel.X);
 		m_KernelY = new Kernel<short>(Kernels.Sobel.Y);
+		
+		m_KernelOutline = new Kernel<short>(Kernels.Outline);
+		
+		m_KernelBoxBlur = new Kernel<float>(Kernels.BoxBlur);
+		m_KernelGaussianBlur = new Kernel<float>(Kernels.GaussianBlurApproximate5x5);
 
 		var grayscale8Job = new Grayscale8FromColor24Job()
 		{
@@ -111,7 +121,10 @@ public class SobelKernelExample : MonoBehaviour
 
 		if (Time.frameCount == 15)
 		{
-			KernelOperations.Run(m_GrayTextureData8, m_SobelTextureDataX, m_KernelX,
+			//KernelOperations.Run(m_GrayTextureData8, m_SobelTextureDataX, m_KernelX,
+			//	m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
+			
+			m_KernelOutline.Convolve(m_GrayTextureData8, m_SobelTextureDataX,
 				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
 			
 			/*
@@ -132,7 +145,10 @@ public class SobelKernelExample : MonoBehaviour
 		
 		if (Time.frameCount == 18)
 		{
-			KernelOperations.Run(m_GrayTextureData8, m_SobelTextureDataY, m_KernelY,
+			//KernelOperations.Run(m_GrayTextureData8, m_SobelTextureDataY, m_KernelY,
+			//	m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
+			
+			m_KernelGaussianBlur.Convolve(m_GrayTextureData8, m_SobelTextureDataY,
 				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
 			
 			/*
@@ -153,8 +169,11 @@ public class SobelKernelExample : MonoBehaviour
 		
 		if (!m_ScheduledLastUpdate)
 		{
+			m_KernelBoxBlur.Convolve(m_GrayTextureData8, m_SobelTextureDataCombined,
+				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
+			
 			m_ScheduledLastUpdate = true;
-			Operations.SobelCombine(m_SobelTextureDataX, m_SobelTextureDataY, m_SobelTextureDataCombined, m_Threshold);
+			//Operations.SobelCombine(m_SobelTextureDataX, m_SobelTextureDataY, m_SobelTextureDataCombined, m_Threshold);
 			m_SobelTexture.LoadRawTextureData(m_SobelTextureDataCombined);
 			m_SobelTexture.Apply();
 		}
