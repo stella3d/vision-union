@@ -76,7 +76,7 @@ public class PoolingTests
 	{
 		var intensities5x5MaxPooled3x3 = new NativeArray<byte>(k_Intensities5x5MaxPooled3x3.Length, Allocator.Temp);
 
-		Operations.MaxPool(s_Intensities5x5Native, intensities5x5MaxPooled3x3, 5, 5, 3, 3, 1, 1);
+		Pool.Max(s_Intensities5x5Native, intensities5x5MaxPooled3x3, 5, 5, 3, 3, 1, 1);
 
 		intensities5x5MaxPooled3x3.AssertCollectionEqual(k_Intensities5x5MaxPooled3x3);
 		intensities5x5MaxPooled3x3.Dispose();

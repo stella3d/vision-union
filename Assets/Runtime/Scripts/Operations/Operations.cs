@@ -352,61 +352,7 @@ namespace BurstVision
                 }
             }
         }
-        
-        public static void MaxPool2x2(NativeArray<float> pixelBuffer, NativeArray<float> pixelOut, 
-            int width, int height)
-        {
-            for (var i = 1; i < height - 1; i += 2)
-            {
-                var rowIndex = i * width;
-                for (var n = 1; n < width - 1; n += 2)
-                {
-                    var index = rowIndex + n;
-             
-                    var previousRowIndex = index - width;
-                    var topRight = pixelBuffer[previousRowIndex];
-                    var topLeft = pixelBuffer[previousRowIndex - 1];
-                    var bottomRight = pixelBuffer[index];
-                    var bottomLeft = pixelBuffer[index - 1];
 
-                    var max = topLeft > topRight ? topLeft : topRight;
-                    max = bottomLeft > max ? bottomLeft : max;
-                    max = bottomRight > max ? bottomRight : max;
-
-                    pixelOut[previousRowIndex] = max;
-                    pixelOut[previousRowIndex - 1] = max;
-                    pixelOut[index] = max;
-                    pixelOut[index - 1] = max;
-                }
-            }
-        }
-        
-        public static void MeanPool2x2(NativeArray<byte> pixelBuffer, NativeArray<float> pixelOut, 
-            int width, int height, 
-            int xStride = 2, int yStride = 2) // default stride is non-overlapping
-        {
-            var outputIndex = 0;
-            for (var i = 1; i < height; i += yStride)
-            {
-                var rowIndex = i * width;
-                for (var n = 1; n < width; n += xStride)
-                {
-                    var index = rowIndex + n;
-             
-                    var previousRowIndex = index - width;
-                    var topRight = pixelBuffer[previousRowIndex];
-                    var topLeft = pixelBuffer[previousRowIndex - 1];
-                    var bottomRight = pixelBuffer[index];
-                    var bottomLeft = pixelBuffer[index - 1];
-
-                    var mean = (topLeft + topRight + bottomLeft + bottomRight) * 0.25f;
-
-                    pixelOut[outputIndex] = mean;
-                    outputIndex++;
-                }
-            }
-        }
-        
         public static void MeanPool(NativeArray<byte> pixelBuffer, NativeArray<float> pixelOut, 
             int width, int height, 
             int xSize = 2, int ySize = 2,         // default is a 2x2 downsampling

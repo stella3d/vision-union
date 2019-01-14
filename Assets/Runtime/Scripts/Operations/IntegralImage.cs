@@ -226,7 +226,7 @@ public struct MeanPool2x2GrayscaleJob : IJob
     // ((x + 1, y + 1) - (x + 1, 0)) - ((0, y) - (0, 0))
     public void Execute()
     {
-        Operations.MeanPool2x2(Input, Output, width, height);
+        Operations.MeanPool(Input, Output, width, height);
     }
 }
 
