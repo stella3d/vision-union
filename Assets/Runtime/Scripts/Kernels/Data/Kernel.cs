@@ -27,6 +27,13 @@ namespace BurstVision
                 }
             }
         }
+        
+        public Kernel(T[] input, bool horizontal = true, Allocator allocator = Allocator.Persistent)
+        {
+            Data = new NativeArray<T>(input, allocator);
+            Width = horizontal ? input.Length : 1;
+            Height = horizontal ? 1 : input.Length;
+        }
 
         public T this[int row, int column]
         {
@@ -41,13 +48,6 @@ namespace BurstVision
                 var data = Data;
                 data[index] = value;
             }
-        }
-
-        public Kernel(T[] input, bool horizontal = true, Allocator allocator = Allocator.Persistent)
-        {
-            Data = new NativeArray<T>(input, allocator);
-            Width = horizontal ? input.Length : 1;
-            Height = horizontal ? 1 : input.Length;
         }
 
         public void Dispose()

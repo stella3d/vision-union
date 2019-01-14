@@ -138,6 +138,7 @@ namespace BurstVision
                 {
                     var centerPixelIndex = rowIndex + c;
                     //var kernelIndex = 0;
+                    // TODO make padding and kernel offsets different values
                     var kernelSum = kernel.Accumulate(pixelBuffer, centerPixelIndex, width, xPad, yPad);
                     /*
                     for (var kY = -yPad; kY < yPad; kY++)
