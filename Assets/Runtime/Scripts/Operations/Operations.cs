@@ -325,14 +325,15 @@ namespace BurstVision
             }
         }
         
-        // does not downsample - downsampling implementation should be faster
+        // does downsample?
         public static void MaxPool2x2(NativeArray<byte> pixelBuffer, NativeArray<byte> pixelOut, 
             int width, int height)
         {
-            for (int i = 1; i < height - 1; i += 2)
+            int outIndex = 0;
+            for (int i = 1; i < height; i += 2)
             {
                 var rowIndex = i * width;
-                for (int n = 1; n < width - 1; n += 2)
+                for (int n = 1; n < width; n += 2)
                 {
                     var index = rowIndex + n;
              
@@ -346,10 +347,8 @@ namespace BurstVision
                     max = bottomLeft > max ? bottomLeft : max;
                     max = bottomRight > max ? bottomRight : max;
 
-                    pixelOut[previousRowIndex] = max;
-                    pixelOut[previousRowIndex - 1] = max;
-                    pixelOut[index] = max;
-                    pixelOut[index - 1] = max;
+                    pixelOut[outIndex] = max;
+                    outIndex++;
                 }
             }
         }
