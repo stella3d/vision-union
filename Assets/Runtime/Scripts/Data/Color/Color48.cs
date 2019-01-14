@@ -4,7 +4,7 @@ using UnityEngine;
 namespace BurstVision
 {
     ///<summary>
-    /// Representation of RGB colors in 24 bit format
+    /// Representation of RGB colors in 48 bit format
     ///</summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct Color48

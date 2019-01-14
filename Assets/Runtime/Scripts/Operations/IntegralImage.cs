@@ -143,7 +143,7 @@ public struct GrayscaleFromColor24Job : IJobParallelFor
         {
             var p = InputTexture[index];
             const float oneOver765 = 0.00130718954f;
-            Grayscale[index] = (p.r + p.g + p.b) * oneOver765;
+            Grayscale[index] = (p.r + p.g + p.b) * oneOver765 * 3;
         }
     }
 
@@ -151,7 +151,7 @@ public struct GrayscaleFromColor24Job : IJobParallelFor
     {
         var p = InputTexture[index];
         const float oneOver765 = 0.00130718954f;
-        Grayscale[index] = (p.r + p.g + p.b) * oneOver765;
+        Grayscale[index] = (p.r + p.g + p.b) * oneOver765 * 3;
     }
 }
 
@@ -247,20 +247,5 @@ public struct SobelJob: IJob
     public void Execute()
     {
         Operations.Sobel(Grayscale, SobelOut, threshold, width, height);
-    }
-}
-
-[StructLayout(LayoutKind.Sequential)]
-public struct Color24
-{
-    public byte r;
-    public byte g;
-    public byte b;
-
-    public Color24(byte r, byte g, byte b)
-    {
-        this.r = r;
-        this.g = g;
-        this.b = b;
     }
 }

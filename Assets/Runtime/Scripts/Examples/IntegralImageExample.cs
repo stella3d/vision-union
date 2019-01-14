@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using BurstVision;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;

@@ -27,7 +27,22 @@ namespace BurstVision
                 }
             }
         }
-        
+
+        public T this[int row, int column]
+        {
+            get
+            {
+                var index = row * Width + column;
+                return Data[index];
+            }
+            set
+            {
+                var index = row * Width + column;
+                var data = Data;
+                data[index] = value;
+            }
+        }
+
         public Kernel(T[] input, bool horizontal = true, Allocator allocator = Allocator.Persistent)
         {
             Data = new NativeArray<T>(input, allocator);
