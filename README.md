@@ -13,7 +13,7 @@ This project is a prototype and proof of concept right now.
 Efficient runtime inference / serving of existing computer vision models on the cpu, by leveraging Burst and the job system.
 
 
-## Builbing Blocks
+## Building Blocks
 
 ### Input Processing
 
@@ -30,3 +30,8 @@ Max & average pooling implementations
 ### Activation
 
 ReLu activation, TODO - softmax 
+
+
+## Network Representation
+
+2d convultion networks only right now.
