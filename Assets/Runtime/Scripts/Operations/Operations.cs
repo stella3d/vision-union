@@ -381,16 +381,15 @@ namespace BurstVision
             }
         }
         
-        
-        
-        // this integral image version should be faster and parallelizable
-        public static void MeanPool2x2(NativeArray<byte> pixelBuffer, NativeArray<byte> pixelOut, 
-            int width, int height)
+        public static void MeanPool2x2(NativeArray<byte> pixelBuffer, NativeArray<float> pixelOut, 
+            int width, int height, 
+            int xStride = 2, int yStride = 2) // default stride is non-overlapping
         {
-            for (int i = 1; i < height - 1; i += 2)
+            var outputIndex = 0;
+            for (var i = 1; i < height; i += yStride)
             {
                 var rowIndex = i * width;
-                for (int n = 1; n < width - 1; n += 2)
+                for (var n = 1; n < width; n += xStride)
                 {
                     var index = rowIndex + n;
              
@@ -400,12 +399,44 @@ namespace BurstVision
                     var bottomRight = pixelBuffer[index];
                     var bottomLeft = pixelBuffer[index - 1];
 
-                    var mean = (byte)((topLeft + topRight + bottomLeft + bottomRight) / 4);
+                    var mean = (topLeft + topRight + bottomLeft + bottomRight) * 0.25f;
 
-                    pixelOut[previousRowIndex] = mean;
-                    pixelOut[previousRowIndex - 1] = mean;
-                    pixelOut[index] = mean;
-                    pixelOut[index - 1] = mean;
+                    pixelOut[outputIndex] = mean;
+                    outputIndex++;
+                }
+            }
+        }
+        
+        public static void MeanPool(NativeArray<byte> pixelBuffer, NativeArray<float> pixelOut, 
+            int width, int height, 
+            int xSize = 2, int ySize = 2,         // default is a 2x2 downsampling
+            int xStride = 2, int yStride = 2) 
+        {
+            var outputIndex = 0;
+            var poolSize = xSize * ySize;
+            for (var i = ySize - 1; i < height; i += yStride)
+            {
+                var rowIndex = i * width;
+                for (var n = xSize - 1; n < width; n += xStride)
+                {
+                    var index = rowIndex + n;
+                    var poolIndex = 0;
+                    var poolSum = 0f;
+                    for (var kY = -ySize + 1; kY <= 0; kY++)
+                    {
+                        var kRowOffset = kY * width;
+                        var kRowIndex = index + kRowOffset;
+                        for (var kX = -xSize + 1; kX <= 0; kX++)
+                        {
+                            var pixelIndex = kRowIndex + kX;
+                            poolSum += pixelBuffer[pixelIndex];
+                            poolIndex++;
+                        }
+                    }
+
+                    var average = poolSum / poolSize;
+                    pixelOut[outputIndex] = average;
+                    outputIndex++;
                 }
             }
         }
@@ -420,7 +451,7 @@ namespace BurstVision
                 
                 var value = math.sqrt(x * x + y * y);
                 //var value = math.abs(x) + math.abs(y);
-                combined[i] = math.clamp(value, 0f, 1f);
+                combined[i] = math.select(0f, 1f, value / 2f > threshold);
             }
         }
     }

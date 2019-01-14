@@ -70,8 +70,6 @@ public static class UtilityTests
 		}
 	}
 	
-	
-	
 	[Test]
 	public static void IntegralImage_Average3x3()
 	{
@@ -95,6 +93,4 @@ public static class UtilityTests
 		
 		DebugUtils.LogFlat2DMatrix(sobel, 5, 5);
 	}
-	
-	
 }

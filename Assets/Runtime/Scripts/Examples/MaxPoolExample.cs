@@ -30,7 +30,7 @@ public class MaxPoolExample : MonoBehaviour
 	// Alpha-8 texture with grayscale color encoded in alpha channel
 	NativeArray<byte> m_GrayTextureData8;
 	NativeArray<byte> m_SobelTextureData8;
-	NativeArray<byte> m_GrayscaleDownsampled2x2;
+	NativeArray<float> m_GrayscaleDownsampled2x2;
 	
 	NativeArray<int> m_IntegralImageDataInt;
 	NativeArray<float> m_MeanIntensity3x3;
@@ -52,7 +52,7 @@ public class MaxPoolExample : MonoBehaviour
 		m_InputTextureData = m_Texture.GetRawTextureData<Color24>();
 		m_GrayTextureData8 = new NativeArray<byte>(m_InputTextureData.Length, Allocator.Persistent);
 		
-		m_GrayscaleDownsampled2x2 = new NativeArray<byte>(m_InputTextureData.Length, Allocator.Persistent);
+		m_GrayscaleDownsampled2x2 = new NativeArray<float>(m_InputTextureData.Length, Allocator.Persistent);
 		
 		m_SobelTextureData8 = new NativeArray<byte>(m_InputTextureData.Length, Allocator.Persistent);
 		

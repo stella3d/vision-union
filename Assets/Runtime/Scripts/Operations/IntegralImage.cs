@@ -221,7 +221,7 @@ public struct MeanPool2x2GrayscaleJob : IJob
     public NativeArray<byte> Input;
     
     [WriteOnly]
-    public NativeArray<byte> Output;
+    public NativeArray<float> Output;
 
     // ((x + 1, y + 1) - (x + 1, 0)) - ((0, y) - (0, 0))
     public void Execute()

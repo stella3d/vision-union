@@ -3,6 +3,7 @@ using System.Text;
 using BurstVision;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public static class DebugUtils
 {
@@ -41,6 +42,25 @@ public static class DebugUtils
         }
         
         Debug.Log(s_String);
+    }
+    
+    public static void AssertCollectionEqual<T>(this NativeArray<T> native, T[] managed) 
+        where T: struct
+    {
+        Assert.AreEqual(native.Length, managed.Length);
+        for (var i = 0; i < native.Length; i++)
+        {
+            Assert.AreEqual(native[i], managed[i]);
+        }
+    }
+    
+    public static void AssertApproximatelyEqual(this NativeArray<float> native, float[] managed) 
+    {
+        Assert.AreEqual(native.Length, managed.Length);
+        for (var i = 0; i < native.Length; i++)
+        {
+            Assert.AreApproximatelyEqual(native[i], managed[i]);
+        }
     }
     
     public static void Print<T>(this Kernel<T> kernel) 

@@ -98,12 +98,12 @@ public class SobelKernelExample : MonoBehaviour
 			Grayscale = m_GrayTextureData8,
 		};
 		
-		var sharpenKernel = new Kernel<short>(Kernels.Scharr.X);
-		var sharpenJob = new ShortKernelConvolveJob(sharpenKernel, m_GrayTextureData8, m_SobelTextureDataX,
+		var kernelOne = new Kernel<short>(Kernels.Sobel.X);
+		var sharpenJob = new ShortKernelConvolveJob(kernelOne, m_GrayTextureData8, m_SobelTextureDataX,
 			m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
 		
-		var sharpenKernel2 = new Kernel<short>(Kernels.Scharr.Y);
-		var sharpenJob2 = new ShortKernelConvolveJob(sharpenKernel2, m_GrayTextureData8, m_SobelTextureDataY,
+		var kernelTwo = new Kernel<short>(Kernels.Sobel.Y);
+		var sharpenJob2 = new ShortKernelConvolveJob(kernelTwo, m_GrayTextureData8, m_SobelTextureDataY,
 			m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
 		
 		m_GrayScaleJobHandle = grayscale8Job.Schedule(m_InputTextureData.Length, 4096);
