@@ -5,6 +5,7 @@
 [Bb]uilds/
 Temp/
 Assets/AssetStoreTools*
+Assets/Plugins/Editor/JetBrains*
 
 # Visual Studio cache directory
 .vs/

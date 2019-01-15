@@ -52,9 +52,6 @@ public class SobelKernelExample : MonoBehaviour
 	Kernel<float> m_KernelBoxBlur;
 	Kernel<float> m_KernelGaussianBlur;
 	
-	
-
-	
 	void Start()
 	{
 		m_InputTextureData = m_Texture.GetRawTextureData<Color24>();

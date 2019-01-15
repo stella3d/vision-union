@@ -1,16 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using BurstVision;
+﻿using BurstVision;
 using NUnit.Framework;
 using Unity.Collections;
-using UnityEngine;
-using UnityEngine.TestTools.Utils;
 
 public class KernelTests
 {
-	
-	
 	[Test]
 	public void ContructFrom2dInput()
 	{

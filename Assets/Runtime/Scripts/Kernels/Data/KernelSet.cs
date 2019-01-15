@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Unity.Collections;
 
 namespace BurstVision
 {
@@ -21,9 +19,9 @@ namespace BurstVision
         
         public KernelSet(int kX, int kY, int filterCount, int channelCount)
         {
-            filterCount = Kernels.GetLength(0);
-            channelCount = Kernels.GetLength(1);
-            this.Kernels = Kernels;
+            filterCount = filterCount;
+            channelCount = channelCount;
+            Kernels = new Kernel<T>[kY, kX];
         }
         
         public void Dispose()
