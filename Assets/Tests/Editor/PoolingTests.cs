@@ -40,6 +40,12 @@ public class PoolingTests
 		3, 2, 3
 	};
 	
+	static readonly byte[] k_Intensities5x5MaxPooled3x3Stride2x2 = 
+	{
+		3, 3,	
+		3, 3
+	};
+	
 	NativeArray<float> m_MeanPool;
 	static NativeArray<byte> s_Intensities5x5Native;
 
@@ -80,5 +86,16 @@ public class PoolingTests
 
 		intensities5x5MaxPooled3x3.AssertCollectionEqual(k_Intensities5x5MaxPooled3x3);
 		intensities5x5MaxPooled3x3.Dispose();
+	}
+	
+	[Test]
+	public static void MaxPooling_5x5Input_3x3Kernel_2x2Stride()
+	{
+		var intensities5x5MaxPooled3x3Stride2x2 = new NativeArray<byte>(k_Intensities5x5MaxPooled3x3Stride2x2.Length, Allocator.Temp);
+
+		Pool.Max(s_Intensities5x5Native, intensities5x5MaxPooled3x3Stride2x2, 5, 5, 3, 3, 2, 2);
+
+		intensities5x5MaxPooled3x3Stride2x2.AssertCollectionEqual(k_Intensities5x5MaxPooled3x3Stride2x2);
+		intensities5x5MaxPooled3x3Stride2x2.Dispose();
 	}
 }
