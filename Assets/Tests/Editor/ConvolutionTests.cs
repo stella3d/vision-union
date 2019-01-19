@@ -43,6 +43,8 @@ namespace VisionUnion.Tests
 		public void IdentityKernelConvolution_OutputEqualsInput()
 		{
 			var identityKernel = new Kernel<byte>(Kernels.Byte.Identity);
+			
+			identityKernel.Dispose();
 		}
 	}
 }

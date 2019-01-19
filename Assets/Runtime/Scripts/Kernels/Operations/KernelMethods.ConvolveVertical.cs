@@ -4,12 +4,13 @@ namespace VisionUnion
 {
     public static partial class KernelMethods
     {
-        public static void ConvolveVertical(this Kernel<short> kernel, 
-            NativeArray<float> pixelBuffer, NativeArray<float> pixelOut, 
-            int width, int height)
+        public static void ConvolveVertical(this Kernel<byte> kernel, 
+            ImageData<byte> imageData, NativeArray<float> pixelOut,
+            int yPad)
         {
-            var yPad = (kernel.Height - 1) / 2;
-            
+            var pixelBuffer = imageData.Buffer;
+            var width = imageData.Width;
+            var height = imageData.Height;
             for (var r = yPad; r < height - yPad; r++)
             {
                 var rowIndex = r * width;

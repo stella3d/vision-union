@@ -1,4 +1,5 @@
 using Unity.Collections;
+using UnityEngine;
 
 namespace VisionUnion
 {
@@ -48,23 +49,44 @@ namespace VisionUnion
             }
         }
         
-        public static void Convolve(this Kernel<float> kernel, 
+        public static void Convolve(this Kernel<short> kernel, 
             ImageData<byte> imageData, NativeArray<float> pixelOut,
-            int xStride = 1, int yStride = 1)
+            Vector2Int strides, Vector2Int pad)
         {
-            var xPad = (kernel.Width - 1) / 2;
-            var yPad = (kernel.Height - 1) / 2;
-
+            kernel.Convolve(imageData.Buffer, pixelOut, imageData.Width, imageData.Height);
+            
             var pixelBuffer = imageData.Buffer;
             var imageWidth = imageData.Width;
-            for (var r = yPad; r < imageData.Height - yPad; r += yStride)
+            for (var r = pad.y; r < imageData.Height - pad.y; r += strides.y)
             {
                 var rowIndex = r * imageWidth;
-                for (var c = xPad; c < imageWidth - xPad; c += xStride)
+                for (var c = pad.x; c < imageWidth - pad.x; c += strides.x)
                 {
                     var centerPixelIndex = rowIndex + c;
                     // TODO make padding and kernel offsets different values
-                    var kernelSum = kernel.Accumulate(pixelBuffer, centerPixelIndex, imageWidth, xPad, yPad);
+                    var kernelSum = kernel.Accumulate(pixelBuffer, centerPixelIndex, imageWidth, pad.x, pad.y);
+
+                    pixelOut[centerPixelIndex] = kernelSum;
+                }
+            }
+        }
+        
+        public static void Convolve(this Kernel<float> kernel, 
+            ImageData<byte> imageData, NativeArray<float> pixelOut,
+            Vector2Int strides, Vector2Int pad)
+        {
+            kernel.Convolve(imageData.Buffer, pixelOut, imageData.Width, imageData.Height);
+            
+            var pixelBuffer = imageData.Buffer;
+            var imageWidth = imageData.Width;
+            for (var r = pad.y; r < imageData.Height - pad.y; r += strides.y)
+            {
+                var rowIndex = r * imageWidth;
+                for (var c = pad.x; c < imageWidth - pad.x; c += strides.x)
+                {
+                    var centerPixelIndex = rowIndex + c;
+                    // TODO make padding and kernel offsets different values
+                    var kernelSum = kernel.Accumulate(pixelBuffer, centerPixelIndex, imageWidth, pad.x, pad.y);
 
                     pixelOut[centerPixelIndex] = kernelSum;
                 }

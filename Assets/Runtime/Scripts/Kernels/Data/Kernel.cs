@@ -1,9 +1,12 @@
 using System;
 using Unity.Collections;
-using UnityEngine;
 
 namespace VisionUnion
 {
+    /// <summary>
+    /// Represents a 2D convolution kernel
+    /// </summary>
+    /// <typeparam name="T">The data type of the kernel multiplier</typeparam>
     public struct Kernel<T> : IDisposable
         where T: struct
     {
@@ -11,16 +14,12 @@ namespace VisionUnion
         public readonly int Height;
         public readonly NativeArray<T> Data;
 
-        public Vector2Int Padding;
-
         public Kernel(T[,] input3D, Allocator allocator = Allocator.Persistent)
         {
             Width = input3D.GetLength(0);
             Height = input3D.GetLength(1);
 
             Data = new NativeArray<T>(Width * Height, allocator);
-            
-            Padding = new Vector2Int();
             
             var flatIndex = 0;
             for (var y = 0; y < Height; y++)
@@ -38,7 +37,6 @@ namespace VisionUnion
             Data = new NativeArray<T>(input, allocator);
             Width = horizontal ? input.Length : 1;
             Height = horizontal ? 1 : input.Length;
-            Padding = new Vector2Int();
         }
 
         public T this[int row, int column]
