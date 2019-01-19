@@ -129,34 +129,6 @@ public struct IntegralImageFromGrayscaleByteJob : IJob
 }
 
 [BurstCompile]
-public struct GrayscaleFromColor24Job : IJobParallelFor
-{
-    [ReadOnly]
-    public NativeArray<Color24> InputTexture;
-    
-    [WriteOnly]
-    public NativeArray<float> Grayscale;
-
-    public void Execute()
-    {
-        for (int index = 0; index < InputTexture.Length; index++)
-        {
-            var p = InputTexture[index];
-            const float oneOver765 = 0.00130718954f;
-            Grayscale[index] = (p.r + p.g + p.b) * oneOver765 * 3;
-        }
-    }
-
-    public void Execute(int index)
-    {
-        var p = InputTexture[index];
-        const float oneOver765 = 0.00130718954f;
-        Grayscale[index] = (p.r + p.g + p.b) * oneOver765 * 3;
-    }
-}
-
-
-[BurstCompile]
 public struct Grayscale8FromColor24Job : IJobParallelFor
 {
     [ReadOnly]
@@ -189,25 +161,6 @@ public struct AverageIntensity3x3IntJob : IJob
     public void Execute()
     {
         Operations.Average3x3(Integral, Intensities, width, height);
-    }
-}
-
-[BurstCompile]
-public struct MaxPool2x2GrayscaleJob : IJob
-{
-    public int width;
-    public int height;
-    
-    [ReadOnly]
-    public NativeArray<byte> Input;
-    
-    [WriteOnly]
-    public NativeArray<byte> Output;
-
-    // ((x + 1, y + 1) - (x + 1, 0)) - ((0, y) - (0, 0))
-    public void Execute()
-    {
-        Operations.MaxPool2x2(Input, Output, width, height);
     }
 }
 

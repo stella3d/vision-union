@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using VisionUnion;
+using VisionUnion.Jobs;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;

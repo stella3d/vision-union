@@ -2,7 +2,7 @@
 using Unity.Collections;
 using Unity.Jobs;
 
-namespace VisionUnion
+namespace VisionUnion.Jobs
 {
     [BurstCompile]
     public struct ShortKernelConvolveJob : IJob

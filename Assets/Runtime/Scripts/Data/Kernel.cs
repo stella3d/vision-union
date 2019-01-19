@@ -14,10 +14,10 @@ namespace VisionUnion
         public readonly int Height;
         public readonly NativeArray<T> Data;
 
-        public Kernel(T[,] input3D, Allocator allocator = Allocator.Persistent)
+        public Kernel(T[,] input, Allocator allocator = Allocator.Persistent)
         {
-            Width = input3D.GetLength(0);
-            Height = input3D.GetLength(1);
+            Width = input.GetLength(0);
+            Height = input.GetLength(1);
 
             Data = new NativeArray<T>(Width * Height, allocator);
             
@@ -26,7 +26,7 @@ namespace VisionUnion
             {
                 for (var x = 0; x < Width; x++)
                 {
-                    Data[flatIndex] = input3D[y, x];
+                    Data[flatIndex] = input[y, x];
                     flatIndex++;
                 }
             }
