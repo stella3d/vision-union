@@ -43,7 +43,17 @@ namespace VisionUnion.Tests
 			sY.Dispose();
 		}
 		
-		// TODO - test [] accessors / setters
+		// TODO - test cases instead of repeating in the test
+		[Test]
+		public void BracketAccessorsWork()
+		{
+			var kernel = new Kernel<short>(3, 3, Allocator.Temp);
+			kernel[0, 0] = 10;
+			kernel[0, 2] = 20;
+			Assert.AreEqual(10, kernel[0, 0]);
+			Assert.AreEqual(20, kernel[0, 2]);
+
+		}
 
 		void AssertFlatRepresentationValid<T>(T[,] input2D, NativeArray<T> flat)
 			where T : struct

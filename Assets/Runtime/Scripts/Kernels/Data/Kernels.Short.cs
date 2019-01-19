@@ -4,12 +4,7 @@ namespace VisionUnion
     {
         public static class Short
         {
-            public static readonly short[,] Identity =
-            {
-                {0, 0, 0},
-                {0, 1, 0},
-                {0, 0, 0}
-            };
+            public static readonly short[,] Identity = { {1} };
 
             public static class Sobel
             {

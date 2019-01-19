@@ -38,6 +38,13 @@ namespace VisionUnion
             Width = horizontal ? input.Length : 1;
             Height = horizontal ? 1 : input.Length;
         }
+        
+        public Kernel(int width, int height, Allocator allocator = Allocator.Persistent)
+        {
+            Width = width;
+            Height = height;
+            Data = new NativeArray<T>(Width * Height, allocator);
+        }
 
         public T this[int row, int column]
         {
