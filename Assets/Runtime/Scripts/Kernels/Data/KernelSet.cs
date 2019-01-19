@@ -19,8 +19,8 @@ namespace VisionUnion
         
         public KernelSet(int kX, int kY, int filterCount, int channelCount)
         {
-            filterCount = filterCount;
-            channelCount = channelCount;
+            this.filterCount = filterCount;
+            this.channelCount = channelCount;
             Kernels = new Kernel<T>[kY, kX];
         }
         

@@ -1,7 +1,7 @@
 {
     "name": "Tests",
     "references": [
-        "BurstVision"
+        "VisionUnion"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
@@ -10,5 +10,9 @@
         "Editor"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
 }
