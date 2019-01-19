@@ -5,7 +5,7 @@ namespace VisionUnion
 {
     public static partial class KernelMethods
     {
-        public static short Accumulate(this Kernel<short> kernel, 
+        public static short Accumulate(this Kernel<byte> kernel, 
             ImageData<byte> imageData, int centerPixelIndex,
             Vector2Int pad)
         {

@@ -55,9 +55,12 @@ namespace VisionUnion.Tests
 		public void ConvolutionWithIdentityKernel_OutputEqualsInput()
 		{
 			var kernel = new Kernel<short>(Kernels.Short.Identity);
-			var convolution = new Convolution<short>(kernel);
+			var convolution = new Convolution<short>(kernel, 1, 0);
 			
 			convolution.Convolve(m_InputImage, m_IntermediateImage);
+			
+			//m_InputImage.Buffer.AssertDeepEqual(m_IntermediateImage.Buffer);
+			
 			
 			convolution.Dispose();
 		}

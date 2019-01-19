@@ -1,7 +1,30 @@
+using System;
+
 namespace VisionUnion
 {
     public static partial class ConvolutionMethods
     {
+        public static void Convolve(this Convolution<byte> convolution, 
+            ImageData<byte> image, ImageData<byte> output)
+        {
+            var outputBuffer = output.Buffer;
+            var imageWidth = image.Width;
+            var pad = convolution.Padding;
+            var stride = convolution.Stride;
+            var kernel = convolution.Kernel;
+
+            for (var r = pad.y; r < image.Height - pad.y; r += stride.y)
+            {
+                var rowIndex = r * imageWidth;
+                for (var c = pad.x; c < imageWidth - pad.x; c += stride.x)
+                {
+                    var i = rowIndex + c;
+                    var kernelSum = kernel.Accumulate(image, i, pad);
+                    outputBuffer[i] = Convert.ToByte(kernelSum);
+                }
+            }
+        }
+        
         public static void Convolve(this Convolution<short> convolution, 
             ImageData<byte> image, ImageData<short> output)
         {

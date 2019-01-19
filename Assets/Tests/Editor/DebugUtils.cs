@@ -54,6 +54,16 @@ namespace  VisionUnion.Tests
             }
         }
         
+        public static void AssertDeepEqual<T>(this NativeArray<T> native, NativeArray<T> other) 
+            where T: struct
+        {
+            Assert.AreEqual(native.Length, other.Length);
+            for (var i = 0; i < native.Length; i++)
+            {
+                Assert.AreEqual(native[i], other[i]);
+            }
+        }
+        
         public static void AssertApproximatelyEqual(this NativeArray<float> native, float[] managed) 
         {
             Assert.AreEqual(native.Length, managed.Length);
