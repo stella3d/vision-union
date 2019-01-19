@@ -4,8 +4,8 @@ namespace VisionUnion
 {
     public struct PoolingOptions
     {
-        PoolFunction Function;
-        Vector2Int KernelSize;
-        Vector2Int Strides;
+        public PoolFunction Function;
+        public Vector2Int KernelSize;
+        public Vector2Int Strides;
     }
 }
