@@ -42,6 +42,8 @@ namespace VisionUnion.Tests
 			Assert.AreEqual(kernelLength, sY.Data.Length);
 			sY.Dispose();
 		}
+		
+		// TODO - test [] accessors / setters
 
 		void AssertFlatRepresentationValid<T>(T[,] input2D, NativeArray<T> flat)
 			where T : struct
