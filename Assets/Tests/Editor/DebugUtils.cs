@@ -1,84 +1,85 @@
-using System.Collections.Generic;
 using System.Text;
-using VisionUnion;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public static class DebugUtils
+namespace  VisionUnion.Tests
 {
-    static StringBuilder s_String = new StringBuilder();
-
-    public static void LogFlat2DMatrix<T>(T[] matrix, int width, int height)
+    public static class DebugUtils
     {
-        s_String.Length = 0;
-        for (int y = 0; y < height; y++)
+        static StringBuilder s_String = new StringBuilder();
+    
+        public static void LogFlat2DMatrix<T>(T[] matrix, int width, int height)
         {
-            var rowIndex = y * width;
-            for (int x = 0; x < width - 1; x++)
+            s_String.Length = 0;
+            for (int y = 0; y < height; y++)
             {
-                s_String.AppendFormat("{0}, ", matrix[rowIndex + x]);
+                var rowIndex = y * width;
+                for (int x = 0; x < width - 1; x++)
+                {
+                    s_String.AppendFormat("{0}, ", matrix[rowIndex + x]);
+                }
+    
+                s_String.AppendLine(matrix[rowIndex + width - 1].ToString());    // end of row, no comma
             }
-
-            s_String.AppendLine(matrix[rowIndex + width - 1].ToString());    // end of row, no comma
+            
+            Debug.Log(s_String);
         }
         
-        Debug.Log(s_String);
-    }
-    
-    public static void LogFlat2DMatrix<T>(NativeArray<T> matrix, int width, int height)
-        where T: struct
-    {
-        s_String.Length = 0;
-        for (int y = 0; y < height; y++)
+        public static void LogFlat2DMatrix<T>(NativeArray<T> matrix, int width, int height)
+            where T: struct
         {
-            var rowIndex = y * width;
-            for (int x = 0; x < width - 1; x++)
+            s_String.Length = 0;
+            for (int y = 0; y < height; y++)
             {
-                s_String.AppendFormat("{0}, ", matrix[rowIndex + x]);
+                var rowIndex = y * width;
+                for (int x = 0; x < width - 1; x++)
+                {
+                    s_String.AppendFormat("{0}, ", matrix[rowIndex + x]);
+                }
+    
+                s_String.AppendLine(matrix[rowIndex + width - 1].ToString());    // end of row, no comma
             }
-
-            s_String.AppendLine(matrix[rowIndex + width - 1].ToString());    // end of row, no comma
+            
+            Debug.Log(s_String);
         }
         
-        Debug.Log(s_String);
-    }
-    
-    public static void AssertCollectionEqual<T>(this NativeArray<T> native, T[] managed) 
-        where T: struct
-    {
-        Assert.AreEqual(native.Length, managed.Length);
-        for (var i = 0; i < native.Length; i++)
+        public static void AssertCollectionEqual<T>(this NativeArray<T> native, T[] managed) 
+            where T: struct
         {
-            Assert.AreEqual(native[i], managed[i]);
-        }
-    }
-    
-    public static void AssertApproximatelyEqual(this NativeArray<float> native, float[] managed) 
-    {
-        Assert.AreEqual(native.Length, managed.Length);
-        for (var i = 0; i < native.Length; i++)
-        {
-            Assert.AreApproximatelyEqual(native[i], managed[i]);
-        }
-    }
-    
-    public static void Print<T>(this Kernel<T> kernel) 
-        where T: struct
-    {
-        s_String.Length = 0;
-        var matrix = kernel.Data;
-        for (int y = 0; y < kernel.Height; y++)
-        {
-            var rowIndex = y * kernel.Width;
-            for (int x = 0; x < kernel.Width - 1; x++)
+            Assert.AreEqual(native.Length, managed.Length);
+            for (var i = 0; i < native.Length; i++)
             {
-                s_String.AppendFormat("{0}, ", matrix[rowIndex + x]);
+                Assert.AreEqual(native[i], managed[i]);
             }
-
-            s_String.AppendLine(matrix[rowIndex + kernel.Width - 1].ToString());    // end of row, no comma
         }
         
-        Debug.Log(s_String);
+        public static void AssertApproximatelyEqual(this NativeArray<float> native, float[] managed) 
+        {
+            Assert.AreEqual(native.Length, managed.Length);
+            for (var i = 0; i < native.Length; i++)
+            {
+                Assert.AreApproximatelyEqual(native[i], managed[i]);
+            }
+        }
+        
+        public static void Print<T>(this Kernel<T> kernel) 
+            where T: struct
+        {
+            s_String.Length = 0;
+            var matrix = kernel.Data;
+            for (int y = 0; y < kernel.Height; y++)
+            {
+                var rowIndex = y * kernel.Width;
+                for (int x = 0; x < kernel.Width - 1; x++)
+                {
+                    s_String.AppendFormat("{0}, ", matrix[rowIndex + x]);
+                }
+    
+                s_String.AppendLine(matrix[rowIndex + kernel.Width - 1].ToString());    // end of row, no comma
+            }
+            
+            Debug.Log(s_String);
+        }
     }
 }
