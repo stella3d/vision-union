@@ -8,7 +8,7 @@ namespace VisionUnion
         public readonly int StrideX;
         public readonly int StrideY;
         public readonly Kernel<T> Kernel;
-
+        
         public Filter(Kernel<T> kernel, int strideX = 1, int strideY = 1)
         {
             StrideX = strideX;
