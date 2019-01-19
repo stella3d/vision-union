@@ -4,7 +4,7 @@ using UnityEngine;
 namespace VisionUnion
 {
     /// <summary>
-    /// 
+    /// A combination of kernel, stride, & padding, everything we need to convolve an image
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct Convolution<T> : IDisposable
