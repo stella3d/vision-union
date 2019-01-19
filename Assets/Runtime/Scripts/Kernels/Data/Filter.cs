@@ -1,6 +1,6 @@
 using System;
 
-namespace BurstVision
+namespace VisionUnion
 {
     public struct Filter<T> : IDisposable
         where T: struct

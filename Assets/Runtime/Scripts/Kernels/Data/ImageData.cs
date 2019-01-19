@@ -1,7 +1,7 @@
 using Unity.Collections;
 using UnityEngine;
 
-namespace BurstVision
+namespace VisionUnion
 {
     public struct ImageData<T>
         where T: struct

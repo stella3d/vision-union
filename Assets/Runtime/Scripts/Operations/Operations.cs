@@ -3,7 +3,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
 
-namespace BurstVision
+namespace VisionUnion
 {
     public static class Operations
     {

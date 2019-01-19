@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BurstVision
+namespace VisionUnion
 {
     public struct PoolingOptions
     {

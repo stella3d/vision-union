@@ -2,7 +2,7 @@
 using Unity.Collections;
 using Unity.Jobs;
 
-namespace BurstVision
+namespace VisionUnion
 {
     [BurstCompile]
     public struct MaxPool2x2Job : IJob

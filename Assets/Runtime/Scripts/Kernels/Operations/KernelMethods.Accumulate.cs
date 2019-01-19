@@ -1,6 +1,6 @@
 using Unity.Collections;
 
-namespace BurstVision
+namespace VisionUnion
 {
     public static partial class KernelMethods
     {

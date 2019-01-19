@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace BurstVision
+namespace VisionUnion
 {
     ///<summary>
     /// Representation of RGB colors in 48 bit format

@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Mathematics;
 
-namespace BurstVision
+namespace VisionUnion
 {
     public static partial class Pool
     {

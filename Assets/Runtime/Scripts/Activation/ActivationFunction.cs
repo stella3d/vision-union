@@ -1,4 +1,4 @@
-namespace BurstVision
+namespace VisionUnion
 {
     public enum ActivationFunction
     {

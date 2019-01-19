@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
-using BurstVision;
+using VisionUnion;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;

@@ -1,7 +1,7 @@
 using System;
 using Unity.Collections;
 
-namespace BurstVision
+namespace VisionUnion
 {
     public struct Kernel<T> : IDisposable
         where T: struct

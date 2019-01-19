@@ -1,6 +1,6 @@
 using System;
 
-namespace BurstVision
+namespace VisionUnion
 {
     public class KernelSet<T> : IDisposable
         where T: struct
