@@ -81,13 +81,13 @@ public class SobelKernelExample : MonoBehaviour
 		
 		m_SobelOutputRenderer.material.mainTexture = m_SobelTexture;
 		
-		m_KernelX = new Kernel<short>(Kernels.Sobel.X);
-		m_KernelY = new Kernel<short>(Kernels.Sobel.Y);
+		m_KernelX = new Kernel<short>(Kernels.Short.Sobel.X);
+		m_KernelY = new Kernel<short>(Kernels.Short.Sobel.Y);
 		
-		m_KernelOutline = new Kernel<short>(Kernels.Outline);
+		m_KernelOutline = new Kernel<short>(Kernels.Short.Outline);
 		
-		m_KernelBoxBlur = new Kernel<float>(Kernels.BoxBlur);
-		m_KernelGaussianBlur = new Kernel<float>(Kernels.GaussianBlurApproximate5x5);
+		m_KernelBoxBlur = new Kernel<float>(Kernels.Float.BoxBlur);
+		m_KernelGaussianBlur = new Kernel<float>(Kernels.Float.GaussianBlurApproximate5x5);
 
 		var grayscale8Job = new Grayscale8FromColor24Job()
 		{
@@ -95,11 +95,11 @@ public class SobelKernelExample : MonoBehaviour
 			Grayscale = m_GrayTextureData8,
 		};
 		
-		var kernelOne = new Kernel<short>(Kernels.Sobel.X);
+		var kernelOne = new Kernel<short>(Kernels.Short.Sobel.X);
 		var sharpenJob = new ShortKernelConvolveJob(kernelOne, m_GrayTextureData8, m_SobelTextureDataX,
 			m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
 		
-		var kernelTwo = new Kernel<short>(Kernels.Sobel.Y);
+		var kernelTwo = new Kernel<short>(Kernels.Short.Sobel.Y);
 		var sharpenJob2 = new ShortKernelConvolveJob(kernelTwo, m_GrayTextureData8, m_SobelTextureDataY,
 			m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
 		

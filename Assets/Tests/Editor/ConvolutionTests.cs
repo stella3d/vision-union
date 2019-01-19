@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace VisionUnion.Tests
 {
-	public class SobelTests
+	public class ConvolutionTests
 	{
 		Texture2D m_GrayScaleTexture8;
 
@@ -22,8 +22,8 @@ namespace VisionUnion.Tests
 		[OneTimeSetUp]
 		public void BeforeAll()
 		{
-			const int count = 64 * 64;
-			m_GrayScaleTexture8 = new Texture2D(64, 64);
+			const int count = 16 * 16;
+			m_GrayScaleTexture8 = new Texture2D(16, 16);
 			m_GrayTextureData8 = new NativeArray<byte>(count, Allocator.Temp);
 			m_SobelTextureDataX = new NativeArray<float>(count, Allocator.Temp);
 			m_SobelTextureDataCombined = new NativeArray<float>(count, Allocator.Temp);
@@ -37,17 +37,12 @@ namespace VisionUnion.Tests
 			m_SobelTextureDataCombined.Dispose();
 		}
 
+		// while we would never actually do this convolution, it is useful 
+		// to test that convolution itself is working correctly
 		[Test]
-		public void SeparatedResultIsTheSame()
+		public void IdentityKernelConvolution_OutputEqualsInput()
 		{
-			var kX = new Kernel<short>(Kernels.Short.Sobel.xHorizontal);
-			var kY = new Kernel<short>(Kernels.Short.Sobel.xVertical);
-
-			KernelOperations.RunHorizontal1D(m_GrayTextureData8, m_SobelTextureDataX, kX,
-				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
-
-			KernelOperations.RunVertical1D(m_SobelTextureDataX, m_SobelTextureDataCombined, kY,
-				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
+			var identityKernel = new Kernel<byte>(Kernels.Byte.Identity);
 		}
 	}
 }
