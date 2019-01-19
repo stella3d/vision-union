@@ -5,6 +5,21 @@ namespace VisionUnion.Tests
 {
 	public class KernelTests
 	{
+		[TestCase(2, 2)]
+		[TestCase(3, 3)]
+		[TestCase(5, 5)]
+		[TestCase(1, 3)]
+		[TestCase(3, 1)]
+		public void ConstructBlankFromDimensions(short x, short y)
+		{
+			var kernel = new Kernel<short>(x, y, Allocator.Temp);
+			Assert.IsTrue(kernel.Data.IsCreated);
+			Assert.AreEqual(x, kernel.Width);
+			Assert.AreEqual(y, kernel.Height);
+			Assert.AreEqual(x * y, kernel.Data.Length);
+			kernel.Dispose();
+		}
+		
 		[Test]
 		public void ContructFrom2dInput()
 		{
@@ -52,7 +67,6 @@ namespace VisionUnion.Tests
 			kernel[0, 2] = 20;
 			Assert.AreEqual(10, kernel[0, 0]);
 			Assert.AreEqual(20, kernel[0, 2]);
-
 		}
 
 		void AssertFlatRepresentationValid<T>(T[,] input2D, NativeArray<T> flat)
