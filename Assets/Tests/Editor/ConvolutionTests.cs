@@ -13,55 +13,49 @@ namespace VisionUnion.Tests
 
 		NativeArray<Color24> m_InputTextureData;
 
-		// Alpha-8 texture with grayscale color encoded in alpha channel
-		NativeArray<byte> m_GrayTextureData8;
-
-
-		NativeArray<float> m_SobelTextureDataX;
-		NativeArray<float> m_SobelTextureDataCombined;
-
 		ImageData<byte> m_InputImage;
 
-		NativeArray<short> m_IntermediateData;
 		ImageData<short> m_IntermediateImage;
+
+		const byte inputColorOne = 42;
 
 		[OneTimeSetUp]
 		public void BeforeAll()
 		{
-			const int count = 16 * 16;
-			
-			m_GrayScaleTexture8 = new Texture2D(16, 16);
+			m_GrayScaleTexture8 = DebugUtils.NewFilledTexture(8, 8, inputColorOne, TextureFormat.R8);
 			m_InputImage = new ImageData<byte>(m_GrayScaleTexture8);
 			
-			m_IntermediateTexture16 = new Texture2D(16, 16, TextureFormat.R16, false);
+			m_IntermediateTexture16 = new Texture2D(8, 8, TextureFormat.R16, false);
 			m_IntermediateImage = new ImageData<short>(m_IntermediateTexture16);
-			
-			m_GrayTextureData8 = new NativeArray<byte>(count, Allocator.Temp);
-			m_IntermediateData = new NativeArray<short>(count, Allocator.Temp);
-			m_SobelTextureDataCombined = new NativeArray<float>(count, Allocator.Temp);
 		}
 
 		[OneTimeTearDown]
 		public void AfterAll()
 		{
-			m_GrayTextureData8.Dispose();
-			m_SobelTextureDataX.Dispose();
-			m_SobelTextureDataCombined.Dispose();
+			m_IntermediateImage.Dispose();
 		}
 
 		// while we would never actually do this convolution, it is useful 
 		// to test that convolution itself is working correctly
 		[Test]
-		public void ConvolutionWithIdentityKernel_OutputEqualsInput()
+		public void ConvolutionWithIdentityKernel_OutputEqualsInput_1x1()
 		{
-			var kernel = new Kernel<short>(Kernels.Short.Identity);
-			var convolution = new Convolution<short>(kernel, 1, 0);
+			var kernel = new Kernel<byte>(Kernels.Byte.Identity1x1);
+			var convolution = new Convolution<byte>(kernel, 1, 0);
 			
 			convolution.Convolve(m_InputImage, m_IntermediateImage);
+			m_InputImage.Buffer.AssertDeepEqual(m_IntermediateImage.Buffer);
+			convolution.Dispose();
+		}
+		
+		[Test]
+		public void ConvolutionWithIdentityKernel_OutputEqualsInput_3x3()
+		{
+			var kernel = new Kernel<byte>(Kernels.Byte.Identity3x3);
+			var convolution = new Convolution<byte>(kernel, 1, 1);
 			
-			//m_InputImage.Buffer.AssertDeepEqual(m_IntermediateImage.Buffer);
-			
-			
+			convolution.Convolve(m_InputImage, m_IntermediateImage);
+			m_InputImage.Buffer.AssertDeepEqual(m_IntermediateImage.Buffer);
 			convolution.Dispose();
 		}
 	}

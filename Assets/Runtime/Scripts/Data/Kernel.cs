@@ -1,5 +1,7 @@
 using System;
 using Unity.Collections;
+using Unity.Mathematics;
+using UnityEngine;
 
 namespace VisionUnion
 {
@@ -10,6 +12,17 @@ namespace VisionUnion
     public struct Kernel<T> : IDisposable
         where T: struct
     {
+        public struct Bounds
+        {
+            public Vector2Int negative;
+            public Vector2Int positive;
+
+            public override string ToString()
+            {
+                return string.Format("kernel bounds: +{0}, -{1}", positive, negative);
+            }
+        }
+
         public readonly int Width;
         public readonly int Height;
         public readonly NativeArray<T> Data;
@@ -59,6 +72,28 @@ namespace VisionUnion
                 var data = Data;
                 data[index] = value;
             }
+        }
+        
+        public Bounds GetBounds()
+        {
+            var wMod2 = Width % 2;
+            var hMod2 = Height % 2;
+            var wUnder3 = Width < 3;
+            var hUnder3 = Height < 3;
+
+            var pwOffset = wUnder3 ? Width : Width / 2;
+            var phOffset = hUnder3 ? Height : Height / 2;
+            var nwOffset = wUnder3 ? 0 : Width / 2 - (1 - wMod2);
+            var nhOffset = hUnder3 ? 0 : Height / 2 - (1 - hMod2);
+
+            var positiveBound = new Vector2Int(pwOffset, phOffset);
+            var negativeBound = new Vector2Int(-nwOffset, -nhOffset);
+
+            return new Bounds()
+            {
+                negative = negativeBound,
+                positive = positiveBound
+            };
         }
 
         public void Dispose()

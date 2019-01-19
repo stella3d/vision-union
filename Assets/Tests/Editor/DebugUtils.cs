@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using Unity.Collections;
 using UnityEngine;
@@ -54,13 +55,22 @@ namespace  VisionUnion.Tests
             }
         }
         
-        public static void AssertDeepEqual<T>(this NativeArray<T> native, NativeArray<T> other) 
+        public static void AssertDeepEqual<T>(this NativeArray<T> self, NativeArray<T> other) 
             where T: struct
         {
-            Assert.AreEqual(native.Length, other.Length);
-            for (var i = 0; i < native.Length; i++)
+            Assert.AreEqual(self.Length, other.Length);
+            for (var i = 0; i < self.Length; i++)
             {
-                Assert.AreEqual(native[i], other[i]);
+                Assert.AreEqual(self[i], other[i]);
+            }
+        }
+        
+        public static void AssertDeepEqual(this NativeArray<byte> bytes, NativeArray<short> shorts) 
+        {
+            Assert.AreEqual(bytes.Length, shorts.Length);
+            for (var i = 0; i < bytes.Length; i++)
+            {
+                Assert.AreEqual(bytes[i], shorts[i]);
             }
         }
         
@@ -90,6 +100,19 @@ namespace  VisionUnion.Tests
             }
             
             Debug.Log(s_String);
+        }
+
+        public static Texture2D NewFilledTexture<T>(int width, int height, T value, TextureFormat format)
+            where T: struct
+        {
+            var texture = new Texture2D(width, height, format, false);
+            var data = texture.GetRawTextureData<T>();
+            for (var i = 0; i < data.Length; i++)
+            {
+                data[i] = value;
+            }
+
+            return texture;
         }
     }
 }

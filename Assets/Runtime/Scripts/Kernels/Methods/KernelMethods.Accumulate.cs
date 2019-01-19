@@ -30,6 +30,32 @@ namespace VisionUnion
             return kernelSum;
         }
         
+        public static short Accumulate(this Kernel<byte> kernel, 
+            ImageData<byte> imageData, int centerPixelIndex,
+            Vector2Int negativeBound, Vector2Int positiveBound)
+        {
+            var width = imageData.Width;
+            var pixelBuffer = imageData.Buffer;
+            var kernelIndex = 0;
+            var kernelSum = 0;
+            for (var y = negativeBound.y; y <= positiveBound.y; y++)
+            {
+                var rowOffset = y * width;
+                var rowIndex = centerPixelIndex + rowOffset;
+                for (var x = negativeBound.x; x <= positiveBound.x; x++)
+                {
+                    var pixelIndex = rowIndex + x;
+                    var inputPixelValue = pixelBuffer[pixelIndex];
+                    var kernelMultiplier = kernel.Data[kernelIndex];
+                    kernelSum += inputPixelValue * kernelMultiplier;
+                    kernelIndex++;
+                }
+            }
+
+            var shortSum = (short)kernelSum;
+            return shortSum;
+        }
+        
         public static short Accumulate(this Kernel<short> kernel, 
             NativeArray<byte> pixelBuffer, int centerPixelIndex,
             int width, int xPad, int yPad)

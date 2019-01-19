@@ -1,5 +1,8 @@
-﻿using NUnit.Framework;
+﻿using System.Collections;
+using System.Collections.Generic;
+using NUnit.Framework;
 using Unity.Collections;
+using UnityEngine;
 
 namespace VisionUnion.Tests
 {
@@ -67,6 +70,36 @@ namespace VisionUnion.Tests
 			kernel[0, 2] = 20;
 			Assert.AreEqual(10, kernel[0, 0]);
 			Assert.AreEqual(20, kernel[0, 2]);
+		}
+		
+		[TestCaseSource(typeof(KernelBoundsCases), "Square")]
+		public void VerifyGetBounds_SquareKernels(int size, Vector2Int nBound, Vector2Int pBound)
+		{
+			var count = size * size;
+			var kernel = new Kernel<short>(size, size, Allocator.Temp);
+			Assert.AreEqual(count, kernel.Data.Length);
+			
+			var bounds = kernel.GetBounds();
+			Debug.Log(bounds);
+			Assert.AreEqual(nBound, bounds.negative);
+			Assert.AreEqual(pBound, bounds.positive);
+		}
+		
+		public static class KernelBoundsCases
+		{
+			public static IEnumerable Square
+			{
+				get
+				{
+					yield return new TestCaseData(1, Vector2Int.zero, new Vector2Int(1, 1));
+					yield return new TestCaseData(2, Vector2Int.zero, new Vector2Int(2, 2));
+					yield return new TestCaseData(3, Vector2Int.one * -1, Vector2Int.one);
+					yield return new TestCaseData(4, Vector2Int.one * -1, Vector2Int.one * 2);
+					yield return new TestCaseData(5, Vector2Int.one * -2, Vector2Int.one * 2);
+					yield return new TestCaseData(6, Vector2Int.one * -2, Vector2Int.one * 3);
+					yield return new TestCaseData(7, Vector2Int.one * -3, Vector2Int.one * 3);
+				}
+			}
 		}
 
 		void AssertFlatRepresentationValid<T>(T[,] input2D, NativeArray<T> flat)
