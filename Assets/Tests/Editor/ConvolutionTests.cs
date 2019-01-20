@@ -47,8 +47,8 @@ namespace VisionUnion.Tests
 		[Test]
 		public void ConvolutionWithIdentityKernel_OutputEqualsInput_1x1()
 		{
-			var kernel = new Kernel<byte>(Kernels.Byte.Identity1x1);
-			var convolution = new Convolution<byte>(kernel, 1, 0);
+			var kernel = new Kernel<short>(Kernels.Short.Identity1x1);
+			var convolution = new Convolution<short>(kernel, 1, 0);
 			
 			convolution.Convolve(m_InputImage, m_IntermediateImage);
 			m_InputImage.Buffer.AssertDeepEqual(m_IntermediateImage.Buffer);
@@ -58,8 +58,8 @@ namespace VisionUnion.Tests
 		[Test]
 		public void ConvolutionWithIdentityKernel_OutputEqualsInput_3x3()
 		{
-			var kernel = new Kernel<byte>(Kernels.Byte.Identity3x3);
-			var convolution = new Convolution<byte>(kernel, 1, 1);
+			var kernel = new Kernel<short>(Kernels.Short.Identity3x3);
+			var convolution = new Convolution<short>(kernel, 1, 1);
 			
 			convolution.Convolve(m_InputImage, m_IntermediateImage);
 			//m_InputImage.Buffer.AssertDeepEqual(m_IntermediateImage.Buffer);
