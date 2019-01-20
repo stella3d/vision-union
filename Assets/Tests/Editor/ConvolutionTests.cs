@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using Unity.Collections;
 using UnityEngine;
 
@@ -31,7 +32,7 @@ namespace VisionUnion.Tests
 			m_IntermediateTexture16 = new Texture2D(8, 8, TextureFormat.R16, false);
 			m_IntermediateImage = new ImageData<short>(m_IntermediateTexture16);
 			
-			m_FloatInputTexture = new Texture2D(8, 8, TextureFormat.RFloat, false);
+			m_FloatInputTexture = DebugUtils.NewFilledTexture(8, 8, 0.5f, TextureFormat.RFloat);
 			m_InputFloatImage = new ImageData<float>(m_FloatInputTexture);
 			m_FloatOutputTexture = new Texture2D(8, 8, TextureFormat.RFloat, false);
 			m_IntermediateFloatImage = new ImageData<float>(m_FloatInputTexture);
@@ -62,19 +63,30 @@ namespace VisionUnion.Tests
 			var convolution = new Convolution<short>(kernel, 1, 1);
 			
 			convolution.Convolve(m_InputImage, m_IntermediateImage);
-			//m_InputImage.Buffer.AssertDeepEqual(m_IntermediateImage.Buffer);
+			// TODO - iterate through, check padding ?
 			convolution.Dispose();
 		}
 		
-		[Test]
-		public void ConvolutionWith3x3BoxBlur_5x5Input()
+		[TestCaseSource(typeof(ConvolutionData.ExpectedConvolutionResults), "FloatCases")]
+		public void ConvolutionWith_1x1Stride_1x1Pad(int width, int height, 
+			float[,] kernelInput, float[] input, float[] expectedInput)
 		{
-			var kernel = new Kernel<float>(Kernels.Float.BoxBlur);
+			var kernel = new Kernel<float>(kernelInput);
 			var convolution = new Convolution<float>(kernel, 1, 1);
 			
-			convolution.Convolve(m_InputFloatImage, m_IntermediateFloatImage);
-			//m_InputImage.Buffer.AssertDeepEqual(m_IntermediateImage.Buffer);
+			var image = new ImageData<float>(input, width, height, Allocator.Temp);
+			var expected = new ImageData<float>(expectedInput, width, height, Allocator.Temp);
+			var output = new ImageData<float>(new float[width * height], width, height, Allocator.Temp);
+
+			convolution.Convolve(image, output);
+			output.Print();
+			
+			DebugUtils.AssertEqualWithin(expected, output);
+
 			convolution.Dispose();
+			image.Dispose();
+			output.Dispose();
+			expected.Dispose();
 		}
 	}
 }
