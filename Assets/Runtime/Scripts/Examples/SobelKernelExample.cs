@@ -97,6 +97,7 @@ public class SobelKernelExample : MonoBehaviour
 		};
 		
 		var kernelOne = new Kernel<short>(Kernels.Short.Sobel.X);
+		/*
 		var sharpenJob = new ShortKernelConvolveJob(kernelOne, m_GrayTextureData8, m_SobelTextureDataX,
 			m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
 		
@@ -105,8 +106,10 @@ public class SobelKernelExample : MonoBehaviour
 			m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
 		
 		m_GrayScaleJobHandle = grayscale8Job.Schedule(m_InputTextureData.Length, 4096);
+		
 		m_JobHandle = sharpenJob.Schedule(m_GrayScaleJobHandle);
 		m_JobHandle = sharpenJob2.Schedule(m_JobHandle);
+		*/
 
 		//var gauss5x5Kernel = new Kernel<float>(Kernels.GaussianBlurApproximate5x5);
 		//var gaussJob = new FloatKernelConvolveJob(gauss5x5Kernel, m_GrayTextureData8, m_SobelTextureDataY,
