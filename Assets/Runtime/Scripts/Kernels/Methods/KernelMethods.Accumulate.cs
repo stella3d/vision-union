@@ -4,32 +4,7 @@ using UnityEngine;
 namespace VisionUnion
 {
     public static partial class KernelMethods
-    {
-        public static short Accumulate(this Kernel<byte> kernel, 
-            ImageData<byte> imageData, int centerPixelIndex,
-            Vector2Int pad)
-        {
-            var width = imageData.Width;
-            var pixelBuffer = imageData.Buffer;
-            var kernelIndex = 0;
-            short kernelSum = 0;
-            for (var kY = -pad.y; kY < pad.y; kY++)
-            {
-                var kRowOffset = kY * width;
-                var kRowIndex = centerPixelIndex + kRowOffset;
-                for (var kX = -pad.x; kX < pad.x; kX++)
-                {
-                    var pixelIndex = kRowIndex + kX;
-                    var inputPixelValue = pixelBuffer[pixelIndex];
-                    var kernelMultiplier = kernel.Data[kernelIndex];
-                    kernelSum += (short)(inputPixelValue * kernelMultiplier);
-                    kernelIndex++;
-                }
-            }
-
-            return kernelSum;
-        }
-        
+    {   
         public static short Accumulate(this Kernel<byte> kernel, 
             ImageData<byte> imageData, int centerPixelIndex)
         {
