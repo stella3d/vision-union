@@ -79,10 +79,9 @@ namespace VisionUnion.Tests
 			var kernel = new Kernel<short>(size, size, Allocator.Temp);
 			Assert.AreEqual(count, kernel.Data.Length);
 			
-			var bounds = kernel.GetBounds();
-			Debug.Log(bounds);
-			Assert.AreEqual(nBound, bounds.negative);
-			Assert.AreEqual(pBound, bounds.positive);
+			Debug.Log(kernel.Bounds);
+			Assert.AreEqual(nBound, kernel.Bounds.negative);
+			Assert.AreEqual(pBound, kernel.Bounds.positive);
 		}
 		
 		public static class KernelBoundsCases
@@ -91,8 +90,8 @@ namespace VisionUnion.Tests
 			{
 				get
 				{
-					yield return new TestCaseData(1, Vector2Int.zero, new Vector2Int(1, 1));
-					yield return new TestCaseData(2, Vector2Int.zero, new Vector2Int(2, 2));
+					yield return new TestCaseData(1, Vector2Int.zero, Vector2Int.zero);
+					yield return new TestCaseData(2, Vector2Int.zero, Vector2Int.one);
 					yield return new TestCaseData(3, Vector2Int.one * -1, Vector2Int.one);
 					yield return new TestCaseData(4, Vector2Int.one * -1, Vector2Int.one * 2);
 					yield return new TestCaseData(5, Vector2Int.one * -2, Vector2Int.one * 2);

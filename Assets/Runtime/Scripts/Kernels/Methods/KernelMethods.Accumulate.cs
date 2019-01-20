@@ -31,16 +31,16 @@ namespace VisionUnion
         }
         
         public static short Accumulate(this Kernel<byte> kernel, 
-            ImageData<byte> imageData, int centerPixelIndex,
-            Vector2Int negativeBound, Vector2Int positiveBound)
+            ImageData<byte> imageData, int centerPixelIndex)
         {
-            var width = imageData.Width;
-            var pixelBuffer = imageData.Buffer;
             var kernelIndex = 0;
             var kernelSum = 0;
+            var pixelBuffer = imageData.Buffer;
+            var negativeBound = kernel.Bounds.negative;
+            var positiveBound = kernel.Bounds.positive;
             for (var y = negativeBound.y; y <= positiveBound.y; y++)
             {
-                var rowOffset = y * width;
+                var rowOffset = y * imageData.Width;
                 var rowIndex = centerPixelIndex + rowOffset;
                 for (var x = negativeBound.x; x <= positiveBound.x; x++)
                 {
