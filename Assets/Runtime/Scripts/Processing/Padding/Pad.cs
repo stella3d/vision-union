@@ -23,19 +23,23 @@ namespace VisionUnion
             return output;
         }
         
-        public static ImageData<T> Image<T>(ImageData<T> input, Padding padding, 
+        public static ImageData<TImage> ConvolutionInput<TImage, TConvolution>(ImageData<TImage> input, 
+            Convolution<TConvolution> convolution, 
             ConvolutionPadMode mode = ConvolutionPadMode.Same,
-            T constantValue = default(T), Allocator allocator = Allocator.Persistent)
-            where T: struct
+            TImage constantValue = default(TImage), 
+            Allocator allocator = Allocator.Persistent)
+            where TImage: struct
+            where TConvolution : struct
         {
-            var output = default(ImageData<T>);
+            var output = default(ImageData<TImage>);
             switch (mode)
             {
                 case ConvolutionPadMode.Same:
+                    var padding = GetSamePad(input, convolution);
                     output = Constant(input, padding, constantValue, allocator);
                     break;
                 case ConvolutionPadMode.Valid:
-                    output = Constant(input, padding, constantValue, allocator);
+                    output = Constant(input, new Padding(0), constantValue, allocator);
                     break;
             }
 

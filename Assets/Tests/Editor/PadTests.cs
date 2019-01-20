@@ -36,6 +36,15 @@ namespace VisionUnion.Tests
 			output.Dispose();
 		}
 
+		[TestCaseSource(typeof(PadConvolutionInputCases), "Uniform")]
+		public void ConvolveWithSameZeroPad<T>(ImageData<byte> input, Convolution<T> convolution, 
+			ImageData<byte> expected)
+			where T: struct
+		{
+			var paddedInput = Pad.ConvolutionInput(input, convolution);
+			expected.Buffer.AssertDeepEqual(paddedInput.Buffer);
+		}
+
 		static void AssertPadValuesAtBounds(ImageData<byte> output, Padding pad, byte value)
 		{
 			if (pad.top > 1 || pad.left > 1)

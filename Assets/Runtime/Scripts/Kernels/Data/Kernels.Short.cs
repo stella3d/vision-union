@@ -24,6 +24,15 @@ namespace VisionUnion
                     {-2, 0, 2},
                     {-1, 0, 1}
                 };
+                
+                public static readonly short[,] x5x5 =
+                {
+                    {-5, -4, 0, 4, 5},
+                    {-8, -10, 0, 10,8},
+                    {-10, -20, 0, 20, 10},
+                    {-8, -10, 0, 10, 8},
+                    {-5, -4, 0, 4, 5}
+                };
 
                 public static readonly short[] xVertical = {1, 2, 1};
 
@@ -34,6 +43,15 @@ namespace VisionUnion
                     {-1, -2, -1},
                     {0, 0, 0},
                     {1, 2, 1}
+                };
+                
+                public static readonly short[,] y5x5 =
+                {
+                    {5, 8, 10, 8, 5},
+                    {4, 10, 20, 10, 4},
+                    {0, 0, 0, 0, 0},
+                    {-4, -10, -20, 10, -4},
+                    {-5, -8, -10, -8, -5}
                 };
 
                 public static readonly short[] yVertical = {-1, 0, 1};
