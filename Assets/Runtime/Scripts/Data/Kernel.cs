@@ -66,6 +66,29 @@ namespace VisionUnion
             }
         }
 
+        public T[] GetColumn(int column)
+        {
+            var columnData = new T[Height];
+            for (var r = 0; r < Height; r++)
+            {
+                columnData[r] = this[r, column];
+            }
+
+            return columnData;
+        }
+        
+        public T[] GetRow(int row)
+        {
+            var rowData = new T[Width];
+            var rowIndex = row * Width;
+            for (var c = 0; c < Width; c++)
+            {
+                rowData[c] = Data[rowIndex + c];
+            }
+
+            return rowData;
+        }
+
         public void Dispose()
         {
             Data.Dispose();
