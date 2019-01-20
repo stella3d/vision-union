@@ -4,38 +4,41 @@ namespace VisionUnion.Tests
 {
 	public class PadTests
 	{
-		ImageData<byte> m_Image5x5;
-		ImageData<byte> m_Image6x6;
-
-		Padding m_UniformPad1;
-		Padding m_Pad1x1x2x2;
-		Padding m_Pad2x2x0x0;
-
-		[OneTimeSetUp]
-		public void BeforeAll()
-		{
-			m_Image5x5 = new ImageData<byte>(InputImages.Byte5x5, 5, 5);
-			m_Image6x6 = new ImageData<byte>(InputImages.Byte6x6, 6, 6);
-			
-			m_UniformPad1 = new Padding(1);
-			m_Pad1x1x2x2 = new Padding(1, 1, 2, 2);
-			m_Pad2x2x0x0 = new Padding(2, 2, 0, 0);
-		}
-
-		[OneTimeTearDown]
-		public void AfterAll()
-		{
-			m_Image5x5.Dispose();
-			m_Image6x6.Dispose();
-		}
-
 		[TestCaseSource(typeof(OutputPadImages), "ConstantCases")]
-		public void ConstantPaddingCases(ImageData<byte> input, Padding pad, ImageData<byte> expected)
+		public void ZeroPaddingCases(ImageData<byte> input, Padding pad, ImageData<byte> expected)
 		{
 			var output = Pad.Constant(input, pad);
 			output.Print();
+			
+			Assert.AreEqual(0, output.Buffer[0]);
 			output.Buffer.AssertDeepEqual(expected.Buffer);
 			output.Dispose();
+		}
+		
+		[TestCaseSource(typeof(OutputPadImages), "ConstantCases")]
+		public void ConstantPaddingCases(ImageData<byte> input, Padding pad, ImageData<byte> expected)
+		{
+			const byte value = 7;
+			var output = Pad.Constant(input, pad, value);
+			output.Print();
+
+			AssertPadValuesAtBounds(output, pad, value);
+			output.Dispose();
+		}
+
+		static void AssertPadValuesAtBounds(ImageData<byte> output, Padding pad, byte value)
+		{
+			if (pad.top > 1 || pad.left > 1)
+			{
+				var firstValue = output.Buffer[0];
+				Assert.AreEqual(value, firstValue);
+			}
+
+			if (pad.bottom <= 1 && pad.right <= 1) 
+				return;
+			
+			var lastValue = output.Buffer[output.Buffer.Length - 1];
+			Assert.AreEqual(value, lastValue);
 		}
 	}
 }
