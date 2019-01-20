@@ -48,6 +48,13 @@ namespace VisionUnion
             Buffer = data;
         }
         
+        public ImageData(int width, int height, Allocator allocator = Allocator.Persistent)
+        {
+            Width = width;
+            Height = height;
+            Buffer = new NativeArray<TPixelData>(Width * height, allocator);
+        }
+        
         public ImageData(TPixelData[] data, int width, int height, Allocator allocator = Allocator.Persistent)
         {
             Width = width;

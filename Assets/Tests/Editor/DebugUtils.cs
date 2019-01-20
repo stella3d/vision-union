@@ -111,6 +111,31 @@ namespace  VisionUnion.Tests
             Debug.Log(s_String);
         }
         
+        public static void Print(this ImageData<byte> image) 
+        {
+            if (image.Height > 12 || image.Width > 12)
+            {
+                Debug.LogWarning("Printing is only suitable for images 12x12 and under!");
+                return;
+            }
+
+            s_String.Length = 0;
+            var buffer = image.Buffer;
+            for (var y = 0; y < image.Height; y++)
+            {
+                var rowIndex = y * image.Width;
+                for (var x = 0; x < image.Width - 1; x++)
+                {
+                    s_String.AppendFormat("{0}, ", buffer[rowIndex + x]);
+                }
+    
+                s_String.AppendLine(((short)buffer[rowIndex + image.Width - 1]).ToString());    
+            }
+            
+            Debug.Log(s_String);
+        }
+
+        
         public static void Print(this ImageData<float> image, string decimalFormat = "F2") 
         {
             if (image.Height > 8 || image.Width > 8)
