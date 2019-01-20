@@ -71,7 +71,7 @@ namespace VisionUnion.Tests
 		public void ConvolutionWith_1x1Stride_1x1Pad(int width, int height, 
 			float[,] kernelInput, float[] input, float[] expectedInput)
 		{
-			var kernel = new Kernel<float>(kernelInput);
+			var kernel = new Kernel<float>(kernelInput, Allocator.Temp);
 			var convolution = new Convolution<float>(kernel, 1, 1);
 			
 			var image = new ImageData<float>(input, width, height, Allocator.Temp);

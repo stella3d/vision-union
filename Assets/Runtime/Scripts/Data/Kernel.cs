@@ -1,6 +1,5 @@
 using System;
 using Unity.Collections;
-using UnityEngine;
 
 namespace VisionUnion
 {

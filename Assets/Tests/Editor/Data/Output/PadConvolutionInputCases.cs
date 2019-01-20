@@ -16,10 +16,10 @@ namespace VisionUnion.Tests
                 var expected1 = new ImageData<byte>(OutputPadImages.Input5x5ZeroPadUniform1, 7, 7);
                 yield return new TestCaseData(inputImageData, outLineConvolution, expected1);
                 
-                var gauss5x5Kernel = new Kernel<float>(OutputImages.Post3x3GaussianBlur5x5);
-                var gauss5x5Convolution = new Convolution<float>(gauss5x5Kernel);
+                var sobel5x5Kernel = new Kernel<short>(Kernels.Short.Sobel.x5x5);
+                var sobel5x5Convolution = new Convolution<short>(sobel5x5Kernel);
                 var expected2 = new ImageData<byte>(OutputPadImages.Input5x5ZeroPadUniform2, 9, 9);
-                yield return new TestCaseData(inputImageData, gauss5x5Convolution, expected2);
+                yield return new TestCaseData(inputImageData, sobel5x5Convolution, expected2);
             }
         }
     }

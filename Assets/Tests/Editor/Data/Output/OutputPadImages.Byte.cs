@@ -72,21 +72,5 @@ namespace VisionUnion.Tests
                     new ImageData<byte>(Input5x5ZeroPad2x2x0x0, 5, 9));
             }
         }
-        
-        public static IEnumerable GetSamePadUniformCases
-        {
-            get
-            {
-                var inputImageData = new ImageData<byte>(InputImages.Byte5x5, 5, 5);
-                
-                var outlineKernel = new Kernel<short>(Kernels.Short.Outline);
-                var outLineConvolution = new Convolution<short>(outlineKernel);
-                yield return new TestCaseData(inputImageData, outLineConvolution, new Padding(1));
-                
-                var gauss5x5Kernel = new Kernel<float>(Kernels.Float.GaussianBlurApproximate5x5);
-                var gauss5x5Convolution = new Convolution<float>(gauss5x5Kernel);
-                yield return new TestCaseData(inputImageData, gauss5x5Convolution, new Padding(2));
-            }
-        }
     }
 }
