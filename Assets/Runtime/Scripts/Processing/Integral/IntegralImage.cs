@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using Unity.Burst;
+﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -26,8 +24,8 @@ namespace VisionUnion
             IntegralTexture[0] = GrayscaleTexture[0];
 
             // do the rest of the top row 
-            float previousSum = 0f;
-            for (int w = 1; w < width; w++)
+            var previousSum = 0f;
+            for (var w = 1; w < width; w++)
             {
                 var localIntensity = GrayscaleTexture[w];
                 var summedIntensity = localIntensity + previousSum;
@@ -35,7 +33,7 @@ namespace VisionUnion
                 IntegralTexture[w] = summedIntensity;
             }
 
-            for (int h = 1; h < height; h++)
+            for (var h = 1; h < height; h++)
             {
                 var yIndex = h * width;
                 var firstLocalIntensity = GrayscaleTexture[yIndex];
@@ -87,7 +85,7 @@ namespace VisionUnion
 
             // do the rest of the top row 
             var previousSum = 0;
-            for (int w = 1; w < width; w++)
+            for (var w = 1; w < width; w++)
             {
                 var localIntensity = GrayscaleTexture[w];
                 var summedIntensity = localIntensity + previousSum;
@@ -95,7 +93,7 @@ namespace VisionUnion
                 IntegralTexture[w] = summedIntensity;
             }
 
-            for (int h = 1; h < height; h++)
+            for (var h = 1; h < height; h++)
             {
                 var yIndex = h * width;
                 var firstLocalIntensity = GrayscaleTexture[yIndex];
@@ -106,7 +104,7 @@ namespace VisionUnion
                 var firstSum = firstLocalIntensity + firstTopSumIntensity;
                 IntegralTexture[yIndex] = firstSum;
 
-                for (int w = 1; w < width; w++)
+                for (var w = 1; w < width; w++)
                 {
                     var index = yIndex + w;
 
@@ -124,58 +122,6 @@ namespace VisionUnion
                     IntegralTexture[index] = summedIntensity;
                 }
             }
-        }
-    }
-
-    [BurstCompile]
-    public struct AverageIntensity3x3IntJob : IJob
-    {
-        public int width;
-        public int height;
-
-        [ReadOnly] public NativeArray<int> Integral;
-
-        [WriteOnly] public NativeArray<float> Intensities;
-
-        // ((x + 1, y + 1) - (x + 1, 0)) - ((0, y) - (0, 0))
-        public void Execute()
-        {
-            Operations.Average3x3(Integral, Intensities, width, height);
-        }
-    }
-
-    [BurstCompile]
-    public struct MeanPool2x2GrayscaleJob : IJob
-    {
-        public int width;
-        public int height;
-
-        [ReadOnly] public NativeArray<byte> Input;
-
-        [WriteOnly] public NativeArray<float> Output;
-
-        // ((x + 1, y + 1) - (x + 1, 0)) - ((0, y) - (0, 0))
-        public void Execute()
-        {
-            Operations.MeanPool(Input, Output, width, height);
-        }
-    }
-
-    [BurstCompile]
-    public struct SobelJob : IJob
-    {
-        public int width;
-        public int height;
-
-        public float threshold;
-
-        [ReadOnly] public NativeArray<byte> Grayscale;
-
-        [WriteOnly] public NativeArray<byte> SobelOut;
-
-        public void Execute()
-        {
-            Operations.Sobel(Grayscale, SobelOut, threshold, width, height);
         }
     }
 }

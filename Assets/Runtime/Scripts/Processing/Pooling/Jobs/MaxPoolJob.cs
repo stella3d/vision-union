@@ -6,16 +6,15 @@ using UnityEngine;
 namespace VisionUnion.Jobs
 {
     [BurstCompile]
-    public struct MaxPoolJob<T> : IJob
-        where T: struct
+    public struct MaxPoolByteJob : IJob
     {
         public Vector2Int Size;
         public Vector2Int Stride;
         
-        [ReadOnly] public ImageData<T> Input;
-        [WriteOnly] public ImageData<T> Output;
+        [ReadOnly] public ImageData<byte> Input;
+        [WriteOnly] public ImageData<byte> Output;
 
-        public MaxPoolJob(ImageData<T> input, ImageData<T> output, Vector2Int size, Vector2Int stride)
+        public MaxPoolByteJob(ImageData<byte> input, ImageData<byte> output, Vector2Int size, Vector2Int stride)
         {
             Input = input;
             Output = output;
@@ -25,8 +24,7 @@ namespace VisionUnion.Jobs
 
         public void Execute()
         {
-            //Pool.Max(Input, Output, Size, Stride);
-            // TODO - make Pool() API friendlier to new structs
+            Pool.Max(Input, Output, Size, Stride);
         }
     }
 }
