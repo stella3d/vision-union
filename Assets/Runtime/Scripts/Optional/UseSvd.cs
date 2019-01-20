@@ -11,9 +11,8 @@ public static class MatrixOps
     {
         var svd = new SingularValueDecomposition(matrix);
         Debug.Log("rank: " + svd.Rank);
-        foreach (var d in svd.Diagonal)
-        {
-            Debug.Log(d);
-        }
+        Debug.Log("diagonal matrix:\n" + svd.DiagonalMatrix.MatrixToString());
+        Debug.Log("right singular vectors matrix:\n" + svd.RightSingularVectors.MatrixToString());
+        Debug.Log("left singular vector matrix:\n" + svd.LeftSingularVectors.MatrixToString());
     }
 }
