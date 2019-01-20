@@ -99,8 +99,12 @@ namespace VisionUnion.Tests
 		[Test]
 		public void SeparateKernel()
 		{
-			var sobelX = Kernels.Float.GaussianBlurApproximate5x5.ToDouble();
-			MatrixOps.DecomposeMatrix(sobelX);
+			var gauss = Kernels.Float.GaussianBlurApproximate3x3;
+			var separated = new float[3, 3][];
+			gauss.TrySeparate(out separated);
+			Assert.AreEqual(3, separated.GetLength(0));
+			Assert.AreEqual(3, separated.GetLength(1));
+			//Assert.AreEqual(2, separated.GetLength(2));
 		}
 
 		public static class KernelBoundsCases

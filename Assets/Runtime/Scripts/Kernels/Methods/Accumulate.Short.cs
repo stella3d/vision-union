@@ -1,4 +1,3 @@
-
 namespace VisionUnion
 {
     public static partial class KernelMethods

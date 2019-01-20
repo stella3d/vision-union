@@ -13,7 +13,7 @@ namespace VisionUnion
         public readonly int Width;
         public readonly int Height;
         public readonly KernelBounds Bounds;
-        public readonly NativeArray<T> Data;
+        public NativeArray<T> Data;
 
         public Kernel(T[,] input, Allocator allocator = Allocator.Persistent)
         {
@@ -87,6 +87,22 @@ namespace VisionUnion
             }
 
             return rowData;
+        }
+        
+        public T[,] ToMatrix()
+        {
+            var output = new T[Height,Width];
+            var flatIndex = 0;
+            for (var y = 0; y < Height; y++)
+            {
+                for (var x = 0; x < Width; x++)
+                {
+                    output[y, x] = Data[flatIndex];
+                    flatIndex++;
+                }
+            }
+
+            return output;
         }
 
         public void Dispose()
