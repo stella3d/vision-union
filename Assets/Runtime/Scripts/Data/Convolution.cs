@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace VisionUnion
@@ -28,24 +26,6 @@ namespace VisionUnion
             Kernel = kernel;
             Stride = stride;
             Padding = padding;
-        }
-
-        public void Iterate<TInput, TOutput>(ImageData<TInput> input, ImageData<TOutput> output,
-            Action<Convolution<T>, ImageData<TInput>, ImageData<TOutput>, int> action)
-            where TInput: struct
-            where TOutput: struct
-        {
-            var imageWidth = input.Width;
-            var stride = Stride;
-            var pad = Padding;
-            for (var r = pad.y; r < input.Height - pad.y; r += stride.y)
-            {
-                var rowIndex = r * imageWidth;
-                for (var c = pad.x; c < imageWidth - pad.x; c += stride.x)
-                {
-                    action(this, input, output, rowIndex + c);
-                }
-            }
         }
 
         public void Dispose()

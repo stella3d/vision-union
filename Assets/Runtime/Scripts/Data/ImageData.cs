@@ -11,7 +11,8 @@ namespace VisionUnion
     /// The type of data that represents a single pixel. If there are multiple channels, the struct
     /// should have members representing each channel, whether sequential or explicit layout.
     /// </typeparam>
-    public struct ImageData<TPixelData> : IDisposable, IEquatable<ImageData<TPixelData>>
+    public struct ImageData<TPixelData> : IDisposable, 
+        IEquatable<ImageData<TPixelData>>
         where TPixelData: struct
     {
         public readonly int Width;
@@ -70,12 +71,6 @@ namespace VisionUnion
         public bool Equals(ImageData<TPixelData> other)
         {
             return Width == other.Width && Height == other.Height && Buffer.Equals(other.Buffer);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is ImageData<TPixelData> && Equals((ImageData<TPixelData>) obj);
         }
 
         public override int GetHashCode()

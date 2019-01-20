@@ -5,11 +5,13 @@ namespace VisionUnion.Tests
 {
 	public class PadTests
 	{
-		[TestCaseSource(typeof(OutputPadImages), "GetSamePadCases")]
-		public void GetSamePadCases(ImageData<byte> input, Convolution<short> convolution, byte[] expected)
+		[TestCaseSource(typeof(GetSamePadCases), "Uniform")]
+		public void GetSamePadCases<T>(ImageData<byte> input, Convolution<T> convolution, Padding expected)
+			where T: struct
 		{
 			var output = Pad.GetSamePad(input, convolution);
 			Debug.Log(output.ToString());
+			Assert.IsTrue(expected.Equals(output));
 		}
 		
 		[TestCaseSource(typeof(OutputPadImages), "ConstantCases")]
