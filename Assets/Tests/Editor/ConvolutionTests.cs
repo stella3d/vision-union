@@ -32,7 +32,6 @@ namespace VisionUnion.Tests
 		[OneTimeTearDown]
 		public void AfterAll()
 		{
-			m_IntermediateImage.Dispose();
 		}
 
 		// while we would never actually do this convolution, it is useful 
@@ -55,17 +54,6 @@ namespace VisionUnion.Tests
 			var convolution = new Convolution<byte>(kernel, 1, 1);
 			
 			convolution.Convolve(m_InputImage, m_IntermediateImage);
-			//m_InputImage.Buffer.AssertDeepEqual(m_IntermediateImage.Buffer);
-			convolution.Dispose();
-		}
-		
-		[Test]
-		public void ConvolutionWithIdentityKernel_OutputEqualsInput_3x3Iteration()
-		{
-			var kernel = new Kernel<byte>(Kernels.Byte.Identity3x3);
-			var convolution = new Convolution<byte>(kernel, 1, 1);
-			
-			convolution.ConvolveIterate(m_InputImage, m_IntermediateImage);
 			//m_InputImage.Buffer.AssertDeepEqual(m_IntermediateImage.Buffer);
 			convolution.Dispose();
 		}

@@ -1,5 +1,3 @@
-using Unity.Collections;
-using UnityEngine;
 
 namespace VisionUnion
 {
@@ -9,7 +7,7 @@ namespace VisionUnion
             ImageData<byte> imageData, int centerPixelIndex)
         {
             var kernelIndex = 0;
-            var kernelSum = 0;
+            var sum = 0;
             var pixelBuffer = imageData.Buffer;
             var negativeBound = kernel.Bounds.negative;
             var positiveBound = kernel.Bounds.positive;
@@ -22,88 +20,89 @@ namespace VisionUnion
                     var pixelIndex = rowIndex + x;
                     var inputPixelValue = pixelBuffer[pixelIndex];
                     var kernelMultiplier = kernel.Data[kernelIndex];
-                    kernelSum += inputPixelValue * kernelMultiplier;
+                    sum += inputPixelValue * kernelMultiplier;
                     kernelIndex++;
                 }
             }
 
-            var shortSum = (short)kernelSum;
-            return shortSum;
+            return (short)sum;
         }
         
         public static short Accumulate(this Kernel<short> kernel, 
-            NativeArray<byte> pixelBuffer, int centerPixelIndex,
-            int width, int xPad, int yPad)
+            ImageData<byte> imageData, int centerPixelIndex)
         {
             var kernelIndex = 0;
-            short kernelSum = 0;
-            for (var kY = -yPad; kY < yPad; kY++)
+            var sum = 0;
+            var pixelBuffer = imageData.Buffer;
+            var negativeBound = kernel.Bounds.negative;
+            var positiveBound = kernel.Bounds.positive;
+            for (var y = negativeBound.y; y <= positiveBound.y; y++)
             {
-                var kRowOffset = kY * width;
-                var kRowIndex = centerPixelIndex + kRowOffset;
-                for (var kX = -xPad; kX < xPad; kX++)
+                var rowOffset = y * imageData.Width;
+                var rowIndex = centerPixelIndex + rowOffset;
+                for (var x = negativeBound.x; x <= positiveBound.x; x++)
                 {
-                    var pixelIndex = kRowIndex + kX;
+                    var pixelIndex = rowIndex + x;
                     var inputPixelValue = pixelBuffer[pixelIndex];
                     var kernelMultiplier = kernel.Data[kernelIndex];
-                    kernelSum += (short)(inputPixelValue * kernelMultiplier);
+                    sum += inputPixelValue * kernelMultiplier;
                     kernelIndex++;
                 }
             }
 
-            return kernelSum;
-        }
-        
-        public static float AccumulateFloat(this Kernel<short> kernel, 
-            NativeArray<byte> pixelBuffer, int centerPixelIndex,
-            int width, int xPad, int yPad)
-        {
-            var kernelIndex = 0;
-            var kernelSum = 0f;
-            for (var kY = -yPad; kY < yPad; kY++)
-            {
-                var kRowOffset = kY * width;
-                var kRowIndex = centerPixelIndex + kRowOffset;
-                for (var kX = -xPad; kX < xPad; kX++)
-                {
-                    var pixelIndex = kRowIndex + kX;
-                    var inputPixelValue = pixelBuffer[pixelIndex];
-                    var kernelMultiplier = kernel.Data[kernelIndex];
-                    kernelSum += inputPixelValue * kernelMultiplier;
-                    kernelIndex++;
-                }
-            }
-
-            //convert the byte range of 0-255 into the float range of 0-1
-            const float oneOver255 = 0.0039215686f;
-            return kernelSum * oneOver255;
+            return (short)sum;
         }
         
         public static float Accumulate(this Kernel<float> kernel, 
-            NativeArray<byte> pixelBuffer, int centerPixelIndex,
-            int width, int xPad, int yPad)
+            ImageData<float> imageData, int centerPixelIndex)
         {
             var kernelIndex = 0;
-            var kernelSum = 0f;
-            for (var kY = -yPad; kY < yPad; kY++)
+            var sum = 0f;
+            var pixelBuffer = imageData.Buffer;
+            var negativeBound = kernel.Bounds.negative;
+            var positiveBound = kernel.Bounds.positive;
+            for (var y = negativeBound.y; y <= positiveBound.y; y++)
             {
-                var kRowOffset = kY * width;
-                var kRowIndex = centerPixelIndex + kRowOffset;
-                for (var kX = -xPad; kX < xPad; kX++)
+                var rowOffset = y * imageData.Width;
+                var rowIndex = centerPixelIndex + rowOffset;
+                for (var x = negativeBound.x; x <= positiveBound.x; x++)
                 {
-                    var pixelIndex = kRowIndex + kX;
+                    var pixelIndex = rowIndex + x;
                     var inputPixelValue = pixelBuffer[pixelIndex];
                     var kernelMultiplier = kernel.Data[kernelIndex];
-                    kernelSum += inputPixelValue * kernelMultiplier;
+                    sum += inputPixelValue * kernelMultiplier;
                     kernelIndex++;
                 }
             }
 
-            //convert the byte range of 0-255 into the float range of 0-1
-            const float oneOver255 = 0.0039215686f;
-            return kernelSum * oneOver255;
+            return sum;
         }
         
-        
+        public static float Accumulate(this Kernel<float> kernel, 
+            ImageData<byte> imageData, int centerPixelIndex)
+        {
+            var kernelIndex = 0;
+            var sum = 0f;
+            var pixelBuffer = imageData.Buffer;
+            var negativeBound = kernel.Bounds.negative;
+            var positiveBound = kernel.Bounds.positive;
+            for (var y = negativeBound.y; y <= positiveBound.y; y++)
+            {
+                var rowOffset = y * imageData.Width;
+                var rowIndex = centerPixelIndex + rowOffset;
+                for (var x = negativeBound.x; x <= positiveBound.x; x++)
+                {
+                    var pixelIndex = rowIndex + x;
+                    var inputPixelValue = pixelBuffer[pixelIndex];
+                    var kernelMultiplier = kernel.Data[kernelIndex];
+                    sum += inputPixelValue * kernelMultiplier;
+                    kernelIndex++;
+                }
+            }
+
+            //convert from 0-255 byte range to 0-1 float range
+            const float oneOver255 = 0.0039215686f;
+            return sum * oneOver255;
+        }
     }
 }

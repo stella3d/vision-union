@@ -26,7 +26,7 @@ namespace VisionUnion.Jobs
 
         public void Execute()
         {
-            Kernel.Convolve(Input, Output, Width, Height);
+            //Kernel.Convolve(Input, Output, Width, Height);
         }
     }
     
@@ -52,7 +52,7 @@ namespace VisionUnion.Jobs
 
         public void Execute()
         {
-            Kernel.Convolve(Input, Output, Width, Height);
+            //Kernel.Convolve(Input, Output, Width, Height);
         }
     }
 }

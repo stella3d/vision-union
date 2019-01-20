@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace VisionUnion
 {
-    
     public struct KernelBounds
     {
         public Vector2Int negative;
