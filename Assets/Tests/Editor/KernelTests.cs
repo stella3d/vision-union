@@ -95,7 +95,14 @@ namespace VisionUnion.Tests
 			Assert.AreEqual(pBound, kernel.Bounds.positive);
 			kernel.Dispose();
 		}
-		
+
+		[Test]
+		public void SeparateKernel()
+		{
+			var sobelX = Kernels.Float.GaussianBlurApproximate5x5.ToDouble();
+			MatrixOps.DecomposeMatrix(sobelX);
+		}
+
 		public static class KernelBoundsCases
 		{
 			public static IEnumerable Square

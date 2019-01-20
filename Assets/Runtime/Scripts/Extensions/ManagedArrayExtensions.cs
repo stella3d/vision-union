@@ -21,5 +21,37 @@ namespace VisionUnion
             const float factor = 1/255f;
             return array.Select((b, i) => Convert.ToSingle(b) * factor).ToArray();
         }
+        
+        public static double[,] ToDouble(this short[,] matrix)
+        {
+            var rows = matrix.GetLength(0);
+            var columns = matrix.GetLength(1);
+            var outMatrix = new double[rows, columns];
+            for (var r = 0; r < rows; r++)
+            {
+                for (var c = 0; c < columns; c++)
+                {
+                    outMatrix[r, c] = Convert.ToDouble(matrix[r, c]);
+                }
+            }
+
+            return outMatrix;
+        }
+        
+        public static double[,] ToDouble(this float[,] matrix)
+        {
+            var rows = matrix.GetLength(0);
+            var columns = matrix.GetLength(1);
+            var outMatrix = new double[rows, columns];
+            for (var r = 0; r < rows; r++)
+            {
+                for (var c = 0; c < columns; c++)
+                {
+                    outMatrix[r, c] = Convert.ToDouble(matrix[r, c]);
+                }
+            }
+
+            return outMatrix;
+        }
     }
 }
