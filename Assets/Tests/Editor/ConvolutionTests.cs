@@ -81,7 +81,7 @@ namespace VisionUnion.Tests
 			convolution.Convolve(image, output);
 			output.Print();
 			
-			DebugUtils.AssertEqualWithin(expected, output);
+			expected.AssertEqualWithin(output);
 
 			convolution.Dispose();
 			image.Dispose();

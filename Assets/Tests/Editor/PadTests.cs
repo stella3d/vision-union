@@ -10,7 +10,7 @@ namespace VisionUnion.Tests
 			var output = Pad.Constant(input, pad);
 			output.Print();
 			
-			Assert.AreEqual(0, output.Buffer[0]);
+			AssertPadValuesAtBounds(output, pad, 0);
 			output.Buffer.AssertDeepEqual(expected.Buffer);
 			output.Dispose();
 		}
@@ -21,7 +21,7 @@ namespace VisionUnion.Tests
 			const byte value = 7;
 			var output = Pad.Constant(input, pad, value);
 			output.Print();
-
+			
 			AssertPadValuesAtBounds(output, pad, value);
 			output.Dispose();
 		}
