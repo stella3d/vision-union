@@ -59,5 +59,17 @@ namespace VisionUnion.Tests
                     new ImageData<byte>(Input5x5ZeroPad2x2x0x0, 5, 9));
             }
         }
+        
+        public static IEnumerable GetSamePadCases
+        {
+            get
+            {
+                var inputImageData = new ImageData<byte>(InputImages.Byte5x5, 5, 5);
+                var outlineKernel = new Kernel<short>(Kernels.Short.Outline);
+                var outLineConvolution = new Convolution<short>(outlineKernel);
+                
+                yield return new TestCaseData(inputImageData, outLineConvolution, Input5x5ZeroPadUniform1);
+            }
+        }
     }
 }

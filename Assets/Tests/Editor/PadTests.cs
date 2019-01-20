@@ -1,9 +1,17 @@
 ﻿using NUnit.Framework;
+using UnityEngine;
 
 namespace VisionUnion.Tests
 {
 	public class PadTests
 	{
+		[TestCaseSource(typeof(OutputPadImages), "GetSamePadCases")]
+		public void GetSamePadCases(ImageData<byte> input, Convolution<short> convolution, byte[] expected)
+		{
+			var output = Pad.GetSamePad(input, convolution);
+			Debug.Log(output.ToString());
+		}
+		
 		[TestCaseSource(typeof(OutputPadImages), "ConstantCases")]
 		public void ZeroPaddingCases(ImageData<byte> input, Padding pad, ImageData<byte> expected)
 		{
