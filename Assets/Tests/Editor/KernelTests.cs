@@ -61,7 +61,6 @@ namespace VisionUnion.Tests
 			sY.Dispose();
 		}
 		
-		// TODO - test cases instead of repeating in the test
 		[Test]
 		public void BracketAccessorsWork()
 		{
@@ -70,6 +69,18 @@ namespace VisionUnion.Tests
 			kernel[0, 2] = 20;
 			Assert.AreEqual(10, kernel[0, 0]);
 			Assert.AreEqual(20, kernel[0, 2]);
+			kernel.Dispose();
+		}
+		
+		[Test]
+		public void GetRow()
+		{
+			var kernel = new Kernel<short>(Kernels.Short.Sobel.X, Allocator.Temp);
+			var row = kernel.GetRow(1);
+			Assert.AreEqual(row[0], Kernels.Short.Sobel.X[1, 0]);
+			Assert.AreEqual(row[1], Kernels.Short.Sobel.X[1, 1]);
+			Assert.AreEqual(row[2], Kernels.Short.Sobel.X[1, 2]);
+			kernel.Dispose();
 		}
 		
 		[TestCaseSource(typeof(KernelBoundsCases), "Square")]
@@ -82,6 +93,7 @@ namespace VisionUnion.Tests
 			Debug.Log(kernel.Bounds);
 			Assert.AreEqual(nBound, kernel.Bounds.negative);
 			Assert.AreEqual(pBound, kernel.Bounds.positive);
+			kernel.Dispose();
 		}
 		
 		public static class KernelBoundsCases
