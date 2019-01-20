@@ -66,6 +66,7 @@ public class MaxPoolExample : MonoBehaviour
 		m_IntegralImageDataInt = new NativeArray<int>(m_InputTextureData.Length, Allocator.Persistent);
 		m_MeanIntensity3x3 = new NativeArray<float>(m_InputTextureData.Length, Allocator.Persistent);
 
+		/*
 		var grayscale8Job = new Grayscale8FromColor24Job()
 		{
 			InputTexture = m_InputTextureData,
@@ -93,6 +94,7 @@ public class MaxPoolExample : MonoBehaviour
 		m_ByteIntegralJobHandle = byteIntegralJob.Schedule(m_GrayScale8JobHandle);
 
 		m_IntensityJobHandle = meanIntJob.Schedule(m_ByteIntegralJobHandle);
+		*/
 	}
 
 	void OnDestroy()

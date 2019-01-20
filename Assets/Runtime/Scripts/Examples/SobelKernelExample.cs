@@ -89,6 +89,7 @@ public class SobelKernelExample : MonoBehaviour
 		
 		m_KernelBoxBlur = new Kernel<float>(Kernels.Float.BoxBlur);
 		m_KernelGaussianBlur = new Kernel<float>(Kernels.Float.GaussianBlurApproximate5x5);
+		/*
 
 		var grayscale8Job = new Grayscale8FromColor24Job()
 		{
@@ -97,7 +98,6 @@ public class SobelKernelExample : MonoBehaviour
 		};
 		
 		var kernelOne = new Kernel<short>(Kernels.Short.Sobel.X);
-		/*
 		var sharpenJob = new ShortKernelConvolveJob(kernelOne, m_GrayTextureData8, m_SobelTextureDataX,
 			m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);
 		

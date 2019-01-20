@@ -4,6 +4,7 @@ using VisionUnion;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
+using VisionUnion.Jobs;
 
 public class IntegralImageExample : MonoBehaviour
 {
@@ -62,10 +63,10 @@ public class IntegralImageExample : MonoBehaviour
 		m_IntegralImageDataInt = new NativeArray<int>(m_InputTextureData.Length, Allocator.Persistent);
 		m_MeanIntensity3x3 = new NativeArray<float>(m_InputTextureData.Length, Allocator.Persistent);
 
-		var grayscale8Job = new Grayscale8FromColor24Job()
+		var grayscale8Job = new GreyscaleLuminanceByteJob()
 		{
-			InputTexture = m_InputTextureData,
 			Grayscale = m_GrayTextureData8,
+			InputTexture = m_InputTextureData
 		};
 
 		var byteIntegralJob = new IntegralImageFromGrayscaleByteJob()

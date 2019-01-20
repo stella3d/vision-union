@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace VisionUnion
     /// Representation of RGB colors in 48 bit format
     ///</summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct Color48
+    public struct Color48 : IEquatable<Color48>
     {
         public float r;
         public float g;
@@ -23,6 +24,11 @@ namespace VisionUnion
         public static implicit operator Color48(Color color)
         {
             return new Color48(color.r, color.g, color.b);
+        }
+
+        public bool Equals(Color48 other)
+        {
+            return r.Equals(other.r) && g.Equals(other.g) && b.Equals(other.b);
         }
     }
 }
