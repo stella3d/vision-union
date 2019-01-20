@@ -67,7 +67,7 @@ namespace VisionUnion.Tests
 			convolution.Dispose();
 		}
 		
-		[TestCaseSource(typeof(ConvolutionData.ExpectedConvolutionResults), "FloatCases")]
+		[TestCaseSource(typeof(ExpectedConvolutionResults), "FloatCases")]
 		public void ConvolutionWith_1x1Stride_1x1Pad(int width, int height, 
 			float[,] kernelInput, float[] input, float[] expectedInput)
 		{
