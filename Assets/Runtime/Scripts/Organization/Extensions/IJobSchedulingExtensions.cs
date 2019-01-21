@@ -19,7 +19,7 @@ namespace VisionUnion.Organization
         
         static readonly NativeList<JobHandle> k_ParallelHandles = new NativeList<JobHandle>(16, Allocator.Persistent);
         
-        public static JobHandle ScheduleParallelSequences<T>(this T[][] jobStructMatrix, JobHandle dependency)
+        public static JobHandle ScheduleParallel<T>(this T[][] jobStructMatrix, JobHandle dependency)
             where T: struct, IJob
         {
             k_ParallelHandles.Clear();

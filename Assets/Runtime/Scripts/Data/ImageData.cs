@@ -62,6 +62,13 @@ namespace VisionUnion
             Height = height;
             Buffer = new NativeArray<TPixelData>(data, allocator);
         }
+        
+        public Texture2D ToTexture(TextureFormat format)
+        {
+            var texture = new Texture2D(Width, Height, format, false);
+            texture.LoadRawTextureData(Buffer);
+            return texture;
+        }
 
         public void Dispose()
         {

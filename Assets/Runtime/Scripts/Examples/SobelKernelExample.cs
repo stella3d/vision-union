@@ -104,10 +104,22 @@ namespace VisionUnion.Examples
 				
 					m_Sobel = new SobelFloatPrototype(m_GrayscaleInputTexture);
 					break;
+				case 6:
+					m_JobHandle = m_Sobel.Schedule(m_GrayScaleJobHandle);
+					break;
+				case 8:
+					m_JobHandle.Complete();
+					m_Sobel.OnJobsComplete();
+					break;
+				case 9:
+					m_KernelOneRenderer.material.mainTexture = m_Sobel.ConvolvedTextureOne;
+					m_KernelTwoRenderer.material.mainTexture = m_Sobel.ConvolvedTextureTwo;
+					break;
 				case 20:
 					Debug.Log("awake done");
 					break;
 			}
+			
 		}
 	}
 }

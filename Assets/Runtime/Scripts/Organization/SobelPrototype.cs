@@ -8,12 +8,11 @@ namespace VisionUnion.Organization
 {
 	public class SobelFloatPrototype : IDisposable
 	{
-		public Texture2D GrayscaleInputTexture;
 		public Texture2D ConvolvedTextureOne;
 		public Texture2D ConvolvedTextureTwo;
 		public Texture2D ConvolutionOutputTexture;
 
-		ImageData<float> m_GrayscaleInputData;
+		ImageData<float> m_PaddedGrayscaleInputData;
 		ImageData<float> m_ConvolvedDataOne;
 		ImageData<float> m_ConvolvedDataTwo;
 		ImageData<float> m_CombinedConvolutionData;
@@ -53,7 +52,7 @@ namespace VisionUnion.Organization
 				jobs[j] = new FloatWithFloatConvolveJob()
 				{
 					Convolution = sequenceOne.Convolutions[0],
-					Input = m_GrayscaleInputData,
+					Input = m_PaddedGrayscaleInputData,
 					Output = m_ConvolvedDataOne
 				};
 			}
@@ -67,7 +66,7 @@ namespace VisionUnion.Organization
 				jobsTwo[j] = new FloatWithFloatConvolveJob()
 				{
 					Convolution = sequenceTwo.Convolutions[0],
-					Input = m_GrayscaleInputData,
+					Input = m_PaddedGrayscaleInputData,
 					Output = m_ConvolvedDataOne
 				};
 			}
@@ -75,12 +74,25 @@ namespace VisionUnion.Organization
 			m_ParallelJobSequences[1] = jobsTwo;
 		}
 
+		public JobHandle Schedule(JobHandle dependency)
+		{
+			return m_ParallelJobSequences.ScheduleParallel(dependency);
+		}
+
+		public void OnJobsComplete()
+		{
+			ConvolvedTextureOne.LoadRawTextureData(m_ParallelJobSequences[0][0].Output.Buffer);
+			ConvolvedTextureOne.Apply();
+			
+			ConvolvedTextureTwo.LoadRawTextureData(m_ParallelJobSequences[1][0].Output.Buffer);
+			ConvolvedTextureTwo.Apply();
+		}
+
 		void SetupTextures(Texture2D input)
 		{
 			var inputData = new ImageData<float>(input);
-			var paddedInput = Pad.ConvolutionInput(inputData, m_ParallelConvolutions);
-			
-			GrayscaleInputTexture = input;
+			m_PaddedGrayscaleInputData = Pad.ConvolutionInput(inputData, m_ParallelConvolutions);
+
 			ConvolvedTextureOne = SetupTexture(input, out m_ConvolvedDataOne);
 			ConvolvedTextureTwo = SetupTexture(input, out m_ConvolvedDataTwo);
 			ConvolutionOutputTexture = SetupTexture(input, out m_CombinedConvolutionData);
