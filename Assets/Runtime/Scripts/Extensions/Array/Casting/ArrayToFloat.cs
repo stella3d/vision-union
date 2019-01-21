@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
-using Accord;
-using Accord.Math;
 
 namespace VisionUnion
 {
-    public static class ManagedArrayExtensions
+    public static partial class ManagedArrayExtensions
     {
-        public static short[] ToShort(this byte[] array)
+        public static float[] ToFloat(this byte[] array)
         {
-            return array.Select((b, i) => Convert.ToInt16(b)).ToArray();
+            return array.Select((b, i) => Convert.ToSingle(b)).ToArray();
         }
         
-        public static float[] ToFloat(this byte[] array)
+        public static float[] ToFloat(this short[] array)
+        {
+            return array.Select((b, i) => Convert.ToSingle(b)).ToArray();
+        }
+        
+        public static float[] ToFloat(this int[] array)
         {
             return array.Select((b, i) => Convert.ToSingle(b)).ToArray();
         }

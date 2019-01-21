@@ -1,7 +1,8 @@
 {
     "name": "Tests",
     "references": [
-        "VisionUnion"
+        "VisionUnion",
+        "VisionUnion.Editor"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
