@@ -24,6 +24,8 @@ namespace VisionUnion.Organization
 
 		FloatWithFloatConvolveJob[][] m_ParallelJobSequences = new FloatWithFloatConvolveJob[2][];
 
+		SquareCombineJob m_CombineJob;
+
 		public SobelFloatPrototype(Texture2D input)
 		{
 			SetupFilter();
@@ -72,20 +74,31 @@ namespace VisionUnion.Organization
 			}
 			
 			m_ParallelJobSequences[1] = jobsTwo;
+
+			//m_CombineJob = new SquareCombineJob(m_ConvolvedDataOne, m_ConvolvedDataTwo, m_CombinedConvolutionData);
+			m_CombineJob = new SquareCombineJob()
+			{
+				A = jobs[0].Output,
+				B = jobsTwo[0].Output,
+				Output = m_CombinedConvolutionData
+			};
 		}
 
 		public JobHandle Schedule(JobHandle dependency)
 		{
-			return m_ParallelJobSequences.ScheduleParallel(dependency);
+			var handle =  m_ParallelJobSequences.ScheduleParallel(dependency);
+			return m_CombineJob.Schedule(m_ConvolvedDataOne.Buffer.Length, 2048, handle);
 		}
 
 		public void OnJobsComplete()
 		{
 			ConvolvedTextureOne.LoadRawTextureData(m_ParallelJobSequences[0][0].Output.Buffer);
 			ConvolvedTextureOne.Apply();
-			
 			ConvolvedTextureTwo.LoadRawTextureData(m_ParallelJobSequences[1][0].Output.Buffer);
 			ConvolvedTextureTwo.Apply();
+			var combined = m_CombineJob.Output.Buffer;
+			ConvolutionOutputTexture.LoadRawTextureData(combined);
+			ConvolutionOutputTexture.Apply();
 		}
 
 		void SetupTextures(Texture2D input)

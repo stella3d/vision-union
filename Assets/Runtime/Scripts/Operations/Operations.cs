@@ -112,20 +112,6 @@ namespace VisionUnion
                 }
             }
         }
-        
-        public static void SobelCombine(NativeArray<float> xImage, NativeArray<float> yImage,
-            NativeArray<float> combined, float threshold)
-        {
-            for (var i = 0; i < xImage.Length; i++)
-            {
-                var x = xImage[i];
-                var y = yImage[i];
-                
-                var value = math.sqrt(x * x + y * y);
-                //var value = math.abs(x) + math.abs(y);
-                combined[i] = math.select(0f, 1f, value / 2f > threshold);
-            }
-        }
     }
     
 }

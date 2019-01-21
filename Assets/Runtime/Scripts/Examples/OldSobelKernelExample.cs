@@ -169,7 +169,7 @@ internal class OldSobelKernelExample : MonoBehaviour
 			
 			m_JobHandle.Complete();
 			m_ScheduledLastUpdate = true;
-			Operations.SobelCombine(m_SobelTextureDataX, m_SobelTextureDataY, m_SobelTextureDataCombined, m_Threshold);
+			//Operations.SobelCombine(m_SobelTextureDataX, m_SobelTextureDataY, m_SobelTextureDataCombined, m_Threshold);
 			m_SobelTexture.LoadRawTextureData(m_SobelTextureDataCombined);
 			m_SobelTexture.Apply();
 		}

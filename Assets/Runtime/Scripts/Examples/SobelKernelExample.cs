@@ -114,6 +114,7 @@ namespace VisionUnion.Examples
 				case 9:
 					m_KernelOneRenderer.material.mainTexture = m_Sobel.ConvolvedTextureOne;
 					m_KernelTwoRenderer.material.mainTexture = m_Sobel.ConvolvedTextureTwo;
+					m_ConvolutionOutputRenderer.material.mainTexture = m_Sobel.ConvolutionOutputTexture;
 					break;
 				case 20:
 					Debug.Log("awake done");
