@@ -60,11 +60,11 @@ namespace VisionUnion.Examples
 		{
 			m_GrayscaleInputTexture = SetupTexture(m_InputTexture, m_GrayscaleRenderer, 
 				out m_GrayscaleInputData);
-			m_ConvolvedTextureOne = SetupTexture(m_GrayscaleInputTexture, m_GrayscaleRenderer, 
+			m_ConvolvedTextureOne = SetupTexture(m_GrayscaleInputTexture, m_KernelOneRenderer, 
 				out m_ConvolvedDataOne);
-			m_ConvolvedTextureTwo = SetupTexture(m_GrayscaleInputTexture, m_GrayscaleRenderer, 
+			m_ConvolvedTextureTwo = SetupTexture(m_GrayscaleInputTexture, m_KernelTwoRenderer, 
 				out m_ConvolvedDataTwo);
-			m_ConvolutionOutputTexture = SetupTexture(m_InputTexture, m_GrayscaleRenderer, 
+			m_ConvolutionOutputTexture = SetupTexture(m_InputTexture, m_ConvolutionOutputRenderer, 
 				out m_CombinedConvolutionData);
 		}
 
@@ -87,31 +87,28 @@ namespace VisionUnion.Examples
 
 		void Update ()
 		{
-			if (Time.frameCount == 2)
+			if (Time.frameCount == 12)
 			{
 				m_GreyscaleJob = new GreyscaleByLuminanceFloatJob24(m_InputTexture.GetRawTextureData<Color24>(),
-					m_GrayscaleInputData.Buffer, LuminanceWeights.Float);
+					m_GrayscaleInputData.Buffer, LuminanceWeights.FloatNormalized);
 			
 				m_GrayScaleJobHandle = m_GreyscaleJob.Schedule(m_GrayscaleInputData.Buffer.Length, 1024);
 				Debug.Log("scheduled grayscale ?");
 			}
 			
-			if (Time.frameCount == 6)
+			if (Time.frameCount == 18)
 			{
 				m_GrayScaleJobHandle.Complete();
+				
+				
 				m_GrayscaleInputTexture.LoadRawTextureData(m_GreyscaleJob.Grayscale);
 				m_GrayscaleInputTexture.Apply();
 				Debug.Log("completed grayscale ?");
 				
 				m_Sobel = new SobelFloatPrototype(m_GrayscaleInputTexture);
 			}
-			
-			if (Time.frameCount == 7)
-			{
 
-			}
-
-			if (Time.frameCount == 10)
+			if (Time.frameCount == 20)
 			{
 				Debug.Log("awake done");
 			}

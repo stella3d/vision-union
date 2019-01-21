@@ -34,11 +34,9 @@
 		UNITY_INSTANCING_BUFFER_END(Props)
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
-			// Albedo comes from a texture tinted by red channel color
-			float c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-			
-			fixed3 alphaColo = fixed3(c * 0.21, c * 0.72, c * 0.07);
-			o.Albedo = alphaColo;
+			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+			fixed4 d = fixed4(c.r, c.r, c.r, 1);
+			o.Albedo = d.rgb;
 			
 			// Metallic and smoothness come from slider variables
 			o.Metallic = _Metallic;

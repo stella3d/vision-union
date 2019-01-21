@@ -14,6 +14,15 @@ namespace VisionUnion.Jobs
         {
             get { return new Color48(0.2126f, 0.7152f, 0.0722f); }
         }
+        
+        public static Color48 FloatNormalized
+        {
+            get
+            {
+                const float oneOver255 = 0.0039215686f;
+                return new Color48(0.2126f * oneOver255, 0.7152f * oneOver255, 0.0722f * oneOver255);
+            }
+        }
 
         public static Color24 Byte
         {
@@ -83,7 +92,6 @@ namespace VisionUnion.Jobs
         public void Execute(int index)
         {
             var p = InputTexture[index];
-            
             Grayscale[index] = p.r * Weights.r + p.g * Weights.g + p.b * Weights.b;
         }
     }
