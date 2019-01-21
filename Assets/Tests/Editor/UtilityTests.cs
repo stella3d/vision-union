@@ -82,14 +82,5 @@ namespace VisionUnion.Tests
 			Debug.Log("averages ???");
 			DebugUtils.LogFlat2DMatrix(avg5x, 5, 5);
 		}
-
-		[Test]
-		public static void Sobel_FromGrayscale()
-		{
-			var sobel = new byte[k_Intensities5x5.Length];
-			Operations.Sobel(k_Intensities5x5, sobel, 10f, 5, 5);
-
-			DebugUtils.LogFlat2DMatrix(sobel, 5, 5);
-		}
 	}
 }
