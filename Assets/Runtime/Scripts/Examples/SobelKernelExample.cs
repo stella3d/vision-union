@@ -44,13 +44,16 @@ namespace VisionUnion.Examples
 		
 		ParallelConvolutions<float> m_ParallelConvolutions;
 
+		SobelFloatPrototype m_Sobel;
+
 		FloatWithFloatConvolveJob[][] m_ParallelJobSequences = new FloatWithFloatConvolveJob[2][];
 	
 		void Awake()
 		{
+			m_Sobel = new SobelFloatPrototype(m_InputTexture);
 			SetupTextures();
-			SetupFilter();
-			SetupJobs();
+			//SetupFilter();
+			//SetupJobs();
 
 			Debug.Log("awake done");
 		}
@@ -71,10 +74,10 @@ namespace VisionUnion.Examples
 			for (var i = 0; i < m_ParallelJobSequences.Length; i++)
 			{
 				var sequence = m_ParallelConvolutions.Sequences[i];
-				var jobs = new FloatWithFloatConvolveJob[2];
+				var jobs = new FloatWithFloatConvolveJob[1];
 				for (var j = 0; j < jobs.Length; j++)
 				{
-					jobs[i] = new FloatWithFloatConvolveJob();;
+					jobs[j] = new FloatWithFloatConvolveJob();;
 				}
 				
 				m_ParallelJobSequences[i] = jobs;
