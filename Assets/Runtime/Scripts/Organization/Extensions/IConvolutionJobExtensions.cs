@@ -1,12 +1,10 @@
-﻿using Unity.Jobs;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace VisionUnion.Organization
 {
     public static class IConvolutionJobExtensions
     {
-        public static void AssignSequence<T>(this IConvolutionJob<T>[] jobs, 
-            ConvolutionSequence<T> sequence, JobHandle dependency)
+        public static void AssignSequence<T>(this IConvolutionJob<T>[] jobs, ConvolutionSequence<T> sequence)
             where T: struct
         {
             var convolutions = sequence.Convolutions;
@@ -23,12 +21,12 @@ namespace VisionUnion.Organization
         }
         
         public static void AssignSequences<T>(this IConvolutionJob<T>[][] jobs, 
-            ConvolutionSequence<T>[] sequences, JobHandle dependency)
+            ConvolutionSequence<T>[] sequences)
             where T: struct
         {
             for (var i = 0; i < sequences.Length; i++)
             {
-                jobs[i].AssignSequence(sequences[i], dependency);
+                jobs[i].AssignSequence(sequences[i]);
             }
         }
         
