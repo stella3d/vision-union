@@ -8,7 +8,7 @@ using Unity.Jobs;
 namespace VisionUnion.Jobs
 {
     // default weights for relative luminance calculation
-    static class LuminanceWeights
+    internal static class LuminanceWeights
     {
         public static Color48 Float
         {
@@ -50,6 +50,40 @@ namespace VisionUnion.Jobs
         public void Execute(int index)
         {
             var p = InputTexture[index];
+            Grayscale[index] = p.r * Weights.r + p.g * Weights.g + p.b * Weights.b;
+        }
+    }
+    
+    [BurstCompile]
+    public struct GreyscaleByLuminanceFloatJob24 : IJobParallelFor
+    {
+        public Color48 Weights;
+        
+        [ReadOnly] public NativeArray<Color24> InputTexture;
+    
+        [WriteOnly] public NativeArray<float> Grayscale;
+
+        public GreyscaleByLuminanceFloatJob24(NativeArray<Color24> input, 
+            NativeArray<float> grayscale, 
+            Color48 weights)
+        {
+            InputTexture = input;
+            Grayscale = grayscale;
+            //convert from 0-255 byte range to 0-1 float range
+            const float oneOver255 = 0.0039215686f;
+            Weights = weights;
+            weights.r *= oneOver255;
+            weights.g *= oneOver255;
+            weights.b *= oneOver255;
+            
+            if (Weights.Equals(default(Color48)))
+                Weights = LuminanceWeights.Float;
+        }
+        
+        public void Execute(int index)
+        {
+            var p = InputTexture[index];
+            
             Grayscale[index] = p.r * Weights.r + p.g * Weights.g + p.b * Weights.b;
         }
     }

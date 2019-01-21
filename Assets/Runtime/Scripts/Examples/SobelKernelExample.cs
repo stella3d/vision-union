@@ -47,51 +47,22 @@ namespace VisionUnion.Examples
 		SobelFloatPrototype m_Sobel;
 
 		FloatWithFloatConvolveJob[][] m_ParallelJobSequences = new FloatWithFloatConvolveJob[2][];
+
+		GreyscaleByLuminanceFloatJob24 m_GreyscaleJob;
 	
 		void Awake()
 		{
-			m_Sobel = new SobelFloatPrototype(m_InputTexture);
 			SetupTextures();
-			//SetupFilter();
-			//SetupJobs();
 
-			Debug.Log("awake done");
-		}
-		
-		void SetupFilter()
-		{
-			m_KernelOne = new Kernel<float>(Kernels.Short.Sobel.X.ToFloat());
-			m_KernelTwo = new Kernel<float>(Kernels.Short.Sobel.Y.ToFloat());
-			var convolutionOne = new ConvolutionSequence<float>(new Convolution<float>(m_KernelOne));
-			var convolutionTwo = new ConvolutionSequence<float>(new Convolution<float>(m_KernelTwo));
-			
-			m_ParallelConvolutions = new ParallelConvolutions<float>(new [] 
-				{ convolutionOne, convolutionTwo });
-		}
-		
-		void SetupJobs()
-		{
-			for (var i = 0; i < m_ParallelJobSequences.Length; i++)
-			{
-				var sequence = m_ParallelConvolutions.Sequences[i];
-				var jobs = new FloatWithFloatConvolveJob[1];
-				for (var j = 0; j < jobs.Length; j++)
-				{
-					jobs[j] = new FloatWithFloatConvolveJob();;
-				}
-				
-				m_ParallelJobSequences[i] = jobs;
-				jobs.Cast<IConvolutionJob<float>>().ToArray().AssignSequence(sequence);
-			}
 		}
 
 		void SetupTextures()
 		{
 			m_GrayscaleInputTexture = SetupTexture(m_InputTexture, m_GrayscaleRenderer, 
 				out m_GrayscaleInputData);
-			m_ConvolvedTextureOne = SetupTexture(m_InputTexture, m_GrayscaleRenderer, 
+			m_ConvolvedTextureOne = SetupTexture(m_GrayscaleInputTexture, m_GrayscaleRenderer, 
 				out m_ConvolvedDataOne);
-			m_ConvolvedTextureTwo = SetupTexture(m_InputTexture, m_GrayscaleRenderer, 
+			m_ConvolvedTextureTwo = SetupTexture(m_GrayscaleInputTexture, m_GrayscaleRenderer, 
 				out m_ConvolvedDataTwo);
 			m_ConvolutionOutputTexture = SetupTexture(m_InputTexture, m_GrayscaleRenderer, 
 				out m_CombinedConvolutionData);
@@ -116,8 +87,34 @@ namespace VisionUnion.Examples
 
 		void Update ()
 		{
-			if (Time.frameCount < 10)
-				return;
+			if (Time.frameCount == 2)
+			{
+				m_GreyscaleJob = new GreyscaleByLuminanceFloatJob24(m_InputTexture.GetRawTextureData<Color24>(),
+					m_GrayscaleInputData.Buffer, LuminanceWeights.Float);
+			
+				m_GrayScaleJobHandle = m_GreyscaleJob.Schedule(m_GrayscaleInputData.Buffer.Length, 1024);
+				Debug.Log("scheduled grayscale ?");
+			}
+			
+			if (Time.frameCount == 6)
+			{
+				m_GrayScaleJobHandle.Complete();
+				m_GrayscaleInputTexture.LoadRawTextureData(m_GreyscaleJob.Grayscale);
+				m_GrayscaleInputTexture.Apply();
+				Debug.Log("completed grayscale ?");
+				
+				m_Sobel = new SobelFloatPrototype(m_GrayscaleInputTexture);
+			}
+			
+			if (Time.frameCount == 7)
+			{
+
+			}
+
+			if (Time.frameCount == 10)
+			{
+				Debug.Log("awake done");
+			}
 		}
 	}
 }

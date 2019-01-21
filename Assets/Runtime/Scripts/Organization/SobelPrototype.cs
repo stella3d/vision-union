@@ -1,18 +1,16 @@
-using System.Linq;
+using System;
 using Unity.Jobs;
 using UnityEngine;
 using VisionUnion.Jobs;
-using VisionUnion.Organization;
 
 namespace VisionUnion.Organization
 {
-	public class SobelFloatPrototype
+	public class SobelFloatPrototype : IDisposable
 	{
-		Texture2D m_InputTexture;
-		Texture2D m_GrayscaleInputTexture;
-		Texture2D m_ConvolvedTextureOne;
-		Texture2D m_ConvolvedTextureTwo;
-		Texture2D m_ConvolutionOutputTexture;
+		public Texture2D GrayscaleInputTexture;
+		public Texture2D ConvolvedTextureOne;
+		public Texture2D ConvolvedTextureTwo;
+		public Texture2D ConvolutionOutputTexture;
 
 		ImageData<float> m_GrayscaleInputData;
 		ImageData<float> m_ConvolvedDataOne;
@@ -21,9 +19,6 @@ namespace VisionUnion.Organization
 	
 		JobHandle m_GrayScaleJobHandle;
 		JobHandle m_JobHandle;
-
-		Kernel<float> m_KernelOne;
-		Kernel<float> m_KernelTwo;
 		
 		ParallelConvolutions<float> m_ParallelConvolutions;
 
@@ -39,10 +34,10 @@ namespace VisionUnion.Organization
 		}
 		void SetupFilter()
 		{
-			m_KernelOne = new Kernel<float>(Kernels.Short.Sobel.X.ToFloat());
-			m_KernelTwo = new Kernel<float>(Kernels.Short.Sobel.Y.ToFloat());
-			var convolutionOne = new ConvolutionSequence<float>(new Convolution<float>(m_KernelOne));
-			var convolutionTwo = new ConvolutionSequence<float>(new Convolution<float>(m_KernelTwo));
+			var kernelOne = new Kernel<float>(Kernels.Short.Sobel.X.ToFloat());
+			var kernelTwo = new Kernel<float>(Kernels.Short.Sobel.Y.ToFloat());
+			var convolutionOne = new ConvolutionSequence<float>(new Convolution<float>(kernelOne));
+			var convolutionTwo = new ConvolutionSequence<float>(new Convolution<float>(kernelTwo));
 			
 			m_ParallelConvolutions = new ParallelConvolutions<float>(new [] 
 				{ convolutionOne, convolutionTwo });
@@ -50,8 +45,6 @@ namespace VisionUnion.Organization
 		
 		void SetupJobs()
 		{
-			
-			
 			var sequenceOne = m_ParallelConvolutions.Sequences[0];
 			var jobs = new FloatWithFloatConvolveJob[1];
 			for (var j = 0; j < jobs.Length; j++)
@@ -83,10 +76,10 @@ namespace VisionUnion.Organization
 
 		void SetupTextures(Texture2D input)
 		{
-			m_GrayscaleInputTexture = SetupTexture(input, out m_GrayscaleInputData);
-			m_ConvolvedTextureOne = SetupTexture(input, out m_ConvolvedDataOne);
-			m_ConvolvedTextureTwo = SetupTexture(input, out m_ConvolvedDataTwo);
-			m_ConvolutionOutputTexture = SetupTexture(input, out m_CombinedConvolutionData);
+			GrayscaleInputTexture = SetupTexture(input, out m_GrayscaleInputData);
+			ConvolvedTextureOne = SetupTexture(input, out m_ConvolvedDataOne);
+			ConvolvedTextureTwo = SetupTexture(input, out m_ConvolvedDataTwo);
+			ConvolutionOutputTexture = SetupTexture(input, out m_CombinedConvolutionData);
 		}
 
 		Texture2D SetupTexture<T>(Texture2D input, out ImageData<T> data)
@@ -97,17 +90,9 @@ namespace VisionUnion.Organization
 			return texture;
 		}
 
-		void OnDestroy()
+		public void Dispose()
 		{
-			m_KernelOne.Dispose();
-			m_KernelTwo.Dispose();
 			m_ParallelConvolutions.Dispose();
-		}
-
-		void Update ()
-		{
-			if (Time.frameCount < 10)
-				return;
 		}
 	}
 }
