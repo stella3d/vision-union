@@ -33,7 +33,7 @@ namespace VisionUnion.Organization
             }
         }
         
-        public void AssignToJobs(JobHandle dependency, IConvolutionJob<T>[] jobs)
+        public void AssignToJobs(IConvolutionJob<T>[] jobs)
         {
             for (var i = 0; i < jobs.Length; i++)
             {

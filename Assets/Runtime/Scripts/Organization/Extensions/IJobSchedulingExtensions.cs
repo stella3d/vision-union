@@ -1,49 +1,36 @@
-﻿using Unity.Jobs;
-using UnityEngine;
+﻿using Unity.Collections;
+using Unity.Jobs;
 
 namespace VisionUnion.Organization
 {
-    public static class IConvolutionJobExtensions
+    public static class IJobSchedulingExtensions
     {
-        public static void AssignSequence<T>(this IConvolutionJob<T>[] jobs, 
-            ConvolutionSequence<T> sequence, JobHandle dependency)
-            where T: struct
+        public static JobHandle ScheduleArray<T>(this T[] jobs, JobHandle dependency)
+            where T: struct, IJob
         {
-            var convolutions = sequence.Convolutions;
-            if (convolutions.Length != jobs.Length)
+            var handle = dependency;
+            foreach (var job in jobs)
             {
-                Debug.LogWarningFormat("{0} convolutions but {1} jobs - numbers must match!",
-                    convolutions.Length, jobs.Length);
+                handle = job.Schedule(handle);
             }
 
-            for (var i = 0; i < convolutions.Length; i++)
-            {
-                jobs[i].SetConvolution(convolutions[i]);
-            }
+            return handle;
         }
         
-        public static void AssignSequences<T>(this IConvolutionJob<T>[][] jobs, 
-            ConvolutionSequence<T>[] sequences, JobHandle dependency)
-            where T: struct
-        {
-            for (var i = 0; i < sequences.Length; i++)
-            {
-                jobs[i].AssignSequence(sequences[i], dependency);
-            }
-        }
+        static readonly NativeList<JobHandle> k_ParallelHandles = new NativeList<JobHandle>(16, Allocator.Persistent);
         
-        public static void AssignSequences<T>(this IConvolutionJob<T>[][] jobs, 
-            ParallelConvolutions<T>[] sequences, JobHandle dependency)
-            where T: struct
+        public static JobHandle ScheduleParallelSequences<T>(this T[][] jobStructMatrix, JobHandle dependency)
+            where T: struct, IJob
         {
-            for (var i = 0; i < sequences.Length; i++)
+            k_ParallelHandles.Clear();
+            var handle = dependency;
+            foreach (var jobSequence in jobStructMatrix)
             {
-                var seq = sequences[i];
-                foreach (var s in seq.Sequences)
-                {
-                    s.AssignToJobs(dependency, jobs[i]);
-                }
+                k_ParallelHandles.Add(jobSequence.ScheduleArray(handle));
             }
+
+            handle = JobHandle.CombineDependencies(k_ParallelHandles);
+            return handle;
         }
     }
 }
