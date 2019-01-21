@@ -1,35 +1,38 @@
 using System;
+using System.Linq;
+using Accord;
 using Accord.Math;
 using Accord.Math.Decompositions;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace VisionUnion
 {
-    public delegate bool TrySeparateShortDelegate(float[,] kernel, out float[,] separated);
-    public delegate bool TrySeparateFloatDelegate(float[,] kernel, out float[,] separated);
-    public delegate bool TrySeparateDoubleDelegate(float[,] kernel, out float[,] separated);
+    public delegate bool TrySeparateShortDelegate(short[,] kernel, out short[][] separated);
+    public delegate bool TrySeparateFloatDelegate(float[,] kernel, out float[][] separated);
+    public delegate bool TrySeparateDoubleDelegate(double[,] kernel, out double[][] separated);
     
     public static partial class KernelMethods
     {
-        public static TrySeparateShortDelegate TrySeparateShort;
-        public static TrySeparateShortDelegate TrySeparateFloat;
-        public static TrySeparateShortDelegate TrySeparateDouble;
+        public static TrySeparateShortDelegate TrySeparateShort = TrySeparateShortNoop;
+        public static TrySeparateFloatDelegate TrySeparateFloat = TrySeparateFloatNoop;
+        public static TrySeparateDoubleDelegate TrySeparateDouble = TrySeparateDoubleNoop;
 
-        internal static bool TrySeparateFloatNoop(float[,] kernel, out float[,] separated)
+        internal static bool TrySeparateFloatNoop(float[,] kernel, out float[][] separated)
         {
             separated = null;
             return false;
         }
         
-        internal static bool TrySeparateShortNoop(short[,] kernel, out short[,] separated)
+        internal static bool TrySeparateShortNoop(short[,] kernel, out short[][] separated)
         {
             separated = null;
             return false;
         }
         
-        internal static bool TrySeparateDoubleNoop(double[,] kernel, out double[,] separated)
+        internal static bool TrySeparateDoubleNoop(double[,] kernel, out double[][] separated)
         {
             separated = null;
             return false;
@@ -38,9 +41,21 @@ namespace VisionUnion
     
     public static class KernelMethodImplementations
     {
-        public static bool TrySeparate(this float[,] kernel, out float[,][] separated)
+        public static bool TrySeparate(this float[,] kernel, out float[][] separated)
         {
             var matrix = kernel.ToDouble();
+            var output = new double[kernel.GetLength(0)][];
+            TrySeparate(matrix, out output);
+            
+            separated = new float[kernel.GetLength(0)][];
+            separated[0] = output[0].ToFloat();
+            separated[1] = output[1].ToFloat();
+            return true;
+        }
+        
+        public static bool TrySeparate(this double[,] kernel, out double[][] separated)
+        {
+            var matrix = kernel;
             Debug.Log("kernel\n" + matrix.MatrixToString());
 
             var svd = new SingularValueDecomposition(matrix);
@@ -55,57 +70,24 @@ namespace VisionUnion
             Debug.Log("right singular vectors matrix:\n" + svd.RightSingularVectors.MatrixToString());
             Debug.Log("left singular vector matrix:\n" + svd.LeftSingularVectors.MatrixToString());
 
-            var scaleFactor = svd.Diagonal[0];
+            var scaleFactor = math.sqrt(svd.Diagonal[0]);
             Debug.Log("scalefactor: " + scaleFactor);
 
-            var factorSqrt = math.sqrt(scaleFactor);
+            var column = svd.LeftSingularVectors.GetColumn(0).Multiply(scaleFactor);
+            var row = svd.RightSingularVectors.GetColumn(0).Multiply(scaleFactor);
 
-            var firstColumn = svd.LeftSingularVectors.GetColumn(0);
-            var multipliedFirstV = firstColumn.Multiply(factorSqrt);
-
-            var firstRow = svd.RightSingularVectors.GetColumn(0);
-            var multipliedFirstRow = firstRow.Multiply(factorSqrt);
-
-            var output = new float[kernel.GetLength(0),kernel.GetLength(1)][];
+            var output = new double[kernel.GetLength(0)][];
             
-            Debug.Log("multiplied V?? column:\n" + multipliedFirstV.ToColumnString());
-            Debug.Log("multiplied U?? row:\n\n" + multipliedFirstRow.ToRowString());
+            Debug.Log("multiplied V?? column:\n" + column.ToColumnString());
+            Debug.Log("multiplied U?? row:\n\n" + row.ToRowString());
 
-
-            var mult = multipliedFirstV.MultiplyWithRow(multipliedFirstRow);
+            var mult = column.MultiplyWithRow(row);
             Debug.Log("resulting matrix:\n" + mult.MatrixToString());
 
-            
+            output[0] = column;
+            output[1] = row;
             separated = output;
             return true;
-        }
-        
-        public static bool TrySeparate(this Kernel<float> kernel, out Kernel<float>[] separated)
-        {
-            var matrix = kernel.ToMatrix().ToDouble();
-            Debug.Log("kernel\n" + matrix.MatrixToString());
-
-            var svd = new SingularValueDecomposition(matrix);
-            Debug.Log("rank: " + svd.Rank);
-            Debug.Log("diagonal matrix:\n" + svd.DiagonalMatrix.MatrixToString());
-            Debug.Log("right singular vectors matrix:\n" + svd.RightSingularVectors.MatrixToString());
-            Debug.Log("left singular vector matrix:\n" + svd.LeftSingularVectors.MatrixToString());
-
-            var scaleFactor = svd.Diagonal[0];
-            Debug.Log("scalefactor: " + scaleFactor);
-
-            var factorSqrt = math.sqrt(scaleFactor);
-
-            var firstColumn = svd.LeftSingularVectors.GetColumn(0);
-            var multipliedFirstV = firstColumn.Multiply(factorSqrt);
-            
-            var multiplied = svd.LeftSingularVectors
-                .Multiply(svd.RightSingularVectors).Multiply(scaleFactor);
-            
-            Debug.Log("multiplied column:\n" + multipliedFirstV.ToColumnString());
-            
-            separated = null;
-            return false;
         }
     }
 }

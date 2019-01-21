@@ -100,11 +100,11 @@ namespace VisionUnion.Tests
 		public void SeparateKernel()
 		{
 			var gauss = Kernels.Float.GaussianBlurApproximate3x3;
-			var separated = new float[3, 3][];
+			var separated = new float[2][];
 			gauss.TrySeparate(out separated);
 			Assert.AreEqual(3, separated.GetLength(0));
-			Assert.AreEqual(3, separated.GetLength(1));
-			//Assert.AreEqual(2, separated.GetLength(2));
+			Debug.Log("\n" + separated[0].ToColumnString());
+			Debug.Log("\n" + separated[1].ToRowString());
 		}
 
 		public static class KernelBoundsCases

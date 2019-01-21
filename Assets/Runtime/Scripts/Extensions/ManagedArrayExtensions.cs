@@ -18,6 +18,11 @@ namespace VisionUnion
             return array.Select((b, i) => Convert.ToSingle(b)).ToArray();
         }
         
+        public static float[] ToFloat(this double[] array)
+        {
+            return array.Select((b, i) => Convert.ToSingle(b)).ToArray();
+        }
+        
         public static float[] ToFloatNormalized(this byte[] array)
         {
             // 0-255 byte range --> 0-1 float range

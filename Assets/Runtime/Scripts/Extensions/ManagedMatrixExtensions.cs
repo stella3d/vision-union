@@ -70,6 +70,22 @@ namespace VisionUnion
 
             return outMatrix;
         }
+        
+        public static float[,] ToFloat(this double[,] matrix)
+        {
+            var rows = matrix.GetLength(0);
+            var columns = matrix.GetLength(1);
+            var outMatrix = new float[rows, columns];
+            for (var r = 0; r < rows; r++)
+            {
+                for (var c = 0; c < columns; c++)
+                {
+                    outMatrix[r, c] = Convert.ToSingle(matrix[r, c]);
+                }
+            }
+
+            return outMatrix;
+        }
 
         static readonly StringBuilder k_String = new StringBuilder(256);
         
@@ -139,7 +155,43 @@ namespace VisionUnion
             return k_String.ToString();
         }
         
+        public static string ToColumnString(this float[] column)
+        {
+            k_String.Clear();
+            foreach (var t in column)
+            {
+                k_String.AppendLine(t.ToString("F3"));
+            }
+            
+            return k_String.ToString();
+        }
+        
+        public static string ToColumnString(this short[] column)
+        {
+            k_String.Clear();
+            foreach (var t in column)
+            {
+                k_String.AppendLine(t.ToString("F3"));
+            }
+            
+            return k_String.ToString();
+        }
+        
         public static string ToRowString(this double[] row)
+        {
+            k_String.Clear();
+            var last = row.Length - 1;
+            for (var i = 0; i < last; i++)
+            {
+                var t = row[i];
+                k_String.AppendFormat("{0:F3}, ", t);
+            }
+
+            k_String.AppendFormat("{0:F3}\n", row[last]);
+            return k_String.ToString();
+        }
+        
+        public static string ToRowString(this float[] row)
         {
             k_String.Clear();
             var last = row.Length - 1;
