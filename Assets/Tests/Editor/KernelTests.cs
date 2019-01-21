@@ -83,6 +83,18 @@ namespace VisionUnion.Tests
 			kernel.Dispose();
 		}
 		
+		[Test]
+		public void GetColumn()
+		{
+			var sobel = Kernels.Short.Sobel.X;
+			var kernel = new Kernel<short>(sobel, Allocator.Temp);
+			var column = kernel.GetColumn(1);
+			Assert.AreEqual(column[0], sobel[0, 1]);
+			Assert.AreEqual(column[1], sobel[1, 1]);
+			Assert.AreEqual(column[2], sobel[2, 1]);
+			kernel.Dispose();
+		}
+		
 		[TestCaseSource(typeof(KernelBoundsCases), "Square")]
 		public void VerifyGetBounds_SquareKernels(int size, Vector2Int nBound, Vector2Int pBound)
 		{
