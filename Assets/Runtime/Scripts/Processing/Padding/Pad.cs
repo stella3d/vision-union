@@ -77,13 +77,10 @@ namespace VisionUnion
         {
             var strides = convolution.Stride;
             var kernel = convolution.Kernel;
-            Debug.LogFormat("same pad input height: {0} , width {1}", input.Height, input.Width);
 
             var outHeight = (int)math.ceil((float)(input.Height - kernel.Height + 1) / strides.y);
             var outWidth = (int)math.ceil((float)(input.Width - kernel.Width + 1) / strides.x);
             
-            Debug.LogFormat("same pad output height: {0} , width {1}", outHeight, outWidth);
-
             var padding = new Padding();
             var hDiff = input.Height - outHeight;
             var wDiff = input.Width - outWidth;
@@ -111,7 +108,6 @@ namespace VisionUnion
                 padding.top += halfDiff;
                 padding.bottom += halfDiff + 1;
             }
-
 
             return padding;
         }

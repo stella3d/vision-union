@@ -27,8 +27,8 @@ namespace VisionUnion.Organization
 
 		public SobelFloatPrototype(Texture2D input)
 		{
-			SetupTextures(input);
 			SetupFilter();
+			SetupTextures(input);
 			SetupJobs();
 
 			Debug.Log("sobel constructor done");
@@ -79,7 +79,6 @@ namespace VisionUnion.Organization
 		{
 			var inputData = new ImageData<float>(input);
 			var paddedInput = Pad.ConvolutionInput(inputData, m_ParallelConvolutions);
-			
 			
 			GrayscaleInputTexture = input;
 			ConvolvedTextureOne = SetupTexture(input, out m_ConvolvedDataOne);
