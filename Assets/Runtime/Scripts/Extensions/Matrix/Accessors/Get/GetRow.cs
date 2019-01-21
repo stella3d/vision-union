@@ -2,11 +2,11 @@
 {
     public static partial class ManagedMatrixExtensions
     {
-        public static double[] GetRow(this double[,] matrix, int row)
+        public static T[] GetRow<T>(this T[,] matrix, int row)
         {
-            var Width = matrix.GetLength(1);
-            var rowData = new double[Width];
-            for (var c = 0; c < Width; c++)
+            var width = matrix.GetLength(1);
+            var rowData = new T[width];
+            for (var c = 0; c < width; c++)
             {
                 rowData[c] = matrix[row, c];
             }
