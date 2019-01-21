@@ -1,12 +1,7 @@
-using System;
-using System.Linq;
-using Accord;
 using Accord.Math;
 using Accord.Math.Decompositions;
-using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace VisionUnion
 {
@@ -53,13 +48,11 @@ namespace VisionUnion
             return true;
         }
         
+        // this approach for separating kernels is adapted from this helpful post
+        // https://blogs.mathworks.com/steve/2006/11/28/separable-convolution-part-2
         public static bool TrySeparate(this double[,] kernel, out double[][] separated)
         {
-            var matrix = kernel;
-            Debug.Log("kernel\n" + matrix.MatrixToString());
-
-            var svd = new SingularValueDecomposition(matrix);
-            Debug.Log("rank: " + svd.Rank);
+            var svd = new SingularValueDecomposition(kernel);
             // any separable kernel has a rank of 1
             if (svd.Rank != 1)
             {
@@ -67,26 +60,17 @@ namespace VisionUnion
                 return false;
             }
 
-            Debug.Log("right singular vectors matrix:\n" + svd.RightSingularVectors.MatrixToString());
-            Debug.Log("left singular vector matrix:\n" + svd.LeftSingularVectors.MatrixToString());
-
             var scaleFactor = math.sqrt(svd.Diagonal[0]);
-            Debug.Log("scalefactor: " + scaleFactor);
-
             var column = svd.LeftSingularVectors.GetColumn(0).Multiply(scaleFactor);
             var row = svd.RightSingularVectors.GetColumn(0).Multiply(scaleFactor);
 
-            var output = new double[kernel.GetLength(0)][];
-            
-            Debug.Log("multiplied V?? column:\n" + column.ToColumnString());
-            Debug.Log("multiplied U?? row:\n\n" + row.ToRowString());
+            separated = new double[kernel.GetLength(0)][];
 
             var mult = column.MultiplyWithRow(row);
             Debug.Log("resulting matrix:\n" + mult.MatrixToString());
-
-            output[0] = column;
-            output[1] = row;
-            separated = output;
+            
+            separated[0] = column;
+            separated[1] = row;
             return true;
         }
     }
