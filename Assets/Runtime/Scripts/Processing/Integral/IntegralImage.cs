@@ -1,65 +1,64 @@
 ﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
-using Unity.Mathematics;
 
 namespace VisionUnion
 {
     [BurstCompile]
     public struct IntegralImageFromGrayscaleJob : IJob
     {
-        public int width;
-        public int height;
-
-        [ReadOnly] public NativeArray<float> GrayscaleTexture;
-
-        public NativeArray<float> IntegralTexture;
-
+        [ReadOnly] 
+        public ImageData<float> Input;
+        
+        public ImageData<float> Output;
+        
         public void Execute()
         {
-            var width = this.width;
+            var inBuffer = Input.Buffer;
+            var outBuffer = Output.Buffer;
+            var width = Input.Width;
 
             // set the top left pixel by itself so we don't have to branch during iteration.
             // since this is the first pixel, the output and input are the same
-            IntegralTexture[0] = GrayscaleTexture[0];
+            outBuffer[0] = inBuffer[0];
 
             // do the rest of the top row 
             var previousSum = 0f;
             for (var w = 1; w < width; w++)
             {
-                var localIntensity = GrayscaleTexture[w];
+                var localIntensity = inBuffer[w];
                 var summedIntensity = localIntensity + previousSum;
                 previousSum = summedIntensity;
-                IntegralTexture[w] = summedIntensity;
+                outBuffer[w] = summedIntensity;
             }
 
-            for (var h = 1; h < height; h++)
+            for (var h = 1; h < Input.Height; h++)
             {
                 var yIndex = h * width;
-                var firstLocalIntensity = GrayscaleTexture[yIndex];
+                var firstLocalIntensity = inBuffer[yIndex];
 
                 var firstTopIndex = (h - 1) * width;
-                var firstTopSumIntensity = IntegralTexture[firstTopIndex];
+                var firstTopSumIntensity = outBuffer[firstTopIndex];
 
                 var firstSum = firstLocalIntensity + firstTopSumIntensity;
-                IntegralTexture[yIndex] = firstSum;
+                outBuffer[yIndex] = firstSum;
 
-                for (int w = 1; w < width; w++)
+                for (var w = 1; w < width; w++)
                 {
                     var index = yIndex + w;
 
-                    var localIntensity = GrayscaleTexture[index];
+                    var localIntensity = inBuffer[index];
 
                     var leftIndex = index - 1;
                     var topIndex = firstTopIndex + w;
                     var topLeftIndex = topIndex - 1;
 
-                    var leftSumIntensity = IntegralTexture[leftIndex];
-                    var topSumIntensity = IntegralTexture[topIndex];
-                    var topLeftSumIntensity = IntegralTexture[topLeftIndex];
+                    var leftSumIntensity = outBuffer[leftIndex];
+                    var topSumIntensity = outBuffer[topIndex];
+                    var topLeftSumIntensity = outBuffer[topLeftIndex];
 
                     var summedIntensity = localIntensity + leftSumIntensity + topSumIntensity - topLeftSumIntensity;
-                    IntegralTexture[index] = summedIntensity;
+                    outBuffer[index] = summedIntensity;
                 }
             }
         }
@@ -68,58 +67,58 @@ namespace VisionUnion
     [BurstCompile]
     public struct IntegralImageFromGrayscaleByteJob : IJob
     {
-        public int width;
-        public int height;
-
-        [ReadOnly] public NativeArray<byte> GrayscaleTexture;
-
-        public NativeArray<int> IntegralTexture;
+        [ReadOnly] 
+        public ImageData<byte> Input;
+        
+        public ImageData<int> Output;
 
         public void Execute()
         {
-            var width = this.width;
+            var inBuffer = Input.Buffer;
+            var outBuffer = Output.Buffer;
+            var width = Input.Width;
 
             // set the top left pixel by itself so we don't have to branch during iteration.
             // since this is the first pixel, the output and input are the same
-            IntegralTexture[0] = GrayscaleTexture[0];
+            outBuffer[0] = inBuffer[0];
 
             // do the rest of the top row 
             var previousSum = 0;
             for (var w = 1; w < width; w++)
             {
-                var localIntensity = GrayscaleTexture[w];
+                var localIntensity = inBuffer[w];
                 var summedIntensity = localIntensity + previousSum;
                 previousSum = summedIntensity;
-                IntegralTexture[w] = summedIntensity;
+                outBuffer[w] = summedIntensity;
             }
 
-            for (var h = 1; h < height; h++)
+            for (var h = 1; h < Input.Height; h++)
             {
                 var yIndex = h * width;
-                var firstLocalIntensity = GrayscaleTexture[yIndex];
+                var firstLocalIntensity = inBuffer[yIndex];
 
                 var firstTopIndex = yIndex - width;
-                var firstTopSumIntensity = IntegralTexture[firstTopIndex];
+                var firstTopSumIntensity = outBuffer[firstTopIndex];
 
                 var firstSum = firstLocalIntensity + firstTopSumIntensity;
-                IntegralTexture[yIndex] = firstSum;
+                outBuffer[yIndex] = firstSum;
 
                 for (var w = 1; w < width; w++)
                 {
                     var index = yIndex + w;
 
-                    var localIntensity = GrayscaleTexture[index];
+                    var localIntensity = inBuffer[index];
 
                     var leftIndex = index - 1;
                     var topIndex = firstTopIndex + w;
                     var topLeftIndex = topIndex - 1;
 
-                    var leftSumIntensity = IntegralTexture[leftIndex];
-                    var topSumIntensity = IntegralTexture[topIndex];
-                    var topLeftSumIntensity = IntegralTexture[topLeftIndex];
+                    var leftSumIntensity = outBuffer[leftIndex];
+                    var topSumIntensity = outBuffer[topIndex];
+                    var topLeftSumIntensity = outBuffer[topLeftIndex];
 
                     var summedIntensity = localIntensity + leftSumIntensity + topSumIntensity - topLeftSumIntensity;
-                    IntegralTexture[index] = summedIntensity;
+                    outBuffer[index] = summedIntensity;
                 }
             }
         }

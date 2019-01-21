@@ -116,7 +116,7 @@ namespace VisionUnion
         public static void SobelCombine(NativeArray<float> xImage, NativeArray<float> yImage,
             NativeArray<float> combined, float threshold)
         {
-            for (int i = 0; i < xImage.Length; i++)
+            for (var i = 0; i < xImage.Length; i++)
             {
                 var x = xImage[i];
                 var y = yImage[i];
