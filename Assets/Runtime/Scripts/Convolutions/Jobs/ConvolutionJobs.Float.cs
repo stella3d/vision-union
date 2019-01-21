@@ -1,11 +1,12 @@
 ﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
+using VisionUnion.Organization;
 
 namespace VisionUnion.Jobs
 {
     [BurstCompile]
-    public struct ByteWithFloatConvolveJob : IJob
+    public struct ByteWithFloatConvolveJob : IConvolutionJob<float>
     {
         [ReadOnly] public Convolution<float> Convolution;
         [ReadOnly] public ImageData<byte> Input;
@@ -19,6 +20,11 @@ namespace VisionUnion.Jobs
             Output = output;
         }
 
+        public void SetConvolution(Convolution<float> convolution)
+        {
+            Convolution = convolution;
+        }
+
         public void Execute()
         {
             Convolution.Convolve(Input, Output);
@@ -26,7 +32,7 @@ namespace VisionUnion.Jobs
     }
     
     [BurstCompile]
-    public struct ShortWithFloatConvolveJob : IJob
+    public struct ShortWithFloatConvolveJob : IConvolutionJob<float>
     {
         [ReadOnly] public Convolution<float> Convolution;
         [ReadOnly] public ImageData<short> Input;
@@ -39,6 +45,11 @@ namespace VisionUnion.Jobs
             Input = input;
             Output = output;
         }
+        
+        public void SetConvolution(Convolution<float> convolution)
+        {
+            Convolution = convolution;
+        }
 
         public void Execute()
         {
@@ -47,7 +58,7 @@ namespace VisionUnion.Jobs
     }
     
     [BurstCompile]
-    public struct FloatWithFloatConvolveJob : IJob
+    public struct FloatWithFloatConvolveJob : IConvolutionJob<float>
     {
         [ReadOnly] public Convolution<float> Convolution;
         [ReadOnly] public ImageData<float> Input;
@@ -59,6 +70,11 @@ namespace VisionUnion.Jobs
             Convolution = convolution;
             Input = input;
             Output = output;
+        }
+        
+        public void SetConvolution(Convolution<float> convolution)
+        {
+            Convolution = convolution;
         }
 
         public void Execute()
