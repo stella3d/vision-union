@@ -1,0 +1,16 @@
+{
+    "name": "VisionUnion.Editor",
+    "references": [
+        "Unity.Mathematics",
+        "AccordMathDecomp",
+        "VisionUnion"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
