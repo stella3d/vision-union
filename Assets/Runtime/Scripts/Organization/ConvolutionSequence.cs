@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Jobs;
 
 namespace VisionUnion.Organization
@@ -7,7 +8,7 @@ namespace VisionUnion.Organization
     /// A set of convolutions
     /// </summary>
     /// <typeparam name="T">The kernel type of the convolution</typeparam>
-    public class ConvolutionSequence<T> : IDisposable
+    public class ConvolutionSequence<T> : IDisposable, IEnumerable
         where T: struct
     {
         public Convolution<T>[] Convolutions;
@@ -39,6 +40,11 @@ namespace VisionUnion.Organization
             {
                 jobs[i].SetConvolution(Convolutions[i]);
             }
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return Convolutions.GetEnumerator();
         }
     }
 }

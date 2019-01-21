@@ -87,30 +87,26 @@ namespace VisionUnion.Examples
 
 		void Update ()
 		{
-			if (Time.frameCount == 12)
+			switch (Time.frameCount)
 			{
-				m_GreyscaleJob = new GreyscaleByLuminanceFloatJob24(m_InputTexture.GetRawTextureData<Color24>(),
-					m_GrayscaleInputData.Buffer, LuminanceWeights.FloatNormalized);
+				case 3:
+					m_GreyscaleJob = new GreyscaleByLuminanceFloatJob24(m_InputTexture.GetRawTextureData<Color24>(),
+						m_GrayscaleInputData.Buffer, LuminanceWeights.FloatNormalized);
 			
-				m_GrayScaleJobHandle = m_GreyscaleJob.Schedule(m_GrayscaleInputData.Buffer.Length, 1024);
-				Debug.Log("scheduled grayscale ?");
-			}
-			
-			if (Time.frameCount == 18)
-			{
-				m_GrayScaleJobHandle.Complete();
+					m_GrayScaleJobHandle = m_GreyscaleJob.Schedule(m_GrayscaleInputData.Buffer.Length, 1024);
+					Debug.Log("scheduled grayscale ?");
+					break;
+				case 5:
+					m_GrayScaleJobHandle.Complete();
+					m_GrayscaleInputTexture.LoadRawTextureData(m_GreyscaleJob.Grayscale);
+					m_GrayscaleInputTexture.Apply();
+					Debug.Log("completed grayscale ?");
 				
-				
-				m_GrayscaleInputTexture.LoadRawTextureData(m_GreyscaleJob.Grayscale);
-				m_GrayscaleInputTexture.Apply();
-				Debug.Log("completed grayscale ?");
-				
-				m_Sobel = new SobelFloatPrototype(m_GrayscaleInputTexture);
-			}
-
-			if (Time.frameCount == 20)
-			{
-				Debug.Log("awake done");
+					m_Sobel = new SobelFloatPrototype(m_GrayscaleInputTexture);
+					break;
+				case 20:
+					Debug.Log("awake done");
+					break;
 			}
 		}
 	}

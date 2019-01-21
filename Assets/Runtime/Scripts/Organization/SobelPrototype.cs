@@ -1,4 +1,5 @@
 using System;
+using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 using VisionUnion.Jobs;
@@ -76,7 +77,11 @@ namespace VisionUnion.Organization
 
 		void SetupTextures(Texture2D input)
 		{
-			GrayscaleInputTexture = SetupTexture(input, out m_GrayscaleInputData);
+			var inputData = new ImageData<float>(input);
+			var paddedInput = Pad.ConvolutionInput(inputData, m_ParallelConvolutions);
+			
+			
+			GrayscaleInputTexture = input;
 			ConvolvedTextureOne = SetupTexture(input, out m_ConvolvedDataOne);
 			ConvolvedTextureTwo = SetupTexture(input, out m_ConvolvedDataTwo);
 			ConvolutionOutputTexture = SetupTexture(input, out m_CombinedConvolutionData);

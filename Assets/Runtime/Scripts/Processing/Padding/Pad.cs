@@ -1,7 +1,7 @@
 ﻿using Unity.Collections;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
+using VisionUnion.Organization;
 
 namespace VisionUnion
 {
@@ -17,6 +17,30 @@ namespace VisionUnion
                 // constant is the only method supported so far
                 case PadMode.Constant:
                     output = Constant(input, padding, constantValue, allocator);
+                    break;
+            }
+
+            return output;
+        }
+        
+        public static ImageData<TImage> ConvolutionInput<TImage, TConvolution>(ImageData<TImage> input, 
+            ParallelConvolutions<TConvolution> convolutions, 
+            ConvolutionPadMode mode = ConvolutionPadMode.Same,
+            TImage constantValue = default(TImage), 
+            Allocator allocator = Allocator.Persistent)
+            where TImage: struct
+            where TConvolution : struct
+        {
+            var output = default(ImageData<TImage>);
+            var firstConvolution = convolutions.Sequences[0].Convolutions[0];
+            switch (mode)
+            {
+                case ConvolutionPadMode.Same:
+                    var padding = GetSamePad(input, firstConvolution);
+                    output = Constant(input, padding, constantValue, allocator);
+                    break;
+                case ConvolutionPadMode.Valid:
+                    output = Constant(input, new Padding(0), constantValue, allocator);
                     break;
             }
 
