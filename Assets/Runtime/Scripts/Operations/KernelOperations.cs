@@ -1,47 +1,9 @@
-using System;
-using Unity.Burst;
 using Unity.Collections;
-using Unity.Mathematics;
-using UnityEngine;
 
 namespace VisionUnion
 {
     public static class KernelOperations
     {
-        public static void Run(NativeArray<byte> pixelBuffer, NativeArray<float> pixelOut,
-            Kernel<short> kernel, int width, int height)
-        {
-            var xPad = (kernel.Width - 1) / 2;
-            var yPad = (kernel.Height - 1) / 2;
-            
-            for (var r = yPad; r < height - yPad; r++)
-            {
-                var rowIndex = r * width;
-                for (var c = xPad; c < width - xPad; c++)
-                {
-                    var centerPixelIndex = rowIndex + c;
-                    var kernelIndex = 0;
-                    var kernelSum = 0f;
-                    for (var kY = -yPad; kY < yPad; kY++)
-                    {
-                        var kRowOffset = kY * width;
-                        var kRowIndex = centerPixelIndex + kRowOffset;
-                        for (var kX = -xPad; kX < xPad; kX++)
-                        {
-                            var pixelIndex = kRowIndex + kX;
-                            var inputPixelValue = pixelBuffer[pixelIndex];
-                            float kernelMultiplier = kernel.Data[kernelIndex];
-                            kernelSum += inputPixelValue * kernelMultiplier;
-                            kernelIndex++;
-                        }
-                    }
-
-                    kernelSum /= 255f;
-                    pixelOut[centerPixelIndex] = kernelSum;
-                }
-            }
-        }
-        
         public static void RunHorizontal1D(NativeArray<byte> pixelBuffer, NativeArray<float> pixelOut,
             Kernel<short> kernel, int width, int height)
         {

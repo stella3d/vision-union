@@ -48,7 +48,7 @@ namespace VisionUnion
             return true;
         }
         
-        // this approach for separating kernels is adapted from this helpful post
+        // this approach for separating kernels is adapted from this very helpful post
         // https://blogs.mathworks.com/steve/2006/11/28/separable-convolution-part-2
         public static bool TrySeparate(this double[,] kernel, out double[][] separated)
         {
