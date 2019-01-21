@@ -63,16 +63,16 @@ namespace VisionUnion
             {
                 public static readonly short[,] X =
                 {
-                    {47, 0, -47},
-                    {162, 0, -162},
-                    {47, 0, -47}
+                    {3, 0, -3},
+                    {10, 0, -10},
+                    {3, 0, -3}
                 };
 
                 public static readonly short[,] Y =
                 {
-                    {47, 162, 47},
+                    {3, 10, 3},
                     {0, 0, 0},
-                    {-47, -162, -47}
+                    {-3, -10, -3}
                 };
             }
 
