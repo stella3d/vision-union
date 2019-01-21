@@ -51,6 +51,8 @@ namespace VisionUnion.Examples
 			SetupTextures();
 			SetupFilter();
 			SetupJobs();
+
+			Debug.Log("awake done");
 		}
 		
 		void SetupFilter()

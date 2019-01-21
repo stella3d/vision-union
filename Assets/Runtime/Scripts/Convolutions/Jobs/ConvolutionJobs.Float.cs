@@ -5,8 +5,9 @@ using VisionUnion.Organization;
 
 namespace VisionUnion.Jobs
 {
+    /*
     [BurstCompile]
-    public struct ByteWithFloatConvolveJob : IConvolutionJob<float>
+    public struct ByteWithFloatConvolveJob : IConvolutionJob<float, byte>
     {
         [ReadOnly] public Convolution<float> Convolution;
         [ReadOnly] public ImageData<byte> Input;
@@ -25,6 +26,13 @@ namespace VisionUnion.Jobs
             Convolution = convolution;
         }
 
+        public void SetData(Convolution<float> convolution, ImageData<byte> input, ImageData<float> output)
+        {
+            Convolution = convolution;
+            Input = input;
+            Output = output;
+        }
+
         public void Execute()
         {
             Convolution.Convolve(Input, Output);
@@ -32,7 +40,7 @@ namespace VisionUnion.Jobs
     }
     
     [BurstCompile]
-    public struct ShortWithFloatConvolveJob : IConvolutionJob<float>
+    public struct ShortWithFloatConvolveJob : IConvolutionJob<float, short>
     {
         [ReadOnly] public Convolution<float> Convolution;
         [ReadOnly] public ImageData<short> Input;
@@ -51,11 +59,20 @@ namespace VisionUnion.Jobs
             Convolution = convolution;
         }
 
+        public void SetData(Convolution<float> convolution, ImageData<short> input, ImageData<float> output)
+        {
+            Convolution = convolution;
+            Input = input;
+            Output = output;
+        }
+
         public void Execute()
         {
             Convolution.Convolve(Input, Output);
         }
     }
+    
+    */
     
     [BurstCompile]
     public struct FloatWithFloatConvolveJob : IConvolutionJob<float>
@@ -66,6 +83,13 @@ namespace VisionUnion.Jobs
 
         public FloatWithFloatConvolveJob(Convolution<float> convolution, 
             ImageData<float> input, ImageData<float> output)
+        {
+            Convolution = convolution;
+            Input = input;
+            Output = output;
+        }
+        
+        public void SetData(Convolution<float> convolution, ImageData<float> input, ImageData<float> output)
         {
             Convolution = convolution;
             Input = input;
