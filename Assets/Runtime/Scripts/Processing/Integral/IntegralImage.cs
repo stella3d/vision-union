@@ -4,7 +4,7 @@ using Unity.Jobs;
 
 namespace VisionUnion
 {
-    [BurstCompile]
+    //[BurstCompile]
     public struct IntegralImageFromGrayscaleJob : IJob
     {
         [ReadOnly] 
@@ -64,7 +64,7 @@ namespace VisionUnion
         }
     }
 
-    [BurstCompile]
+    //[BurstCompile]
     public struct IntegralImageFromGrayscaleByteJob : IJob
     {
         [ReadOnly] 

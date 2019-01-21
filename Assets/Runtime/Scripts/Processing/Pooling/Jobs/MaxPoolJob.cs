@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace VisionUnion.Jobs
 {
-    [BurstCompile]
+    //[BurstCompile]
     public struct MaxPoolByteJob : IJob
     {
         public Vector2Int Size;

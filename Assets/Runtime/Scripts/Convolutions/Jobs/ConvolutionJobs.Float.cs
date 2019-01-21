@@ -71,11 +71,10 @@ namespace VisionUnion.Jobs
             Convolution.Convolve(Input, Output);
         }
     }
-    
     */
     
     [BurstCompile]
-    public struct FloatWithFloatConvolveJob : IConvolutionJob<float>
+    public struct FloatWithFloatConvolveJob : IJob
     {
         [ReadOnly] public Convolution<float> Convolution;
         [ReadOnly] public ImageData<float> Input;
@@ -89,18 +88,6 @@ namespace VisionUnion.Jobs
             Output = output;
         }
         
-        public void SetData(Convolution<float> convolution, ImageData<float> input, ImageData<float> output)
-        {
-            Convolution = convolution;
-            Input = input;
-            Output = output;
-        }
-        
-        public void SetConvolution(Convolution<float> convolution)
-        {
-            Convolution = convolution;
-        }
-
         public void Execute()
         {
             Convolution.Convolve(Input, Output);

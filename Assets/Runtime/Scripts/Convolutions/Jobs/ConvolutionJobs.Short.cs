@@ -4,7 +4,7 @@ using Unity.Jobs;
 
 namespace VisionUnion.Jobs
 {
-    [BurstCompile]
+    //[BurstCompile]
     public struct ByteWithShortConvolveJob : IJob
     {
         [ReadOnly] public Convolution<short> Convolution;
@@ -25,7 +25,7 @@ namespace VisionUnion.Jobs
         }
     }
     
-    [BurstCompile]
+    //[BurstCompile]
     public struct ShortWithShortConvolveJob : IJob
     {
         [ReadOnly] public Convolution<short> Convolution;
@@ -46,7 +46,7 @@ namespace VisionUnion.Jobs
         }
     }
     
-    [BurstCompile]
+    //[BurstCompile]
     public struct FloatWithShortConvolveJob : IJob
     {
         [ReadOnly] public Convolution<short> Convolution;

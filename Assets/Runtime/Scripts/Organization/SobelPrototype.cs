@@ -75,12 +75,12 @@ namespace VisionUnion.Organization
 			
 			m_ParallelJobSequences[1] = jobsTwo;
 
-			//m_CombineJob = new SquareCombineJob(m_ConvolvedDataOne, m_ConvolvedDataTwo, m_CombinedConvolutionData);
 			m_CombineJob = new SquareCombineJob()
 			{
 				A = jobs[0].Output,
 				B = jobsTwo[0].Output,
-				Output = m_CombinedConvolutionData
+				Output = m_CombinedConvolutionData,
+				OutputScale = 0.5f
 			};
 		}
 

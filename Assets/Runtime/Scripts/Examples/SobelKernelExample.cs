@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Unity.Jobs;
+﻿using Unity.Jobs;
 using UnityEngine;
 using VisionUnion.Jobs;
 using VisionUnion.Organization;
@@ -27,9 +26,6 @@ namespace VisionUnion.Examples
 		float m_Threshold = 0.69f;
 
 		Texture2D m_GrayscaleInputTexture;
-		Texture2D m_ConvolvedTextureOne;
-		Texture2D m_ConvolvedTextureTwo;
-		Texture2D m_ConvolutionOutputTexture;
 
 		ImageData<float> m_GrayscaleInputData;
 		ImageData<float> m_ConvolvedDataOne;
@@ -46,26 +42,19 @@ namespace VisionUnion.Examples
 
 		SobelFloatPrototype m_Sobel;
 
-		FloatWithFloatConvolveJob[][] m_ParallelJobSequences = new FloatWithFloatConvolveJob[2][];
-
 		GreyscaleByLuminanceFloatJob24 m_GreyscaleJob;
 	
 		void Awake()
 		{
 			SetupTextures();
-
+			
+			m_Sobel = new SobelFloatPrototype(m_GrayscaleInputTexture);
 		}
 
 		void SetupTextures()
 		{
 			m_GrayscaleInputTexture = SetupTexture(m_InputTexture, m_GrayscaleRenderer, 
 				out m_GrayscaleInputData);
-			m_ConvolvedTextureOne = SetupTexture(m_GrayscaleInputTexture, m_KernelOneRenderer, 
-				out m_ConvolvedDataOne);
-			m_ConvolvedTextureTwo = SetupTexture(m_GrayscaleInputTexture, m_KernelTwoRenderer, 
-				out m_ConvolvedDataTwo);
-			m_ConvolutionOutputTexture = SetupTexture(m_InputTexture, m_ConvolutionOutputRenderer, 
-				out m_CombinedConvolutionData);
 		}
 
 		Texture2D SetupTexture<T>(Texture2D input, Renderer r, out ImageData<T> data)
@@ -90,28 +79,37 @@ namespace VisionUnion.Examples
 			switch (Time.frameCount)
 			{
 				case 3:
+					m_Sobel.Dispose();
 					m_GreyscaleJob = new GreyscaleByLuminanceFloatJob24(m_InputTexture.GetRawTextureData<Color24>(),
 						m_GrayscaleInputData.Buffer, LuminanceWeights.FloatNormalized);
 			
 					m_GrayScaleJobHandle = m_GreyscaleJob.Schedule(m_GrayscaleInputData.Buffer.Length, 1024);
-					Debug.Log("scheduled grayscale ?");
 					break;
-				case 5:
+				case 8:
 					m_GrayScaleJobHandle.Complete();
 					m_GrayscaleInputTexture.LoadRawTextureData(m_GreyscaleJob.Grayscale);
 					m_GrayscaleInputTexture.Apply();
-					Debug.Log("completed grayscale ?");
 				
 					m_Sobel = new SobelFloatPrototype(m_GrayscaleInputTexture);
 					break;
-				case 6:
+				case 9:
 					m_JobHandle = m_Sobel.Schedule(m_GrayScaleJobHandle);
 					break;
-				case 8:
+				case 13:
+					m_JobHandle.Complete();
+					m_Sobel.OnJobsComplete();
+					m_KernelOneRenderer.material.mainTexture = m_Sobel.ConvolvedTextureOne;
+					m_KernelTwoRenderer.material.mainTexture = m_Sobel.ConvolvedTextureTwo;
+					m_ConvolutionOutputRenderer.material.mainTexture = m_Sobel.ConvolutionOutputTexture;
+					break;
+				case 14:
+					m_JobHandle = m_Sobel.Schedule(m_GrayScaleJobHandle);
+					break;
+				case 18:
 					m_JobHandle.Complete();
 					m_Sobel.OnJobsComplete();
 					break;
-				case 9:
+				case 19:
 					m_KernelOneRenderer.material.mainTexture = m_Sobel.ConvolvedTextureOne;
 					m_KernelTwoRenderer.material.mainTexture = m_Sobel.ConvolvedTextureTwo;
 					m_ConvolutionOutputRenderer.material.mainTexture = m_Sobel.ConvolutionOutputTexture;

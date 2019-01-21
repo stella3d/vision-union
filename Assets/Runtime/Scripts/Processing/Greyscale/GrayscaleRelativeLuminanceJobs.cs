@@ -36,7 +36,7 @@ namespace VisionUnion.Jobs
         }
     }
     
-    [BurstCompile]
+    //[BurstCompile]
     public struct GreyscaleByLuminanceFloatJob : IJobParallelFor
     {
         public Color48 Weights;
@@ -96,7 +96,7 @@ namespace VisionUnion.Jobs
         }
     }
 
-    [BurstCompile]
+    //[BurstCompile]
     public struct GreyscaleLuminanceByteJob : IJobParallelFor
     {
         public Color24 Weights;
