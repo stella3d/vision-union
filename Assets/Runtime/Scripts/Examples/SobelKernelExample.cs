@@ -15,6 +15,8 @@ namespace VisionUnion.Examples
 		[SerializeField]
 		MeshRenderer m_GrayscaleRenderer;
 		[SerializeField]
+		MeshRenderer m_GaussRenderer;
+		[SerializeField]
 		MeshRenderer m_KernelOneRenderer;
 		[SerializeField]
 		MeshRenderer m_KernelTwoRenderer;
@@ -26,8 +28,11 @@ namespace VisionUnion.Examples
 		float m_Threshold = 0.69f;
 
 		Texture2D m_GrayscaleInputTexture;
+		Texture2D m_GaussTexture;
 
 		ImageData<float> m_GrayscaleInputData;
+		ImageData<float> m_GaussInputData;
+		
 		ImageData<float> m_ConvolvedDataOne;
 		ImageData<float> m_ConvolvedDataTwo;
 		ImageData<float> m_CombinedConvolutionData;
@@ -37,6 +42,8 @@ namespace VisionUnion.Examples
 
 		Kernel<float> m_KernelOne;
 		Kernel<float> m_KernelTwo;
+
+		Convolution<float> m_GaussianBlur3x3;
 		
 		ParallelConvolutionSequences<float> m_ParallelConvolutionSequences;
 
@@ -46,6 +53,8 @@ namespace VisionUnion.Examples
 	
 		void Awake()
 		{
+			m_GaussianBlur3x3 = new Convolution<float>(Kernels.Float.GaussianBlurApproximate3x3);
+			
 			SetupTextures();
 			
 			m_Sobel = new SobelFloatPrototype(m_GrayscaleInputTexture);
@@ -55,6 +64,8 @@ namespace VisionUnion.Examples
 		{
 			m_GrayscaleInputTexture = SetupTexture(m_InputTexture, m_GrayscaleRenderer, 
 				out m_GrayscaleInputData);
+
+			m_GaussTexture = SetupTexture(m_InputTexture, m_GaussRenderer, out m_GaussInputData);
 		}
 
 		Texture2D SetupTexture<T>(Texture2D input, Renderer r, out ImageData<T> data)
@@ -75,6 +86,8 @@ namespace VisionUnion.Examples
 			m_Sobel.Dispose();
 		}
 
+		FloatWithFloatConvolveJob m_GaussJob;
+
 		void Update ()
 		{
 			switch (Time.frameCount)
@@ -85,13 +98,26 @@ namespace VisionUnion.Examples
 						m_GrayscaleInputData.Buffer, LuminanceWeights.FloatNormalized);
 			
 					m_GrayScaleJobHandle = m_GreyscaleJob.Schedule(m_GrayscaleInputData.Buffer.Length, 1024);
+
+					var width = m_InputTexture.width;
+					var height = m_InputTexture.width;
+					m_GaussJob = new FloatWithFloatConvolveJob()
+					{
+						Convolution = m_GaussianBlur3x3,
+						Input = new ImageData<float>(m_GreyscaleJob.Grayscale, width, height),
+						Output = m_GaussInputData
+					};
+
+					m_GrayScaleJobHandle = m_GaussJob.Schedule(m_GrayScaleJobHandle);
 					break;
 				case 8:
 					m_GrayScaleJobHandle.Complete();
 					m_GrayscaleInputTexture.LoadRawTextureData(m_GreyscaleJob.Grayscale);
 					m_GrayscaleInputTexture.Apply();
+					
+					m_GaussTexture.LoadImageData(m_GaussJob.Output);
 				
-					m_Sobel = new SobelFloatPrototype(m_GrayscaleInputTexture);
+					m_Sobel = new SobelFloatPrototype(m_GaussTexture);
 					break;
 				case 9:
 					m_JobHandle = m_Sobel.Schedule(m_GrayScaleJobHandle);
