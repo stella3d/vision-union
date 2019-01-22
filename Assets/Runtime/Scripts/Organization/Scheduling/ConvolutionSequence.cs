@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Unity.Jobs;
 
 namespace VisionUnion.Organization
 {
@@ -11,11 +10,10 @@ namespace VisionUnion.Organization
     public class ConvolutionSequence<T> : IDisposable, IEnumerable
         where T: struct
     {
-        // TODO - create JobSequence parallel to this
         public Convolution<T>[] Convolutions;
-
-        public JobHandle Handle { get; private set; }
         
+        public int Length => Convolutions.Length;
+
         public ConvolutionSequence(Convolution<T> convolution)
         {
             Convolutions  = new Convolution<T>[1];

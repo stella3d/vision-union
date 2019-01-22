@@ -28,6 +28,22 @@ namespace VisionUnion.Organization
         }
     }
     
+    public class ParallelJobSequences<T> 
+        where T: struct, IJob
+    {
+        public readonly JobSequence<T>[] Sequences;
+        
+        public ParallelJobSequences(JobSequence<T> sequence)
+        {
+            Sequences = new [] { sequence };
+        }
+        
+        public ParallelJobSequences(JobSequence<T>[] sequences)
+        {
+            Sequences = sequences;
+        }
+    }
+    
     public class ParallelConvolutionJobs<T> : IDisposable
         where T: struct, IJob
     {
