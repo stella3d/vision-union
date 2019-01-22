@@ -8,7 +8,7 @@ namespace VisionUnion.Organization
     /// A set of convolutions that runs serially, each operating on the output of the previous
     /// </summary>
     /// <typeparam name="T">The kernel type of the convolution</typeparam>
-    public class ConvolutionSequence<T> : IDisposable, IEnumerable<ConvolutionSequence<T>> 
+    public class ConvolutionSequence<T> : IDisposable, IEnumerable<Convolution<T>> 
         where T: struct
     {
         public Convolution<T>[] Convolutions;
@@ -44,9 +44,9 @@ namespace VisionUnion.Organization
             Convolutions.Dispose();
         }
 
-        IEnumerator<ConvolutionSequence<T>> IEnumerable<ConvolutionSequence<T>>.GetEnumerator()
+        IEnumerator<Convolution<T>> IEnumerable<Convolution<T>>.GetEnumerator()
         {
-            return (IEnumerator<ConvolutionSequence<T>>) Convolutions.GetEnumerator();
+            return (IEnumerator<Convolution<T>>) Convolutions.GetEnumerator();
         }
 
         public IEnumerator GetEnumerator()

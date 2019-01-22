@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using Unity.Jobs;
 
 namespace VisionUnion.Organization
@@ -7,7 +8,7 @@ namespace VisionUnion.Organization
     /// A set of jobs that run serially
     /// </summary>
     /// <typeparam name="T">The kernel type of the convolution</typeparam>
-    public class JobSequence<T> : IEnumerable
+    public class JobSequence<T> : IEnumerable<T>
         where T: struct, IJob
     {
         public T[] Jobs;
@@ -35,6 +36,11 @@ namespace VisionUnion.Organization
         {
             get { return Jobs[index]; }
             set { Jobs[index] = value;}
+        }
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            return (IEnumerator<T>)Jobs.GetEnumerator();
         }
 
         public IEnumerator GetEnumerator()

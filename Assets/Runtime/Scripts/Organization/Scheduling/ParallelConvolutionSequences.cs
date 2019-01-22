@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace VisionUnion.Organization
 {
-    public class ParallelConvolutionSequences<T> : IDisposable, IEnumerable
+    public class ParallelConvolutionSequences<T> : IDisposable, IEnumerable<ConvolutionSequence<T>>
         where T: struct
     {
         public readonly ConvolutionSequence<T>[] Sequences;
@@ -36,6 +37,11 @@ namespace VisionUnion.Organization
         public void Dispose()
         {
             Sequences.Dispose();
+        }
+
+        IEnumerator<ConvolutionSequence<T>> IEnumerable<ConvolutionSequence<T>>.GetEnumerator()
+        {
+            return (IEnumerator<ConvolutionSequence<T>>)Sequences.GetEnumerator();
         }
 
         public IEnumerator GetEnumerator()

@@ -4,7 +4,7 @@ using Unity.Jobs;
 
 namespace VisionUnion.Organization
 {
-    public class ParallelJobSequences<T> : IEnumerable<T> 
+    public class ParallelJobSequences<T> : IEnumerable<JobSequence<T>> 
         where T: struct, IJob
     {
         public readonly JobSequence<T>[] Sequences;
@@ -51,9 +51,9 @@ namespace VisionUnion.Organization
             set { Sequences[sequence][sequenceIndex] = value; }
         }
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        IEnumerator<JobSequence<T>> IEnumerable<JobSequence<T>>.GetEnumerator()
         {
-            return (IEnumerator<T>)Sequences.GetEnumerator();
+            return (IEnumerator<JobSequence<T>>)Sequences.GetEnumerator();
         }
 
         public IEnumerator GetEnumerator()
