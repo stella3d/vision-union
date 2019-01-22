@@ -21,7 +21,7 @@ namespace VisionUnion.Organization
 		JobHandle m_GrayScaleJobHandle;
 		JobHandle m_JobHandle;
 		
-		ParallelConvolutionSequences<float> _mParallelConvolutionSequences;
+		ParallelConvolutionSequences<float> m_ParallelConvolutionSequences;
 
 		FloatWithFloatConvolveJob[][] m_ParallelJobSequences = new FloatWithFloatConvolveJob[2][];
 
@@ -47,14 +47,14 @@ namespace VisionUnion.Organization
 			var convolutionOne = new ConvolutionSequence<float>(new Convolution<float>(kernelOne));
 			var convolutionTwo = new ConvolutionSequence<float>(new Convolution<float>(kernelTwo));
 			
-			_mParallelConvolutionSequences = new ParallelConvolutionSequences<float>(new [] 
+			m_ParallelConvolutionSequences = new ParallelConvolutionSequences<float>(new [] 
 				{ convolutionOne, convolutionTwo });
 		}
 		
 		void SetupJobs()
 		{
 			// TODO - figure out if we can make this generic
-			var sequenceOne = _mParallelConvolutionSequences.Sequences[0];
+			var sequenceOne = m_ParallelConvolutionSequences.Sequences[0];
 			var jobs = new FloatWithFloatConvolveJob[1];
 
 			m_PadJob = new ImagePadJob<float>(m_InputData, m_PaddedGrayscaleInputData, m_Pad);
@@ -65,7 +65,7 @@ namespace VisionUnion.Organization
 					m_PadJob.Output, m_ConvolvedDataOne);
 			}
 			
-			var sequenceTwo = _mParallelConvolutionSequences.Sequences[1];
+			var sequenceTwo = m_ParallelConvolutionSequences.Sequences[1];
 			var jobsTwo = new FloatWithFloatConvolveJob[1];
 			for (var j = 0; j < jobs.Length; j++)
 			{
@@ -82,29 +82,15 @@ namespace VisionUnion.Organization
 				B = jobsTwo[0].Output,
 				Output = m_CombinedConvolutionData,
 			};
-			
-			m_MinMaxJob = new FindMinMaxJob(m_CombineJob.Output.Buffer);
-			m_NormalizeJob = new ImageNormalize01Job(m_MinMaxJob.Data, m_MinMaxJob.MinMaxOutput);
 		}
-
-		FindMinMaxJob m_MinMaxJob;
-		ImageNormalize01Job m_NormalizeJob;
 		
 		public JobHandle Schedule(JobHandle dependency)
 		{
 			var handle = m_PadJob.Schedule(dependency);
 			handle =  m_ParallelJobSequences.ScheduleParallel(handle);
 			handle = m_CombineJob.Schedule(m_ConvolvedDataOne.Buffer.Length, 2048, handle);
-			handle = m_MinMaxJob.Schedule(handle);
 			m_JobHandle = handle;
 			return handle;
-		}
-		
-		public JobHandle ScheduleNormalize(JobHandle dependency)
-		{
-			m_NormalizeJob = new ImageNormalize01Job(m_MinMaxJob.Data, m_MinMaxJob.MinMaxOutput);
-			m_JobHandle = m_NormalizeJob.Schedule(m_NormalizeJob.Data.Length, 2048, dependency);
-			return m_JobHandle;
 		}
 		
 		public void Complete()
@@ -114,15 +100,12 @@ namespace VisionUnion.Organization
 
 		public void OnJobsComplete()
 		{
-			m_NormalizeJob = new ImageNormalize01Job(m_MinMaxJob.Data, m_MinMaxJob.MinMaxOutput);
-			
 			// TODO - extension method for texture that loads an ImageData
 			ConvolvedTextureOne.LoadRawTextureData(m_ParallelJobSequences[0][0].Output.Buffer);
 			ConvolvedTextureOne.Apply();
 			ConvolvedTextureTwo.LoadRawTextureData(m_ParallelJobSequences[1][0].Output.Buffer);
 			ConvolvedTextureTwo.Apply();
-			var combined = m_NormalizeJob.Data;
-			ConvolutionOutputTexture.LoadRawTextureData(combined);
+			ConvolutionOutputTexture.LoadRawTextureData(m_CombineJob.Output.Buffer);
 			ConvolutionOutputTexture.Apply();
 		}
 
@@ -130,7 +113,7 @@ namespace VisionUnion.Organization
 		{
 			m_InputData = new ImageData<float>(input);
 
-			m_Pad = Pad.GetSamePad(m_InputData, _mParallelConvolutionSequences.Sequences[0].Convolutions[0]);
+			m_Pad = Pad.GetSamePad(m_InputData, m_ParallelConvolutionSequences.Sequences[0].Convolutions[0]);
 			var newSize = Pad.GetNewSize(m_InputData.Width, m_InputData.Height, m_Pad);
 			m_PaddedGrayscaleInputData = new ImageData<float>(newSize.x, newSize.y, Allocator.TempJob);
 
@@ -149,7 +132,7 @@ namespace VisionUnion.Organization
 
 		public void Dispose()
 		{
-			_mParallelConvolutionSequences.Dispose();
+			m_ParallelConvolutionSequences.Dispose();
 		}
 	}
 }

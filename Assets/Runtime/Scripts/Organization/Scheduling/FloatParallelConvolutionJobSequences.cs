@@ -7,35 +7,30 @@ namespace VisionUnion.Organization
         ParallelConvolutionJobSequence<float, FloatWithFloatConvolveJob>
         where TData: struct
     {
-        protected FloatParallelConvolutionJobSequence(int width, int height,
+        protected FloatParallelConvolutionJobSequence(ImageData<float> input,
             ParallelConvolutionSequences<float> convolutions, 
             ParallelJobSequences<FloatWithFloatConvolveJob> jobs) 
             : 
-                base(width, height, convolutions, jobs)
+                base(input, convolutions, jobs)
         {
         }
-
-        public void SetupJobs()
+        
+        public void InitializeJobs()
         {
-            
-        }
-
-        public JobHandle Schedule(JobHandle dependency)
-        {
-            /*
             // TODO - figure out if we can make this generic
-            var sequenceOne = ConvolutionSequences.Sequences[0];
-            var jobs = new FloatWithFloatConvolveJob[1];
-
-			var padded = new ImageData<float>();
-            for (var j = 0; j < jobs.Length; j++)
+            for (var i = 0; i < Images.Length; i++)
             {
-                jobs[j] = new FloatWithFloatConvolveJob(sequenceOne.Convolutions[0],
-                    padded, m_ConvolvedDataOne);
+                var image = Images[i];
+                var sequenceJobs = Jobs[i];
+                
+                var previous = InputImage;
+                for (var j = 0; j < sequenceJobs.Length; j++)
+                {
+                    var newJob = new FloatWithFloatConvolveJob(Convolutions[i, j], previous, image);
+                    sequenceJobs[j] = newJob;
+                    previous = newJob.Output;
+                }
             }
-
-			*/
-            return new JobHandle();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace VisionUnion.Organization
             return handle;
         }
         
-        static readonly NativeList<JobHandle> k_ParallelHandles = new NativeList<JobHandle>(16, Allocator.Persistent);
+        public static readonly NativeList<JobHandle> k_ParallelHandles = new NativeList<JobHandle>(16, Allocator.Persistent);
         
         public static JobHandle ScheduleParallel<T>(this T[][] jobStructMatrix, JobHandle dependency)
             where T: struct, IJob

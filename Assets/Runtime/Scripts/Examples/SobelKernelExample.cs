@@ -105,10 +105,6 @@ namespace VisionUnion.Examples
 				case 15:
 					m_JobHandle = m_Sobel.Schedule(m_GrayScaleJobHandle);
 					break;
-				case 18:
-					m_JobHandle.Complete();
-					m_Sobel.ScheduleNormalize(m_JobHandle);
-					break;
 				case 22:
 					m_JobHandle.Complete();
 					m_Sobel.Complete();

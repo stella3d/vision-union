@@ -34,5 +34,16 @@ namespace VisionUnion.Organization
         {
             return Jobs.GetEnumerator();
         }
+        
+        public JobHandle Schedule(JobHandle dependency)
+        {
+            var handle = dependency;
+            foreach (var job in Jobs)
+            {
+                handle = job.Schedule(handle);
+            }
+
+            return handle;
+        }
     }
 }

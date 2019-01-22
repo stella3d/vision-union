@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
@@ -13,8 +14,13 @@ namespace VisionUnion.Organization
         public readonly ParallelJobSequences<TJob> Jobs;
 
         public readonly ImageData<TData>[] Images;
+
+        public ImageData<TData> InputImage;
         
-        protected ParallelConvolutionJobSequence(int width, int height,
+        static readonly NativeList<JobHandle> k_ParallelHandles = 
+            new NativeList<JobHandle>(16, Allocator.Persistent);
+        
+        protected ParallelConvolutionJobSequence(ImageData<TData> input,
             ParallelConvolutionSequences<TData> convolutions, 
             ParallelJobSequences<TJob> jobs)
         {
@@ -28,7 +34,7 @@ namespace VisionUnion.Organization
             }
 
             Images = new ImageData<TData>[jobs.Width];
-            InitializeImageData(width, height);
+            InitializeImageData(input.Width, input.Height);
         }
 
         public void InitializeImageData(int width, int height)
@@ -37,6 +43,19 @@ namespace VisionUnion.Organization
             {
                 Images[i] = new ImageData<TData>(width, height);
             }
+        }
+        
+        public JobHandle Schedule(JobHandle dependency)
+        {
+            k_ParallelHandles.Clear();
+            var handle = dependency;
+            foreach (JobSequence<TJob> jobSequence in Jobs)
+            {
+                k_ParallelHandles.Add(jobSequence.Schedule(handle));
+            }
+
+            handle = JobHandle.CombineDependencies(k_ParallelHandles);
+            return handle;
         }
 
         public void Dispose()
