@@ -65,8 +65,8 @@ namespace VisionUnion.Organization
 			
 			m_CombineJob = new SquareCombineJob()
 			{
-				A = m_NewSequence.Jobs[0].Last.Output,
-				B = m_NewSequence.Jobs[1].Last.Output,
+				A = m_NewSequence.Images[0],
+				B = m_NewSequence.Images[1],
 				Output = m_CombinedConvolutionData,
 			};
 		}
