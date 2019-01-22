@@ -37,19 +37,16 @@ namespace VisionUnion.Organization
 			SetupFilter();
 			SetupTextures(input);
 			SetupJobs();
-
-			Debug.Log("sobel constructor done");
 		}
+		
 		void SetupFilter()
 		{
 			// TODO - keep this example and make a separated one to compare
-			var kernelOne = new Kernel<float>(Kernels.Short.Sobel.X.ToFloat());
-			var kernelTwo = new Kernel<float>(Kernels.Short.Sobel.Y.ToFloat());
-			var convolutionOne = new ConvolutionSequence<float>(new Convolution<float>(kernelOne));
-			var convolutionTwo = new ConvolutionSequence<float>(new Convolution<float>(kernelTwo));
-			
-			m_ParallelConvolutionSequences = new ParallelConvolutionSequences<float>(new [] 
-				{ convolutionOne, convolutionTwo });
+			m_ParallelConvolutionSequences = new ParallelConvolutionSequences<float>(new []
+			{
+				new ConvolutionSequence<float>(Kernels.Short.Sobel.X.ToFloat()), 
+				new ConvolutionSequence<float>(Kernels.Short.Sobel.Y.ToFloat())
+			});
 		}
 		
 		void SetupJobs()

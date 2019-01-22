@@ -27,6 +27,13 @@ namespace VisionUnion
             Stride = stride;
             Padding = padding;
         }
+        
+        public Convolution(T[,] kernel, int stride = 1, int pad = 1)
+        {
+            Kernel = new Kernel<T>(kernel);
+            Stride = new Vector2Int(stride, stride);
+            Padding = new Vector2Int(pad, pad);
+        }
 
         public void Dispose()
         {

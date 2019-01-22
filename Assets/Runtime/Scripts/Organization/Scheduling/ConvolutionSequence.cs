@@ -28,6 +28,11 @@ namespace VisionUnion.Organization
             Convolutions = convolutions;
         }
         
+        public ConvolutionSequence(T[,] kernel, int stride = 1, int pad = 1)
+        {
+            Convolutions = new [] { new Convolution<T>(kernel, stride, pad) };
+        }
+        
         public Convolution<T> this[int index]
         {
             get { return Convolutions[index]; }
