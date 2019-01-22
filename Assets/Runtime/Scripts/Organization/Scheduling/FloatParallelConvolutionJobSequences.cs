@@ -7,9 +7,11 @@ namespace VisionUnion.Organization
         ParallelConvolutionJobSequence<float, FloatWithFloatConvolveJob>
         where TData: struct
     {
-        protected FloatParallelConvolutionJobSequence(ParallelConvolutionSequences<float> convolutionSequences, 
+        protected FloatParallelConvolutionJobSequence(int width, int height,
+            ParallelConvolutionSequences<float> convolutionSequences, 
             ParallelJobSequences<FloatWithFloatConvolveJob> jobSequences) 
-            : base(convolutionSequences, jobSequences)
+            : 
+                base(width, height, convolutionSequences, jobSequences)
         {
         }
 

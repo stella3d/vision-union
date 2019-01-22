@@ -14,8 +14,6 @@ namespace VisionUnion.Organization
         
         public int Length => Jobs.Length;
 
-        public JobHandle Handle { get; private set; }
-        
         public JobSequence(T job)
         {
             Jobs = new[] { job };

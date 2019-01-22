@@ -27,10 +27,7 @@ namespace VisionUnion.Organization
 
         public void Dispose()
         {
-            foreach (var convolution in Convolutions)
-            {
-                convolution.Dispose();
-            }
+            Convolutions.Dispose();
         }
 
         public IEnumerator GetEnumerator()

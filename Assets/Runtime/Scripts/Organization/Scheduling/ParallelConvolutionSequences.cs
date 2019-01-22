@@ -21,12 +21,15 @@ namespace VisionUnion.Organization
             Sequences = sequences;
         }
         
+        public Convolution<T> this[int sequence, int sequenceIndex]
+        {
+            get { return Sequences[sequence].Convolutions[sequenceIndex]; }
+            set { Sequences[sequence].Convolutions[sequenceIndex] = value;}
+        }
+        
         public void Dispose()
         {
-            foreach (var convolution in Sequences)
-            {
-                convolution.Dispose();
-            }
+            Sequences.Dispose();
         }
 
         public IEnumerator GetEnumerator()

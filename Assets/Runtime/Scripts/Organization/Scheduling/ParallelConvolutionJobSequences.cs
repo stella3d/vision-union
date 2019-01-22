@@ -42,10 +42,7 @@ namespace VisionUnion.Organization
         public void Dispose()
         {
             ConvolutionSequences.Dispose();
-            foreach (var image in Images)
-            {
-                image.Dispose();
-            }
+            Images.Dispose();
         }
     }
 }
