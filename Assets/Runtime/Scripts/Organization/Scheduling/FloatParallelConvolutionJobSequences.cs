@@ -1,33 +1,8 @@
-﻿using System;
-using Unity.Jobs;
+﻿using Unity.Jobs;
 using VisionUnion.Jobs;
 
 namespace VisionUnion.Organization
 {
-    public abstract class ParallelConvolutionJobSequence<TData, TJob> : IDisposable
-        where TData: struct
-        where TJob: struct, IJob
-    {
-        public readonly ParallelConvolutionSequences<TData> ConvolutionSequences;
-
-        public readonly ParallelJobSequences<TJob> JobSequences;
-
-        public readonly ImageData<float>[] Images;
-        
-        protected ParallelConvolutionJobSequence(ParallelConvolutionSequences<TData> convolutionSequences, 
-            ParallelJobSequences<TJob> jobSequences)
-        {
-            ConvolutionSequences = convolutionSequences;
-            JobSequences = jobSequences;
-            Images = new ImageData<float>[jobSequences.Width];
-        }
-
-        public void Dispose()
-        {
-            ConvolutionSequences.Dispose();
-        }
-    }
-    
     public abstract class FloatParallelConvolutionJobSequence<TData> : 
         ParallelConvolutionJobSequence<float, FloatWithFloatConvolveJob>
         where TData: struct

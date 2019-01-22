@@ -5,7 +5,7 @@ using Unity.Mathematics;
 
 namespace VisionUnion
 {
-    //[BurstCompile]
+    [BurstCompile]
     public struct ImageNormalize01Job : IJobParallelFor
     {
         public NativeArray<float> Data;

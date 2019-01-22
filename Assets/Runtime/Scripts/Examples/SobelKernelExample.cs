@@ -38,7 +38,7 @@ namespace VisionUnion.Examples
 		Kernel<float> m_KernelOne;
 		Kernel<float> m_KernelTwo;
 		
-		ParallelConvolutions<float> m_ParallelConvolutions;
+		ParallelConvolutionSequences<float> _mParallelConvolutionSequences;
 
 		SobelFloatPrototype m_Sobel;
 

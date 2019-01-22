@@ -24,7 +24,7 @@ namespace VisionUnion
         }
         
         public static ImageData<TImage> ConvolutionInput<TImage, TConvolution>(ImageData<TImage> input, 
-            ParallelConvolutions<TConvolution> convolutions, 
+            ParallelConvolutionSequences<TConvolution> convolutionSequences, 
             ConvolutionPadMode mode = ConvolutionPadMode.Same,
             TImage constantValue = default(TImage), 
             Allocator allocator = Allocator.Persistent)
@@ -32,7 +32,7 @@ namespace VisionUnion
             where TConvolution : struct
         {
             var output = default(ImageData<TImage>);
-            var firstConvolution = convolutions.Sequences[0].Convolutions[0];
+            var firstConvolution = convolutionSequences.Sequences[0].Convolutions[0];
             switch (mode)
             {
                 case ConvolutionPadMode.Same:

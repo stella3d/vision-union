@@ -21,7 +21,7 @@ namespace VisionUnion.Organization
 		JobHandle m_GrayScaleJobHandle;
 		JobHandle m_JobHandle;
 		
-		ParallelConvolutions<float> m_ParallelConvolutions;
+		ParallelConvolutionSequences<float> _mParallelConvolutionSequences;
 
 		FloatWithFloatConvolveJob[][] m_ParallelJobSequences = new FloatWithFloatConvolveJob[2][];
 
@@ -47,14 +47,14 @@ namespace VisionUnion.Organization
 			var convolutionOne = new ConvolutionSequence<float>(new Convolution<float>(kernelOne));
 			var convolutionTwo = new ConvolutionSequence<float>(new Convolution<float>(kernelTwo));
 			
-			m_ParallelConvolutions = new ParallelConvolutions<float>(new [] 
+			_mParallelConvolutionSequences = new ParallelConvolutionSequences<float>(new [] 
 				{ convolutionOne, convolutionTwo });
 		}
 		
 		void SetupJobs()
 		{
 			// TODO - figure out if we can make this generic
-			var sequenceOne = m_ParallelConvolutions.Sequences[0];
+			var sequenceOne = _mParallelConvolutionSequences.Sequences[0];
 			var jobs = new FloatWithFloatConvolveJob[1];
 
 			m_PadJob = new ImagePadJob<float>(m_InputData, m_PaddedGrayscaleInputData, m_Pad);
@@ -65,7 +65,7 @@ namespace VisionUnion.Organization
 					m_PadJob.Output, m_ConvolvedDataOne);
 			}
 			
-			var sequenceTwo = m_ParallelConvolutions.Sequences[1];
+			var sequenceTwo = _mParallelConvolutionSequences.Sequences[1];
 			var jobsTwo = new FloatWithFloatConvolveJob[1];
 			for (var j = 0; j < jobs.Length; j++)
 			{
@@ -130,7 +130,7 @@ namespace VisionUnion.Organization
 		{
 			m_InputData = new ImageData<float>(input);
 
-			m_Pad = Pad.GetSamePad(m_InputData, m_ParallelConvolutions.Sequences[0].Convolutions[0]);
+			m_Pad = Pad.GetSamePad(m_InputData, _mParallelConvolutionSequences.Sequences[0].Convolutions[0]);
 			var newSize = Pad.GetNewSize(m_InputData.Width, m_InputData.Height, m_Pad);
 			m_PaddedGrayscaleInputData = new ImageData<float>(newSize.x, newSize.y, Allocator.TempJob);
 
@@ -149,7 +149,7 @@ namespace VisionUnion.Organization
 
 		public void Dispose()
 		{
-			m_ParallelConvolutions.Dispose();
+			_mParallelConvolutionSequences.Dispose();
 		}
 	}
 }

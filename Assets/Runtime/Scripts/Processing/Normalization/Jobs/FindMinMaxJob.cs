@@ -5,7 +5,7 @@ using Unity.Mathematics;
 
 namespace VisionUnion.Jobs
 {
-    //[BurstCompile]
+    [BurstCompile]
     public struct FindMinMaxJob : IJob
     {
         [ReadOnly] public NativeArray<float> Data;
