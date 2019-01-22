@@ -5,7 +5,7 @@ using Unity.Mathematics;
 
 namespace VisionUnion.Jobs
 {
-    [BurstCompile]
+    //[BurstCompile]
     public struct FindMinMaxJob : IJob
     {
         [ReadOnly] public NativeArray<float> Data;
@@ -22,8 +22,9 @@ namespace VisionUnion.Jobs
         {
             var minimum = float.MaxValue;
             var maximum = float.MinValue;
-            foreach (var inputValue in Data)
+            for (var i = 0; i < Data.Length; i++)
             {
+                var inputValue = Data[i];
                 minimum = math.select(inputValue, minimum, inputValue > minimum);
                 maximum = math.select(inputValue, maximum, inputValue < maximum);
             }

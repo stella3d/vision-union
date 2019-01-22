@@ -2,6 +2,7 @@ namespace VisionUnion.Tests
 {
     internal static partial class OutputImages
     {
+        // TODO - fix these expected results for new padding results
         internal static readonly float[] Post3x3BoxBlur5x5 =
         {
             0.00f, 0.00f, 0.00f, 0.00f, 0.00f,

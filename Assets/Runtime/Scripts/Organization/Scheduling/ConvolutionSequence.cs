@@ -24,6 +24,12 @@ namespace VisionUnion.Organization
         {
             Convolutions = convolutions;
         }
+        
+        public Convolution<T> this[int index]
+        {
+            get { return Convolutions[index]; }
+            set { Convolutions[index] = value;}
+        }
 
         public void Dispose()
         {

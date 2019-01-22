@@ -23,6 +23,12 @@ namespace VisionUnion.Organization
         {
             Jobs = jobs;
         }
+        
+        public T this[int index]
+        {
+            get { return Jobs[index]; }
+            set { Jobs[index] = value;}
+        }
 
         public IEnumerator GetEnumerator()
         {

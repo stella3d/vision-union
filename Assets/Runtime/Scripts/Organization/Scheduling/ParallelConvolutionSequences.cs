@@ -23,8 +23,8 @@ namespace VisionUnion.Organization
         
         public Convolution<T> this[int sequence, int sequenceIndex]
         {
-            get { return Sequences[sequence].Convolutions[sequenceIndex]; }
-            set { Sequences[sequence].Convolutions[sequenceIndex] = value;}
+            get { return Sequences[sequence][sequenceIndex]; }
+            set { Sequences[sequence][sequenceIndex] = value;}
         }
         
         public void Dispose()

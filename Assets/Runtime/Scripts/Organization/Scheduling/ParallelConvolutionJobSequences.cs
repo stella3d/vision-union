@@ -8,26 +8,26 @@ namespace VisionUnion.Organization
         where TData: struct
         where TJob: struct, IJob
     {
-        public readonly ParallelConvolutionSequences<TData> ConvolutionSequences;
+        public readonly ParallelConvolutionSequences<TData> Convolutions;
 
-        public readonly ParallelJobSequences<TJob> JobSequences;
+        public readonly ParallelJobSequences<TJob> Jobs;
 
         public readonly ImageData<TData>[] Images;
         
         protected ParallelConvolutionJobSequence(int width, int height,
-            ParallelConvolutionSequences<TData> convolutionSequences, 
-            ParallelJobSequences<TJob> jobSequences)
+            ParallelConvolutionSequences<TData> convolutions, 
+            ParallelJobSequences<TJob> jobs)
         {
-            ConvolutionSequences = convolutionSequences;
-            JobSequences = jobSequences;
+            Convolutions = convolutions;
+            Jobs = jobs;
 
-            if (convolutionSequences.Width != jobSequences.Width)
+            if (convolutions.Width != jobs.Width)
             {
                 Debug.LogWarningFormat("convolutions ({0}) & jobs ({1}) must  be same length !",
-                    convolutionSequences.Width, jobSequences.Width);
+                    convolutions.Width, jobs.Width);
             }
 
-            Images = new ImageData<TData>[jobSequences.Width];
+            Images = new ImageData<TData>[jobs.Width];
             InitializeImageData(width, height);
         }
 
@@ -41,7 +41,7 @@ namespace VisionUnion.Organization
 
         public void Dispose()
         {
-            ConvolutionSequences.Dispose();
+            Convolutions.Dispose();
             Images.Dispose();
         }
     }

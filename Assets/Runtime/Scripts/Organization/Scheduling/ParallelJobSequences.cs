@@ -22,8 +22,8 @@ namespace VisionUnion.Organization
 
         public T this[int sequence, int sequenceIndex]
         {
-            get { return Sequences[sequence].Jobs[sequenceIndex]; }
-            set { Sequences[sequence].Jobs[sequenceIndex] = value;}
+            get { return Sequences[sequence][sequenceIndex]; }
+            set { Sequences[sequence][sequenceIndex] = value; }
         }
         
         public IEnumerator GetEnumerator()

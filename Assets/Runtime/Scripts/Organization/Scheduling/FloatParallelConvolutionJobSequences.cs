@@ -3,15 +3,15 @@ using VisionUnion.Jobs;
 
 namespace VisionUnion.Organization
 {
-    public abstract class FloatParallelConvolutionJobSequence<TData> : 
+    public class FloatParallelConvolutionJobSequence<TData> : 
         ParallelConvolutionJobSequence<float, FloatWithFloatConvolveJob>
         where TData: struct
     {
         protected FloatParallelConvolutionJobSequence(int width, int height,
-            ParallelConvolutionSequences<float> convolutionSequences, 
-            ParallelJobSequences<FloatWithFloatConvolveJob> jobSequences) 
+            ParallelConvolutionSequences<float> convolutions, 
+            ParallelJobSequences<FloatWithFloatConvolveJob> jobs) 
             : 
-                base(width, height, convolutionSequences, jobSequences)
+                base(width, height, convolutions, jobs)
         {
         }
 
@@ -36,11 +36,6 @@ namespace VisionUnion.Organization
 
 			*/
             return new JobHandle();
-        }
-
-        public void Dispose()
-        {
-            ConvolutionSequences.Dispose();
         }
     }
 }
