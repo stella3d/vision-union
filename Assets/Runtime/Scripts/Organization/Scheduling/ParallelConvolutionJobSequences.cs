@@ -5,14 +5,29 @@ using UnityEngine;
 
 namespace VisionUnion.Organization
 {
+    /// <summary>
+    /// Defines a group of convolutions and how to schedule their jobs.
+    /// Allows scheduling all component jobs as one.
+    /// </summary>
+    /// <typeparam name="TData">The data type of the convolution and image</typeparam>
+    /// <typeparam name="TJob">The concrete type of job that will use this data</typeparam>
     public abstract class ParallelConvolutionJobSequence<TData, TJob> : IDisposable
         where TData: struct
         where TJob: struct, IJob
     {
+        /// <summary>
+        /// The definition of the set of convolution sequences to run
+        /// </summary>
         public readonly ParallelConvolutionSequences<TData> Convolutions;
 
+        /// <summary>
+        /// The jobs that will execute the convolution definitions
+        /// </summary>
         public readonly ParallelJobSequences<TJob> Jobs;
 
+        /// <summary>
+        /// The image outputs of each sequence
+        /// </summary>
         public readonly ImageData<TData>[] Images;
 
         public ImageData<TData> InputImage;
