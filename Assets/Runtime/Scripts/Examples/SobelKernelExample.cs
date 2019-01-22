@@ -38,7 +38,7 @@ namespace VisionUnion.Examples
 		Kernel<float> m_KernelOne;
 		Kernel<float> m_KernelTwo;
 		
-		ParallelConvolutionSequences<float> _mParallelConvolutionSequences;
+		ParallelConvolutionSequences<float> m_ParallelConvolutionSequences;
 
 		SobelFloatPrototype m_Sobel;
 
@@ -70,8 +70,9 @@ namespace VisionUnion.Examples
 
 		void OnDestroy()
 		{
-			m_KernelOne.Dispose();
-			m_KernelTwo.Dispose();
+			//m_KernelOne.Dispose();
+			//m_KernelTwo.Dispose();
+			m_Sobel.Dispose();
 		}
 
 		void Update ()

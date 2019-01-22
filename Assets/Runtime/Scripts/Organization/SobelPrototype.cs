@@ -103,6 +103,7 @@ namespace VisionUnion.Organization
 
 		public void Dispose()
 		{
+			m_PaddedGrayscaleInputData.Dispose();
 			m_ParallelConvolutionSequences.Dispose();
 			m_NewSequence.Dispose();
 		}
