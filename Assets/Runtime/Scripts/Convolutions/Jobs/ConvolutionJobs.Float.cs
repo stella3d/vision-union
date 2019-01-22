@@ -74,6 +74,7 @@ namespace VisionUnion.Jobs
     */
     
     [BurstCompile]
+    // TODO - better names for these jobs!
     public struct FloatWithFloatConvolveJob : IJob
     {
         [ReadOnly] public Convolution<float> Convolution;

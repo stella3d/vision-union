@@ -11,6 +11,7 @@ namespace VisionUnion.Organization
     public class ConvolutionSequence<T> : IDisposable, IEnumerable
         where T: struct
     {
+        // TODO - create JobSequence parallel to this
         public Convolution<T>[] Convolutions;
 
         public JobHandle Handle { get; private set; }

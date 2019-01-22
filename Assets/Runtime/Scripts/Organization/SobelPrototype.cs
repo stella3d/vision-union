@@ -36,6 +36,7 @@ namespace VisionUnion.Organization
 		}
 		void SetupFilter()
 		{
+			// TODO - keep this example and make a separated one to compare
 			var kernelOne = new Kernel<float>(Kernels.Short.Sobel.X.ToFloat());
 			var kernelTwo = new Kernel<float>(Kernels.Short.Sobel.Y.ToFloat());
 			var convolutionOne = new ConvolutionSequence<float>(new Convolution<float>(kernelOne));
@@ -47,32 +48,24 @@ namespace VisionUnion.Organization
 		
 		void SetupJobs()
 		{
+			// TODO - figure out if we can make this generic
 			var sequenceOne = m_ParallelConvolutions.Sequences[0];
 			var jobs = new FloatWithFloatConvolveJob[1];
 			for (var j = 0; j < jobs.Length; j++)
 			{
-				jobs[j] = new FloatWithFloatConvolveJob()
-				{
-					Convolution = sequenceOne.Convolutions[0],
-					Input = m_PaddedGrayscaleInputData,
-					Output = m_ConvolvedDataOne
-				};
+				jobs[j] = new FloatWithFloatConvolveJob(sequenceOne.Convolutions[0],
+					m_PaddedGrayscaleInputData, m_ConvolvedDataOne);
 			}
-			
-			m_ParallelJobSequences[0] = jobs;
 			
 			var sequenceTwo = m_ParallelConvolutions.Sequences[1];
 			var jobsTwo = new FloatWithFloatConvolveJob[1];
 			for (var j = 0; j < jobs.Length; j++)
 			{
-				jobsTwo[j] = new FloatWithFloatConvolveJob()
-				{
-					Convolution = sequenceTwo.Convolutions[0],
-					Input = m_PaddedGrayscaleInputData,
-					Output = m_ConvolvedDataOne
-				};
+				jobsTwo[j] = new FloatWithFloatConvolveJob(sequenceTwo.Convolutions[0],
+					m_PaddedGrayscaleInputData, m_ConvolvedDataTwo);
 			}
 			
+			m_ParallelJobSequences[0] = jobs;
 			m_ParallelJobSequences[1] = jobsTwo;
 
 			m_CombineJob = new SquareCombineJob()
@@ -92,6 +85,7 @@ namespace VisionUnion.Organization
 
 		public void OnJobsComplete()
 		{
+			// TODO - extension method for texture that loads an ImageData
 			ConvolvedTextureOne.LoadRawTextureData(m_ParallelJobSequences[0][0].Output.Buffer);
 			ConvolvedTextureOne.Apply();
 			ConvolvedTextureTwo.LoadRawTextureData(m_ParallelJobSequences[1][0].Output.Buffer);

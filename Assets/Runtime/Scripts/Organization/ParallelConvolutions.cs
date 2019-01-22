@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.Jobs;
 
 namespace VisionUnion.Organization
 {
@@ -24,6 +25,30 @@ namespace VisionUnion.Organization
             {
                 convolution.Dispose();
             }
+        }
+    }
+    
+    public class ParallelConvolutionJobs<T> : IDisposable
+        where T: struct, IJob
+    {
+        public readonly ParallelConvolutions<T> Convolutions;
+        
+        public T[][] JobSequences;
+        
+        public ParallelConvolutionJobs(ParallelConvolutions<T> convolutions, T[][] jobSequences)
+        {
+            Convolutions = convolutions;
+            JobSequences = jobSequences;
+        }
+
+        public JobHandle Schedule(JobHandle dependency)
+        {
+            return JobSequences.ScheduleParallel(dependency);
+        }
+
+        public void Dispose()
+        {
+            Convolutions.Dispose();
         }
     }
 }
