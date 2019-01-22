@@ -8,7 +8,6 @@ namespace VisionUnion.Jobs
     [BurstCompile]
     public struct SquareCombineJob : IJobParallelFor
     {
-        public float OutputScale;
         [ReadOnly] public ImageData<float> A;
         [ReadOnly] public ImageData<float> B;
         [WriteOnly] public ImageData<float> Output;
@@ -17,8 +16,7 @@ namespace VisionUnion.Jobs
         {
             var x = A.Buffer[index];
             var y = B.Buffer[index];
-            var outBuffer = Output.Buffer;
-            outBuffer[index] = math.sqrt(x * x + y * y) * OutputScale;
+            Output.Buffer[index] = math.sqrt(x * x + y * y);
         }
     }
 }

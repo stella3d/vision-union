@@ -107,14 +107,19 @@ namespace VisionUnion.Examples
 					break;
 				case 18:
 					m_JobHandle.Complete();
+					m_Sobel.ScheduleNormalize(m_JobHandle);
+					break;
+				case 22:
+					m_JobHandle.Complete();
+					m_Sobel.Complete();
 					m_Sobel.OnJobsComplete();
 					break;
-				case 19:
+				case 28:
 					m_KernelOneRenderer.material.mainTexture = m_Sobel.ConvolvedTextureOne;
 					m_KernelTwoRenderer.material.mainTexture = m_Sobel.ConvolvedTextureTwo;
 					m_ConvolutionOutputRenderer.material.mainTexture = m_Sobel.ConvolutionOutputTexture;
 					break;
-				case 20:
+				case 30:
 					Debug.Log("awake done");
 					break;
 			}

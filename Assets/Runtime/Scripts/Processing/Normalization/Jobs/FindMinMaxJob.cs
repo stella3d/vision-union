@@ -5,22 +5,31 @@ using Unity.Mathematics;
 
 namespace VisionUnion.Jobs
 {
-    [BurstCompile]
+    //[BurstCompile]
     public struct FindMinMaxJob : IJob
     {
         [ReadOnly] public NativeArray<float> Data;
 
-        public float2 MinMaxOutput;
+        public NativeArray<float> MinMaxOutput;
 
         public FindMinMaxJob(NativeArray<float> data)
         {
             Data = data;
-            MinMaxOutput = new int2();
+            MinMaxOutput = new NativeArray<float>(2, Allocator.TempJob);
         }
 
         public void Execute()
         {
-            MinMaxOutput = Data.FindMinMax();
+            var minimum = float.MaxValue;
+            var maximum = float.MinValue;
+            foreach (var inputValue in Data)
+            {
+                minimum = math.select(inputValue, minimum, inputValue > minimum);
+                maximum = math.select(inputValue, maximum, inputValue < maximum);
+            }
+
+            MinMaxOutput[0] = minimum;
+            MinMaxOutput[1] = maximum;
         }
     }
 }

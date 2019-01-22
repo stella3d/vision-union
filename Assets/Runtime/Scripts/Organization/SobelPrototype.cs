@@ -81,25 +81,47 @@ namespace VisionUnion.Organization
 				A = jobs[0].Output,
 				B = jobsTwo[0].Output,
 				Output = m_CombinedConvolutionData,
-				OutputScale = 0.5f
 			};
+			
+			m_MinMaxJob = new FindMinMaxJob(m_CombineJob.Output.Buffer);
+			m_NormalizeJob = new ImageNormalize01Job(m_MinMaxJob.Data, m_MinMaxJob.MinMaxOutput);
 		}
 
+		FindMinMaxJob m_MinMaxJob;
+		ImageNormalize01Job m_NormalizeJob;
+		
 		public JobHandle Schedule(JobHandle dependency)
 		{
 			var handle = m_PadJob.Schedule(dependency);
 			handle =  m_ParallelJobSequences.ScheduleParallel(handle);
-			return m_CombineJob.Schedule(m_ConvolvedDataOne.Buffer.Length, 2048, handle);
+			handle = m_CombineJob.Schedule(m_ConvolvedDataOne.Buffer.Length, 2048, handle);
+			handle = m_MinMaxJob.Schedule(handle);
+			m_JobHandle = handle;
+			return handle;
+		}
+		
+		public JobHandle ScheduleNormalize(JobHandle dependency)
+		{
+			m_NormalizeJob = new ImageNormalize01Job(m_MinMaxJob.Data, m_MinMaxJob.MinMaxOutput);
+			m_JobHandle = m_NormalizeJob.Schedule(m_NormalizeJob.Data.Length, 2048, dependency);
+			return m_JobHandle;
+		}
+		
+		public void Complete()
+		{
+			m_JobHandle.Complete();
 		}
 
 		public void OnJobsComplete()
 		{
+			m_NormalizeJob = new ImageNormalize01Job(m_MinMaxJob.Data, m_MinMaxJob.MinMaxOutput);
+			
 			// TODO - extension method for texture that loads an ImageData
 			ConvolvedTextureOne.LoadRawTextureData(m_ParallelJobSequences[0][0].Output.Buffer);
 			ConvolvedTextureOne.Apply();
 			ConvolvedTextureTwo.LoadRawTextureData(m_ParallelJobSequences[1][0].Output.Buffer);
 			ConvolvedTextureTwo.Apply();
-			var combined = m_CombineJob.Output.Buffer;
+			var combined = m_NormalizeJob.Data;
 			ConvolutionOutputTexture.LoadRawTextureData(combined);
 			ConvolutionOutputTexture.Apply();
 		}
