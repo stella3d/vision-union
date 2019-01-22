@@ -94,13 +94,9 @@ namespace VisionUnion.Organization
 		public void OnJobsComplete()
 		{
 			Debug.Log("jobs complete event");
-			// TODO - extension method for texture that loads an ImageData
-			ConvolvedTextureOne.LoadRawTextureData(m_NewSequence.Images[0].Buffer);
-			ConvolvedTextureOne.Apply();
-			ConvolvedTextureTwo.LoadRawTextureData(m_NewSequence.Images[1].Buffer);
-			ConvolvedTextureTwo.Apply();
-			ConvolutionOutputTexture.LoadRawTextureData(m_CombineJob.Output.Buffer);
-			ConvolutionOutputTexture.Apply();
+			ConvolvedTextureOne.LoadImageData(m_NewSequence.Images[0]);
+			ConvolvedTextureTwo.LoadImageData(m_NewSequence.Images[1]);
+			ConvolutionOutputTexture.LoadImageData(m_CombineJob.Output);
 		}
 
 		void SetupTextures(Texture2D input)
