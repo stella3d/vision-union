@@ -335,6 +335,26 @@ PrefabInstance:
       propertyPath: m_GaussRenderer
       value: 
       objectReference: {fileID: 7824244421611965019}
+    - target: {fileID: 4643708803225492307, guid: 2afccb91787a5a9459f536e1f1185dd5,
+        type: 3}
+      propertyPath: m_InputTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: 0082eeb99b736ff40a4cae117ebcff94, type: 3}
+    - target: {fileID: 4643708803404947787, guid: 2afccb91787a5a9459f536e1f1185dd5,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 4643708803404947787, guid: 2afccb91787a5a9459f536e1f1185dd5,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4643708803404947797, guid: 2afccb91787a5a9459f536e1f1185dd5,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: cd741c81ee961484e8bb11b7a259e39f, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2afccb91787a5a9459f536e1f1185dd5, type: 3}
 --- !u!23 &7824244421611965019 stripped
