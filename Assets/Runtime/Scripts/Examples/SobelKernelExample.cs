@@ -102,7 +102,7 @@ namespace VisionUnion.Examples
 					m_KernelTwoRenderer.material.mainTexture = m_Sobel.ConvolvedTextureTwo;
 					m_ConvolutionOutputRenderer.material.mainTexture = m_Sobel.ConvolutionOutputTexture;
 					break;
-				case 14:
+				case 15:
 					m_JobHandle = m_Sobel.Schedule(m_GrayScaleJobHandle);
 					break;
 				case 18:

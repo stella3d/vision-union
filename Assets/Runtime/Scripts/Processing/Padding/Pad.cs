@@ -111,7 +111,22 @@ namespace VisionUnion
 
             return padding;
         }
-
+        
+        public static int GetSizeDifference(int width, int height, Padding pad)
+        {
+            var newHeight = height + pad.top + pad.bottom;
+            var newWidth = width + pad.left + pad.right;
+            var newSize = newHeight * newWidth;
+            return width * height - newSize;
+        }
+        
+        public static Vector2Int GetNewSize(int width, int height, Padding pad)
+        {
+            var newHeight = height + pad.top + pad.bottom;
+            var newWidth = width + pad.left + pad.right;
+            return new Vector2Int(newWidth, newHeight);
+        }
+        
         public static ImageData<T> Constant<T>(ImageData<T> input, Padding pad, T value = default(T), 
             Allocator allocator = Allocator.Persistent)
             where T: struct
@@ -166,6 +181,57 @@ namespace VisionUnion
             }
 
             return newImage;
+        }
+        
+        public static void Constant<T>(ImageData<T> input, ImageData<T> output, 
+            Padding pad, T value = default(T))
+            where T: struct
+        {
+            var newWidth = input.Width + pad.left + pad.right;
+            var newHeight = input.Height + pad.top + pad.bottom;
+            var outBuffer = output.Buffer;
+            var inBuffer = input.Buffer;
+            var inputIndex = 0;
+            var outIndex = 0;
+            for (var i = 0; i < pad.top; i++)                                     // top pad
+            {
+                for (var c = 0; c < output.Width; c++)
+                {
+                    outBuffer[outIndex] = value;
+                    outIndex++;
+                }
+            }
+
+            var contentRowEnd = newHeight - pad.bottom;
+            for (var r = pad.top; r < contentRowEnd; r++)
+            {
+                var contentColumnEnd = newWidth - pad.right;
+                for (var i = 0; i < pad.left; i++)                               // left pad
+                {
+                    outBuffer[outIndex] = value;
+                    outIndex++;
+                }
+                for (var i = pad.left; i < contentColumnEnd; i++)                // original content
+                {
+                    outBuffer[outIndex] = inBuffer[inputIndex];
+                    outIndex++;
+                    inputIndex++;
+                }
+                for (var i = contentColumnEnd; i < newWidth; i++)                // right pad
+                {
+                    outBuffer[outIndex] = value;
+                    outIndex++;
+                }
+            }
+            
+            for (var r = contentRowEnd; r < newHeight; r++)                      // bottom pad
+            {
+                for (var c = 0; c < output.Width; c++)
+                {
+                    outBuffer[outIndex] = value;
+                    outIndex++;
+                }
+            }
         }
     }
 }

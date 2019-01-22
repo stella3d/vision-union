@@ -17,7 +17,7 @@ namespace VisionUnion
     {
         public readonly int Width;
         public readonly int Height;
-        public readonly NativeArray<TPixelData> Buffer;
+        public NativeArray<TPixelData> Buffer;
 
         /// <summary>
         /// Create a representation of this texture

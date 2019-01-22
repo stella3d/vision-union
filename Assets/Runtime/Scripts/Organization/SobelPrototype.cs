@@ -12,6 +12,7 @@ namespace VisionUnion.Organization
 		public Texture2D ConvolvedTextureTwo;
 		public Texture2D ConvolutionOutputTexture;
 
+		ImageData<float> m_InputData;
 		ImageData<float> m_PaddedGrayscaleInputData;
 		ImageData<float> m_ConvolvedDataOne;
 		ImageData<float> m_ConvolvedDataTwo;
@@ -25,6 +26,10 @@ namespace VisionUnion.Organization
 		FloatWithFloatConvolveJob[][] m_ParallelJobSequences = new FloatWithFloatConvolveJob[2][];
 
 		SquareCombineJob m_CombineJob;
+
+		ImagePadJob<float> m_PadJob;
+		
+		Padding m_Pad;
 
 		public SobelFloatPrototype(Texture2D input)
 		{
@@ -51,10 +56,13 @@ namespace VisionUnion.Organization
 			// TODO - figure out if we can make this generic
 			var sequenceOne = m_ParallelConvolutions.Sequences[0];
 			var jobs = new FloatWithFloatConvolveJob[1];
+
+			m_PadJob = new ImagePadJob<float>(m_InputData, m_PaddedGrayscaleInputData, m_Pad);
+			
 			for (var j = 0; j < jobs.Length; j++)
 			{
 				jobs[j] = new FloatWithFloatConvolveJob(sequenceOne.Convolutions[0],
-					m_PaddedGrayscaleInputData, m_ConvolvedDataOne);
+					m_PadJob.Output, m_ConvolvedDataOne);
 			}
 			
 			var sequenceTwo = m_ParallelConvolutions.Sequences[1];
@@ -62,7 +70,7 @@ namespace VisionUnion.Organization
 			for (var j = 0; j < jobs.Length; j++)
 			{
 				jobsTwo[j] = new FloatWithFloatConvolveJob(sequenceTwo.Convolutions[0],
-					m_PaddedGrayscaleInputData, m_ConvolvedDataTwo);
+					m_PadJob.Output, m_ConvolvedDataTwo);
 			}
 			
 			m_ParallelJobSequences[0] = jobs;
@@ -79,7 +87,8 @@ namespace VisionUnion.Organization
 
 		public JobHandle Schedule(JobHandle dependency)
 		{
-			var handle =  m_ParallelJobSequences.ScheduleParallel(dependency);
+			var handle = m_PadJob.Schedule(dependency);
+			handle =  m_ParallelJobSequences.ScheduleParallel(handle);
 			return m_CombineJob.Schedule(m_ConvolvedDataOne.Buffer.Length, 2048, handle);
 		}
 
@@ -97,8 +106,11 @@ namespace VisionUnion.Organization
 
 		void SetupTextures(Texture2D input)
 		{
-			var inputData = new ImageData<float>(input);
-			m_PaddedGrayscaleInputData = Pad.ConvolutionInput(inputData, m_ParallelConvolutions);
+			m_InputData = new ImageData<float>(input);
+
+			m_Pad = Pad.GetSamePad(m_InputData, m_ParallelConvolutions.Sequences[0].Convolutions[0]);
+			var newSize = Pad.GetNewSize(m_InputData.Width, m_InputData.Height, m_Pad);
+			m_PaddedGrayscaleInputData = new ImageData<float>(newSize.x, newSize.y, Allocator.TempJob);
 
 			ConvolvedTextureOne = SetupTexture(input, out m_ConvolvedDataOne);
 			ConvolvedTextureTwo = SetupTexture(input, out m_ConvolvedDataTwo);
