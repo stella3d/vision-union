@@ -14,6 +14,8 @@ namespace VisionUnion.Organization
         
         public int Length => Jobs.Length;
         
+        public T Last => Jobs[Jobs.Length - 1];
+        
         public JobSequence(int count)
         {
             Jobs = new T[count];

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace VisionUnion.Organization
 {
     /// <summary>
-    /// A set of convolutions
+    /// A set of convolutions that runs serially, each operating on the output of the previous
     /// </summary>
     /// <typeparam name="T">The kernel type of the convolution</typeparam>
     public class ConvolutionSequence<T> : IDisposable, IEnumerable<ConvolutionSequence<T>> 
@@ -14,6 +14,8 @@ namespace VisionUnion.Organization
         public Convolution<T>[] Convolutions;
         
         public int Length => Convolutions.Length;
+        
+        public Convolution<T> Last => Convolutions[Convolutions.Length - 1];
 
         public ConvolutionSequence(Convolution<T> convolution)
         {

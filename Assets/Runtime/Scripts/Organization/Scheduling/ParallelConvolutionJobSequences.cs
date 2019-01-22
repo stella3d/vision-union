@@ -24,21 +24,22 @@ namespace VisionUnion.Organization
             ParallelConvolutionSequences<TData> convolutions, 
             ParallelJobSequences<TJob> jobs)
         {
-            InputImage = input;
-            Convolutions = convolutions;
-            Jobs = jobs;
-
             if (convolutions.Width != jobs.Width)
             {
                 Debug.LogWarningFormat("convolutions ({0}) & jobs ({1}) must  be same length !",
                     convolutions.Width, jobs.Width);
+
+                return;
             }
+            
+            InputImage = input;
+            Convolutions = convolutions;
+            Jobs = jobs;
 
             var pad = convolutions[0, 0].Padding;
 
             Images = new ImageData<TData>[jobs.Width];
             InitializeImageData(input.Width - pad.x * 2, input.Height - pad.y * 2);
-            
             InitializeJobs();
         }
 
@@ -63,7 +64,7 @@ namespace VisionUnion.Organization
             return handle;
         }
 
-        internal void ForEachSequence(Action<ConvolutionSequence<TData>, JobSequence<TJob>, ImageData<TData>> action)
+        public void ForEachSequence(Action<ConvolutionSequence<TData>, JobSequence<TJob>, ImageData<TData>> action)
         {
             for (var i = 0; i < Convolutions.Width; i++)
             {
@@ -80,6 +81,7 @@ namespace VisionUnion.Organization
         /// 1) create all the job structs
         /// 2) assign the same input image to every job
         /// 3) assign an output image to every job - one image per sequence
+        /// As well as whatever else is needed for that job type
         /// </summary>
         public abstract void InitializeJobs();
 

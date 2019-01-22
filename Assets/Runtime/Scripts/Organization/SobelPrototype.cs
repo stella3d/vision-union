@@ -24,8 +24,6 @@ namespace VisionUnion.Organization
 		ParallelConvolutionSequences<float> m_ParallelConvolutionSequences;
 		ParallelJobSequences<FloatWithFloatConvolveJob> m_JobSequences;
 
-		FloatWithFloatConvolveJob[][] m_ParallelJobSequences = new FloatWithFloatConvolveJob[2][];
-
 		FloatParallelConvolutionJobSequence m_NewSequence;
 
 		SquareCombineJob m_CombineJob;
@@ -70,8 +68,8 @@ namespace VisionUnion.Organization
 			
 			m_CombineJob = new SquareCombineJob()
 			{
-				A = m_NewSequence.Jobs[0][0].Output,
-				B = m_JobSequences[1][0].Output,
+				A = m_NewSequence.Jobs[0].Last.Output,
+				B = m_NewSequence.Jobs[1].Last.Output,
 				Output = m_CombinedConvolutionData,
 			};
 		}
@@ -80,7 +78,6 @@ namespace VisionUnion.Organization
 		{
 			var handle = m_PadJob.Schedule(dependency);
 			handle = m_NewSequence.Schedule(handle);
-			//handle =  m_ParallelJobSequences.ScheduleParallel(handle);
 			handle = m_CombineJob.Schedule(m_ConvolvedDataOne.Buffer.Length, 2048, handle);
 			m_JobHandle = handle;
 			return handle;
