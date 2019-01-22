@@ -1,4 +1,6 @@
 ﻿using System;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 
 namespace VisionUnion
 {
@@ -10,6 +12,13 @@ namespace VisionUnion
             {
                 item.Dispose();
             }
+        }
+        
+        public static void DisposeIfCreated<T>(this NativeArray<T> array)
+            where T: struct
+        {
+            if(array.IsCreated)
+                array.Dispose();
         }
     }
 }

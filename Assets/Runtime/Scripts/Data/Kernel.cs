@@ -107,7 +107,7 @@ namespace VisionUnion
 
         public void Dispose()
         {
-            Data.Dispose();
+            Data.DisposeIfCreated();
         }
     }
 }

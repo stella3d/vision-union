@@ -2,13 +2,12 @@
 
 namespace VisionUnion.Organization
 {
-    public class FloatParallelConvolutionJobSequence : 
-        ParallelConvolutionJobSequence<float, FloatWithFloatConvolveJob>
+    public class FloatParallelConvolutionJobs : 
+        ParallelConvolutionJobs<float, FloatWithFloatConvolveJob>
     {
-        public FloatParallelConvolutionJobSequence(ImageData<float> input,
-            ParallelConvolutionSequences<float> convolutions, 
-            ParallelJobSequences<FloatWithFloatConvolveJob> jobs) 
-            : base(input, convolutions, jobs)
+        public FloatParallelConvolutionJobs(ImageData<float> input,
+            ParallelConvolutionSequences<float> convolutions) 
+            : base(input, convolutions)
         {
         }
         

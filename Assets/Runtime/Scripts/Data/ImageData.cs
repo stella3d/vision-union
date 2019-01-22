@@ -72,7 +72,7 @@ namespace VisionUnion
 
         public void Dispose()
         {
-            Buffer.Dispose();
+            Buffer.DisposeIfCreated();
         }
 
         public bool Equals(ImageData<TPixelData> other)

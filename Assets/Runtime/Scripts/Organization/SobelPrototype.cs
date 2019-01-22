@@ -1,12 +1,11 @@
 using System;
-using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 using VisionUnion.Jobs;
 
 namespace VisionUnion.Organization
 {
-	public class SobelFloatPrototype : IDisposable
+	public class SobelFloatPrototype :  IDisposable
 	{
 		public Texture2D ConvolvedTextureOne;
 		public Texture2D ConvolvedTextureTwo;
@@ -14,20 +13,18 @@ namespace VisionUnion.Organization
 
 		ImageData<float> m_InputData;
 		ImageData<float> m_PaddedGrayscaleInputData;
-		ImageData<float> m_ConvolvedDataOne;
-		ImageData<float> m_ConvolvedDataTwo;
+		ImageData<float> m_ConvDataOne;
+		ImageData<float> m_ConvDataTwo;
 		ImageData<float> m_CombinedConvolutionData;
 	
 		JobHandle m_GrayScaleJobHandle;
 		JobHandle m_JobHandle;
 		
 		ParallelConvolutionSequences<float> m_ParallelConvolutionSequences;
-		ParallelJobSequences<FloatWithFloatConvolveJob> m_JobSequences;
 
-		FloatParallelConvolutionJobSequence m_NewSequence;
+		FloatParallelConvolutionJobs m_NewSequence;
 
 		SquareCombineJob m_CombineJob;
-
 		ImagePadJob<float> m_PadJob;
 		
 		Padding m_Pad;
@@ -41,7 +38,6 @@ namespace VisionUnion.Organization
 		
 		void SetupFilter()
 		{
-			// TODO - keep this example and make a separated one to compare
 			m_ParallelConvolutionSequences = new ParallelConvolutionSequences<float>(new []
 			{
 				new ConvolutionSequence<float>(Kernels.Short.Sobel.X.ToFloat()), 
@@ -54,14 +50,7 @@ namespace VisionUnion.Organization
 			m_PadJob = new ImagePadJob<float>(m_InputData, m_PaddedGrayscaleInputData, m_Pad);
 			m_PadJob.Run();
 			
-			// TODO - figure out if we can make this generic
-			m_JobSequences = new ParallelJobSequences<FloatWithFloatConvolveJob>
-				(m_ParallelConvolutionSequences.Width, 1);
-			
-			m_NewSequence = new FloatParallelConvolutionJobSequence(m_PadJob.Output,
-				m_ParallelConvolutionSequences, m_JobSequences);
-			
-			m_NewSequence.InitializeJobs();
+			m_NewSequence = new FloatParallelConvolutionJobs(m_PadJob.Output, m_ParallelConvolutionSequences);
 			
 			m_CombineJob = new SquareCombineJob()
 			{
@@ -75,7 +64,7 @@ namespace VisionUnion.Organization
 		{
 			var handle = m_PadJob.Schedule(dependency);
 			handle = m_NewSequence.Schedule(handle);
-			handle = m_CombineJob.Schedule(m_ConvolvedDataOne.Buffer.Length, 2048, handle);
+			handle = m_CombineJob.Schedule(m_NewSequence.Images[0].Buffer.Length, 2048, handle);
 			m_JobHandle = handle;
 			return handle;
 		}
@@ -87,7 +76,6 @@ namespace VisionUnion.Organization
 
 		public void OnJobsComplete()
 		{
-			Debug.Log("jobs complete event");
 			ConvolvedTextureOne.LoadImageData(m_NewSequence.Images[0]);
 			ConvolvedTextureTwo.LoadImageData(m_NewSequence.Images[1]);
 			ConvolutionOutputTexture.LoadImageData(m_CombineJob.Output);
@@ -97,26 +85,26 @@ namespace VisionUnion.Organization
 		{
 			m_InputData = new ImageData<float>(input);
 
-			m_Pad = Pad.GetSamePad(m_InputData, m_ParallelConvolutionSequences.Sequences[0].Convolutions[0]);
+			m_Pad = Pad.GetSamePad(m_InputData, m_ParallelConvolutionSequences[0][0]);
 			var newSize = Pad.GetNewSize(m_InputData.Width, m_InputData.Height, m_Pad);
-			m_PaddedGrayscaleInputData = new ImageData<float>(newSize.x, newSize.y, Allocator.Persistent);
+			m_PaddedGrayscaleInputData = new ImageData<float>(newSize.x, newSize.y);
 
-			ConvolvedTextureOne = SetupTexture(input, out m_ConvolvedDataOne);
-			ConvolvedTextureTwo = SetupTexture(input, out m_ConvolvedDataTwo);
+			ConvolvedTextureOne = SetupTexture(input, out m_ConvDataOne);
+			ConvolvedTextureTwo = SetupTexture(input, out m_ConvDataTwo);
 			ConvolutionOutputTexture = SetupTexture(input, out m_CombinedConvolutionData);
 		}
 
-		Texture2D SetupTexture<T>(Texture2D input, out ImageData<T> data)
-			where T: struct
+		Texture2D SetupTexture(Texture2D input, out ImageData<float> data)
 		{
 			var texture = new Texture2D(input.width, input.height, TextureFormat.RFloat, false);
-			data = new ImageData<T>(texture);
+			data = new ImageData<float>(texture);
 			return texture;
 		}
 
 		public void Dispose()
 		{
 			m_ParallelConvolutionSequences.Dispose();
+			m_NewSequence.Dispose();
 		}
 	}
 }

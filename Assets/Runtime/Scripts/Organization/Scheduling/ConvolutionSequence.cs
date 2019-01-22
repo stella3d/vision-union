@@ -11,7 +11,7 @@ namespace VisionUnion.Organization
     public class ConvolutionSequence<T> : IDisposable, IEnumerable<Convolution<T>> 
         where T: struct
     {
-        public Convolution<T>[] Convolutions;
+        public readonly Convolution<T>[] Convolutions;
         
         public int Length => Convolutions.Length;
         
