@@ -11,6 +11,24 @@ namespace VisionUnion.Organization
 
         public int Width => Sequences.Length;
         
+        public ParallelJobSequences(int capacity, int sequenceLength)
+        {
+            Sequences = new JobSequence<T>[capacity];
+            for (var i = 0; i < Sequences.Length; i++)
+            {
+                Sequences[i] = new JobSequence<T>(sequenceLength);
+            }
+        }
+        
+        public ParallelJobSequences(int capacity, int[] sequenceLengths)
+        {
+            Sequences = new JobSequence<T>[capacity];
+            for (var i = 0; i < Sequences.Length; i++)
+            {
+                Sequences[i] = new JobSequence<T>(sequenceLengths[i]);
+            }
+        }
+        
         public ParallelJobSequences(JobSequence<T> sequence)
         {
             Sequences = new [] { sequence };

@@ -20,10 +20,11 @@ namespace VisionUnion.Organization
         static readonly NativeList<JobHandle> k_ParallelHandles = 
             new NativeList<JobHandle>(16, Allocator.Persistent);
         
-        protected ParallelConvolutionJobSequence(ImageData<TData> input,
+        protected ParallelConvolutionJobSequence(ImageData<TData> input, 
             ParallelConvolutionSequences<TData> convolutions, 
             ParallelJobSequences<TJob> jobs)
         {
+            InputImage = input;
             Convolutions = convolutions;
             Jobs = jobs;
 
@@ -33,8 +34,10 @@ namespace VisionUnion.Organization
                     convolutions.Width, jobs.Width);
             }
 
+            var pad = convolutions[0, 0].Padding;
+
             Images = new ImageData<TData>[jobs.Width];
-            InitializeImageData(input.Width, input.Height);
+            InitializeImageData(input.Width - pad.x * 2, input.Height - pad.y * 2);
         }
 
         public void InitializeImageData(int width, int height)

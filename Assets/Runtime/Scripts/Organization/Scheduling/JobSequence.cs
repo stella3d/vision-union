@@ -13,6 +13,11 @@ namespace VisionUnion.Organization
         public T[] Jobs;
         
         public int Length => Jobs.Length;
+        
+        public JobSequence(int count)
+        {
+            Jobs = new T[count];
+        }
 
         public JobSequence(T job)
         {

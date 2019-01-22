@@ -22,8 +22,11 @@ namespace VisionUnion.Organization
 		JobHandle m_JobHandle;
 		
 		ParallelConvolutionSequences<float> m_ParallelConvolutionSequences;
+		ParallelJobSequences<FloatWithFloatConvolveJob> m_JobSequences;
 
 		FloatWithFloatConvolveJob[][] m_ParallelJobSequences = new FloatWithFloatConvolveJob[2][];
+
+		FloatParallelConvolutionJobSequence m_NewSequence;
 
 		SquareCombineJob m_CombineJob;
 
@@ -53,12 +56,19 @@ namespace VisionUnion.Organization
 		
 		void SetupJobs()
 		{
-			// TODO - figure out if we can make this generic
-			var sequenceOne = m_ParallelConvolutionSequences.Sequences[0];
-			var jobs = new FloatWithFloatConvolveJob[1];
-
 			m_PadJob = new ImagePadJob<float>(m_InputData, m_PaddedGrayscaleInputData, m_Pad);
+			m_PadJob.Run();
 			
+			// TODO - figure out if we can make this generic
+			m_JobSequences = new ParallelJobSequences<FloatWithFloatConvolveJob>
+				(m_ParallelConvolutionSequences.Width, 1);
+			
+			m_NewSequence = new FloatParallelConvolutionJobSequence(m_PadJob.Output,
+				m_ParallelConvolutionSequences, m_JobSequences);
+			
+			m_NewSequence.InitializeJobs();
+			
+			/*
 			for (var j = 0; j < jobs.Length; j++)
 			{
 				jobs[j] = new FloatWithFloatConvolveJob(sequenceOne.Convolutions[0],
@@ -75,11 +85,12 @@ namespace VisionUnion.Organization
 			
 			m_ParallelJobSequences[0] = jobs;
 			m_ParallelJobSequences[1] = jobsTwo;
+			*/
 
 			m_CombineJob = new SquareCombineJob()
 			{
-				A = jobs[0].Output,
-				B = jobsTwo[0].Output,
+				A = m_NewSequence.Jobs[0][0].Output,
+				B = m_JobSequences[1][0].Output,
 				Output = m_CombinedConvolutionData,
 			};
 		}
@@ -87,7 +98,8 @@ namespace VisionUnion.Organization
 		public JobHandle Schedule(JobHandle dependency)
 		{
 			var handle = m_PadJob.Schedule(dependency);
-			handle =  m_ParallelJobSequences.ScheduleParallel(handle);
+			handle = m_NewSequence.Schedule(handle);
+			//handle =  m_ParallelJobSequences.ScheduleParallel(handle);
 			handle = m_CombineJob.Schedule(m_ConvolvedDataOne.Buffer.Length, 2048, handle);
 			m_JobHandle = handle;
 			return handle;
@@ -100,10 +112,11 @@ namespace VisionUnion.Organization
 
 		public void OnJobsComplete()
 		{
+			Debug.Log("jobs complete event");
 			// TODO - extension method for texture that loads an ImageData
-			ConvolvedTextureOne.LoadRawTextureData(m_ParallelJobSequences[0][0].Output.Buffer);
+			ConvolvedTextureOne.LoadRawTextureData(m_NewSequence.Images[0].Buffer);
 			ConvolvedTextureOne.Apply();
-			ConvolvedTextureTwo.LoadRawTextureData(m_ParallelJobSequences[1][0].Output.Buffer);
+			ConvolvedTextureTwo.LoadRawTextureData(m_NewSequence.Images[1].Buffer);
 			ConvolvedTextureTwo.Apply();
 			ConvolutionOutputTexture.LoadRawTextureData(m_CombineJob.Output.Buffer);
 			ConvolutionOutputTexture.Apply();
@@ -115,7 +128,7 @@ namespace VisionUnion.Organization
 
 			m_Pad = Pad.GetSamePad(m_InputData, m_ParallelConvolutionSequences.Sequences[0].Convolutions[0]);
 			var newSize = Pad.GetNewSize(m_InputData.Width, m_InputData.Height, m_Pad);
-			m_PaddedGrayscaleInputData = new ImageData<float>(newSize.x, newSize.y, Allocator.TempJob);
+			m_PaddedGrayscaleInputData = new ImageData<float>(newSize.x, newSize.y, Allocator.Persistent);
 
 			ConvolvedTextureOne = SetupTexture(input, out m_ConvolvedDataOne);
 			ConvolvedTextureTwo = SetupTexture(input, out m_ConvolvedDataTwo);

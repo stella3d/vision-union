@@ -1,17 +1,14 @@
-﻿using Unity.Jobs;
-using VisionUnion.Jobs;
+﻿using VisionUnion.Jobs;
 
 namespace VisionUnion.Organization
 {
-    public class FloatParallelConvolutionJobSequence<TData> : 
+    public class FloatParallelConvolutionJobSequence : 
         ParallelConvolutionJobSequence<float, FloatWithFloatConvolveJob>
-        where TData: struct
     {
-        protected FloatParallelConvolutionJobSequence(ImageData<float> input,
+        public FloatParallelConvolutionJobSequence(ImageData<float> input,
             ParallelConvolutionSequences<float> convolutions, 
             ParallelJobSequences<FloatWithFloatConvolveJob> jobs) 
-            : 
-                base(input, convolutions, jobs)
+            : base(input, convolutions, jobs)
         {
         }
         
@@ -22,7 +19,6 @@ namespace VisionUnion.Organization
             {
                 var image = Images[i];
                 var sequenceJobs = Jobs[i];
-                
                 var previous = InputImage;
                 for (var j = 0; j < sequenceJobs.Length; j++)
                 {
