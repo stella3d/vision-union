@@ -14,6 +14,8 @@ namespace VisionUnion.Organization
         where TData: struct
         where TJob: struct, IJob
     {
+        // TODO - split out or merge the convolution + image data with the jobs, since the jobs duplicate all that
+        
         /// <summary>
         /// The definition of the set of convolution sequences to run
         /// </summary>
@@ -67,6 +69,10 @@ namespace VisionUnion.Organization
         {
             for (var i = 0; i < Images.Length; i++)
             {
+                var existing = Images[i];
+                if(existing != default(ImageData<TData>) && existing.Buffer.IsCreated)
+                    existing.Dispose();
+                
                 Images[i] = new ImageData<TData>(width, height);
             }
         }

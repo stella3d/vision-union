@@ -74,7 +74,17 @@ namespace VisionUnion
         {
             Buffer.DisposeIfCreated();
         }
+        
+        public static bool operator ==(ImageData<TPixelData> a, ImageData<TPixelData> b)
+        {
+            return a.Equals(b);
+        }
 
+        public static bool operator !=(ImageData<TPixelData> a, ImageData<TPixelData> b)
+        {
+            return !a.Equals(b);
+        }
+        
         public bool Equals(ImageData<TPixelData> other)
         {
             return Width == other.Width && Height == other.Height && Buffer.Equals(other.Buffer);
