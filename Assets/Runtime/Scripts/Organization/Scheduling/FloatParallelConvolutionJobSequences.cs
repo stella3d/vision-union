@@ -12,18 +12,20 @@ namespace VisionUnion.Organization
         {
         }
         
-        public void InitializeJobs()
+        public override void InitializeJobs()
         {
-            // TODO - figure out if we can make this generic
             for (var i = 0; i < Images.Length; i++)
             {
                 var image = Images[i];
                 var sequenceJobs = Jobs[i];
                 var previous = InputImage;
+
                 for (var j = 0; j < sequenceJobs.Length; j++)
                 {
                     var newJob = new FloatWithFloatConvolveJob(Convolutions[i, j], previous, image);
                     sequenceJobs[j] = newJob;
+
+                    // we assign each job in the sequence the result of the previous convolution
                     previous = newJob.Output;
                 }
             }

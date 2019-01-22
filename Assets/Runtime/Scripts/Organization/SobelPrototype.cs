@@ -68,25 +68,6 @@ namespace VisionUnion.Organization
 			
 			m_NewSequence.InitializeJobs();
 			
-			/*
-			for (var j = 0; j < jobs.Length; j++)
-			{
-				jobs[j] = new FloatWithFloatConvolveJob(sequenceOne.Convolutions[0],
-					m_PadJob.Output, m_ConvolvedDataOne);
-			}
-			
-			var sequenceTwo = m_ParallelConvolutionSequences.Sequences[1];
-			var jobsTwo = new FloatWithFloatConvolveJob[1];
-			for (var j = 0; j < jobs.Length; j++)
-			{
-				jobsTwo[j] = new FloatWithFloatConvolveJob(sequenceTwo.Convolutions[0],
-					m_PadJob.Output, m_ConvolvedDataTwo);
-			}
-			
-			m_ParallelJobSequences[0] = jobs;
-			m_ParallelJobSequences[1] = jobsTwo;
-			*/
-
 			m_CombineJob = new SquareCombineJob()
 			{
 				A = m_NewSequence.Jobs[0][0].Output,

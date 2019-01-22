@@ -38,6 +38,8 @@ namespace VisionUnion.Organization
 
             Images = new ImageData<TData>[jobs.Width];
             InitializeImageData(input.Width - pad.x * 2, input.Height - pad.y * 2);
+            
+            InitializeJobs();
         }
 
         public void InitializeImageData(int width, int height)
@@ -60,6 +62,26 @@ namespace VisionUnion.Organization
             handle = JobHandle.CombineDependencies(k_ParallelHandles);
             return handle;
         }
+
+        internal void ForEachSequence(Action<ConvolutionSequence<TData>, JobSequence<TJob>, ImageData<TData>> action)
+        {
+            for (var i = 0; i < Convolutions.Width; i++)
+            {
+                var image = Images[i];
+                var jobSequence = Jobs[i];
+                var convSequence = Convolutions[i];
+                
+                action(convSequence, jobSequence, image);
+            }
+        }
+
+        /// <summary>
+        /// Inside the implementation:
+        /// 1) create all the job structs
+        /// 2) assign the same input image to every job
+        /// 3) assign an output image to every job - one image per sequence
+        /// </summary>
+        public abstract void InitializeJobs();
 
         public void Dispose()
         {

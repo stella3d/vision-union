@@ -21,6 +21,12 @@ namespace VisionUnion.Organization
             Sequences = sequences;
         }
         
+        public ConvolutionSequence<T> this[int sequence]
+        {
+            get { return Sequences[sequence]; }
+            set { Sequences[sequence] = value; }
+        }
+        
         public Convolution<T> this[int sequence, int sequenceIndex]
         {
             get { return Sequences[sequence][sequenceIndex]; }
