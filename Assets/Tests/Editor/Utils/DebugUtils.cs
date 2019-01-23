@@ -49,7 +49,7 @@ namespace  VisionUnion.Tests
             where T: struct
         {
             s_String.Length = 0;
-            var matrix = kernel.Data;
+            var matrix = kernel.Weights;
             for (int y = 0; y < kernel.Height; y++)
             {
                 var rowIndex = y * kernel.Width;

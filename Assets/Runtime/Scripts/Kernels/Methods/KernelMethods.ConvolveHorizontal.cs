@@ -23,7 +23,7 @@ namespace VisionUnion
                     {
                         var pixelIndex = centerPixelIndex + kX;
                         var inputPixelValue = pixelBuffer[pixelIndex];
-                        float kernelMultiplier = kernel.Data[kernelIndex];
+                        float kernelMultiplier = kernel.Weights[kernelIndex];
                         kernelSum += inputPixelValue * kernelMultiplier;
                         kernelIndex++;
                     }

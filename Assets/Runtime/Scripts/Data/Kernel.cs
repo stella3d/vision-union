@@ -13,7 +13,7 @@ namespace VisionUnion
         public readonly int Width;
         public readonly int Height;
         public readonly KernelBounds Bounds;
-        public NativeArray<T> Data;
+        public NativeArray<T> Weights;
 
         public Kernel(T[,] input, Allocator allocator = Allocator.Persistent)
         {
@@ -22,14 +22,14 @@ namespace VisionUnion
 
             Bounds = new KernelBounds(Width, Height);
 
-            Data = new NativeArray<T>(Width * Height, allocator);
+            Weights = new NativeArray<T>(Width * Height, allocator);
             
             var flatIndex = 0;
             for (var y = 0; y < Height; y++)
             {
                 for (var x = 0; x < Width; x++)
                 {
-                    Data[flatIndex] = input[y, x];
+                    Weights[flatIndex] = input[y, x];
                     flatIndex++;
                 }
             }
@@ -37,7 +37,7 @@ namespace VisionUnion
         
         public Kernel(T[] input, bool horizontal = true, Allocator allocator = Allocator.Persistent)
         {
-            Data = new NativeArray<T>(input, allocator);
+            Weights = new NativeArray<T>(input, allocator);
             Width = horizontal ? input.Length : 1;
             Height = horizontal ? 1 : input.Length;
             Bounds = new KernelBounds(Width, Height);
@@ -48,7 +48,7 @@ namespace VisionUnion
             Width = width;
             Height = height;
             Bounds = new KernelBounds(Width, Height);
-            Data = new NativeArray<T>(Width * Height, allocator);
+            Weights = new NativeArray<T>(Width * Height, allocator);
         }
 
         public T this[int row, int column]
@@ -56,12 +56,12 @@ namespace VisionUnion
             get
             {
                 var index = row * Width + column;
-                return Data[index];
+                return Weights[index];
             }
             set
             {
                 var index = row * Width + column;
-                var data = Data;
+                var data = Weights;
                 data[index] = value;
             }
         }
@@ -83,7 +83,7 @@ namespace VisionUnion
             var rowIndex = row * Width;
             for (var c = 0; c < Width; c++)
             {
-                rowData[c] = Data[rowIndex + c];
+                rowData[c] = Weights[rowIndex + c];
             }
 
             return rowData;
@@ -97,7 +97,7 @@ namespace VisionUnion
             {
                 for (var x = 0; x < Width; x++)
                 {
-                    output[y, x] = Data[flatIndex];
+                    output[y, x] = Weights[flatIndex];
                     flatIndex++;
                 }
             }
@@ -107,7 +107,7 @@ namespace VisionUnion
 
         public void Dispose()
         {
-            Data.DisposeIfCreated();
+            Weights.DisposeIfCreated();
         }
     }
 }

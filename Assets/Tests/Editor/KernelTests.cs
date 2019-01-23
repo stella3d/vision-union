@@ -16,10 +16,10 @@ namespace VisionUnion.Tests
 		public void ConstructBlankFromDimensions(short x, short y)
 		{
 			var kernel = new Kernel<short>(x, y, Allocator.Temp);
-			Assert.IsTrue(kernel.Data.IsCreated);
+			Assert.IsTrue(kernel.Weights.IsCreated);
 			Assert.AreEqual(x, kernel.Width);
 			Assert.AreEqual(y, kernel.Height);
-			Assert.AreEqual(x * y, kernel.Data.Length);
+			Assert.AreEqual(x * y, kernel.Weights.Length);
 			kernel.Dispose();
 		}
 		
@@ -28,12 +28,12 @@ namespace VisionUnion.Tests
 		{
 			var sY = new Kernel<short>(Kernels.Short.Sobel.X, Allocator.Temp);
 			sY.Print();
-			AssertFlatRepresentationValid(Kernels.Short.Sobel.X, sY.Data);
+			AssertFlatRepresentationValid(Kernels.Short.Sobel.X, sY.Weights);
 			sY.Dispose();
 
 			var sX = new Kernel<short>(Kernels.Short.Sobel.Y, Allocator.Temp);
 			sX.Print();
-			AssertFlatRepresentationValid(Kernels.Short.Sobel.Y, sX.Data);
+			AssertFlatRepresentationValid(Kernels.Short.Sobel.Y, sX.Weights);
 			sX.Dispose();
 		}
 
@@ -45,7 +45,7 @@ namespace VisionUnion.Tests
 			sX.Print();
 			Assert.AreEqual(1, sX.Height);
 			Assert.AreEqual(kernelLength, sX.Width);
-			Assert.AreEqual(kernelLength, sX.Data.Length);
+			Assert.AreEqual(kernelLength, sX.Weights.Length);
 			sX.Dispose();
 		}
 
@@ -57,7 +57,7 @@ namespace VisionUnion.Tests
 			sY.Print();
 			Assert.AreEqual(1, sY.Width);
 			Assert.AreEqual(kernelLength, sY.Height);
-			Assert.AreEqual(kernelLength, sY.Data.Length);
+			Assert.AreEqual(kernelLength, sY.Weights.Length);
 			sY.Dispose();
 		}
 		
@@ -100,7 +100,7 @@ namespace VisionUnion.Tests
 		{
 			var count = size * size;
 			var kernel = new Kernel<short>(size, size, Allocator.Temp);
-			Assert.AreEqual(count, kernel.Data.Length);
+			Assert.AreEqual(count, kernel.Weights.Length);
 			
 			Debug.Log(kernel.Bounds);
 			Assert.AreEqual(nBound, kernel.Bounds.negative);

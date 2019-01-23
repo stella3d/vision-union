@@ -18,7 +18,7 @@ namespace VisionUnion
                 {
                     var pixelIndex = rowIndex + x;
                     var inputPixelValue = pixelBuffer[pixelIndex];
-                    var kernelMultiplier = kernel.Data[kernelIndex];
+                    var kernelMultiplier = kernel.Weights[kernelIndex];
                     sum += inputPixelValue * kernelMultiplier;
                     kernelIndex++;
                 }
@@ -43,7 +43,7 @@ namespace VisionUnion
                 {
                     var pixelIndex = rowIndex + x;
                     var inputPixelValue = pixelBuffer[pixelIndex];
-                    var kernelMultiplier = kernel.Data[kernelIndex];
+                    var kernelMultiplier = kernel.Weights[kernelIndex];
                     sum += inputPixelValue * kernelMultiplier;
                     kernelIndex++;
                 }
@@ -70,7 +70,7 @@ namespace VisionUnion
                 {
                     var pixelIndex = rowIndex + x;
                     var inputPixelValue = pixelBuffer[pixelIndex];
-                    var kernelMultiplier = kernel.Data[kernelIndex];
+                    var kernelMultiplier = kernel.Weights[kernelIndex];
                     sum += inputPixelValue * kernelMultiplier;
                     kernelIndex++;
                 }
