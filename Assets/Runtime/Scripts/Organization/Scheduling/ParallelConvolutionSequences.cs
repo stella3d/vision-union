@@ -9,7 +9,10 @@ namespace VisionUnion.Organization
     {
         public readonly ConvolutionSequence<T>[] Sequences;
         
-        public int Width => Sequences.Length;
+        /// <summary>
+        /// The number of parallel filter sequences.  Width & Height come from the image
+        /// </summary>
+        public int Depth => Sequences.Length;
         
         public ParallelConvolutionSequences(ConvolutionSequence<T> sequence)
         {
