@@ -29,6 +29,13 @@ namespace VisionUnion
         /// <param name="allocator">The allocator to use if copying.  Has no effect if not copying</param>
         public ImageData(Texture2D texture, bool copy = false, Allocator allocator = Allocator.Persistent)
         {
+            if (!texture.isReadable)
+            {
+                Debug.LogWarningFormat("Texture {0} needs to be readable to be used as input!");
+                Width = texture.width;
+                Height = texture.height;
+            }
+            
             Width = texture.width;
             Height = texture.height;
             if (copy)
