@@ -19,17 +19,17 @@ namespace VisionUnion.Organization
         /// <summary>
         /// The definition of the set of convolution sequences to run
         /// </summary>
-        public readonly ParallelConvolutionSequences<TData> Convolutions;
+        public readonly ParallelConvolutionSequences<TData>[] Convolutions;
 
         /// <summary>
         /// The jobs that will execute the convolution definitions
         /// </summary>
-        public readonly ParallelJobSequences<TJob> Jobs;
+        public readonly ParallelJobSequences<TJob>[] Jobs;
 
         /// <summary>
         /// The image outputs of each sequence
         /// </summary>
-        public readonly ImageData<TData>[] Images;
+        public readonly ImageData<TData>[][] Images;
 
         public ImageData<TData> InputImage;
 
@@ -41,12 +41,27 @@ namespace VisionUnion.Organization
             ParallelConvolutionSequences<TData> convolutions)
         {
             InputImage = input;
+            Convolutions = new [] {convolutions};
+            Jobs = new ParallelJobSequences<TJob>[3];
+
+            var pad = Convolutions[0][0, 0].Padding;
+
+            Images = new ImageData<TData>[Jobs[0].Width][];
+            InitializeImageData(input.Width - pad.x * 2, input.Height - pad.y * 2);
+            
+            InitializeJobs();
+        }
+        
+        protected ParallelConvolutionJobs(ImageData<TData> input, 
+            ParallelConvolutionSequences<TData>[] convolutions)
+        {
+            InputImage = input;
             Convolutions = convolutions;
-            Jobs = new ParallelJobSequences<TJob>(convolutions.Depth, 1);
+            Jobs = new ParallelJobSequences<TJob>[3];
 
-            var pad = convolutions[0, 0].Padding;
+            var pad = convolutions[0][0, 0].Padding;
 
-            Images = new ImageData<TData>[Jobs.Width];
+            Images = new ImageData<TData>[Jobs[0].Width][];
             InitializeImageData(input.Width - pad.x * 2, input.Height - pad.y * 2);
             
             InitializeJobs();
@@ -56,9 +71,12 @@ namespace VisionUnion.Organization
         {
             m_ParallelHandles.Clear();
             var handle = dependency;
-            foreach (JobSequence<TJob> jobSequence in Jobs)
+            foreach (var channel in Jobs)
             {
-                m_ParallelHandles.Add(jobSequence.Schedule(handle));
+                foreach (JobSequence<TJob> jobSequence in channel)
+                {
+                    m_ParallelHandles.Add(jobSequence.Schedule(handle));
+                }
             }
 
             handle = JobHandle.CombineDependencies(m_ParallelHandles);
@@ -67,13 +85,17 @@ namespace VisionUnion.Organization
         
         public void InitializeImageData(int width, int height)
         {
-            for (var i = 0; i < Images.Length; i++)
+            for (var n = 0; n < Jobs.Length; n++)
             {
-                var existing = Images[i];
-                if(existing != default(ImageData<TData>) && existing.Buffer.IsCreated)
-                    existing.Dispose();
-                
-                Images[i] = new ImageData<TData>(width, height);
+                var channel = Jobs[n];
+                for (var i = 0; i < Images.Length; i++)
+                {
+                    var existing = Images[n][i];
+                    if (existing != default(ImageData<TData>) && existing.Buffer.IsCreated)
+                        existing.Dispose();
+
+                    Images[n][i] = new ImageData<TData>(width, height);
+                }
             }
         }
         
@@ -81,7 +103,7 @@ namespace VisionUnion.Organization
         {
             m_ParallelHandles.Dispose();
             //Convolutions.Dispose();
-            Images.Dispose();
+            Images[0].Dispose();
         }
         
         /// <summary>

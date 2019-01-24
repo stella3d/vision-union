@@ -54,8 +54,8 @@ namespace VisionUnion.Organization
 			
 			m_CombineJob = new SquareCombineJob()
 			{
-				A = m_NewSequence.Images[0],
-				B = m_NewSequence.Images[1],
+				A = m_NewSequence.Images[0][0],
+				B = m_NewSequence.Images[1][0],
 				Output = m_CombinedConvolutionData,
 			};
 		}
@@ -64,7 +64,7 @@ namespace VisionUnion.Organization
 		{
 			var handle = m_PadJob.Schedule(dependency);
 			handle = m_NewSequence.Schedule(handle);
-			handle = m_CombineJob.Schedule(m_NewSequence.Images[0].Buffer.Length, 2048, handle);
+			handle = m_CombineJob.Schedule(m_NewSequence.Images[0][0].Buffer.Length, 2048, handle);
 			m_JobHandle = handle;
 			return handle;
 		}
@@ -76,8 +76,8 @@ namespace VisionUnion.Organization
 
 		public void OnJobsComplete()
 		{
-			ConvolvedTextureOne.LoadImageData(m_NewSequence.Images[0]);
-			ConvolvedTextureTwo.LoadImageData(m_NewSequence.Images[1]);
+			ConvolvedTextureOne.LoadImageData(m_NewSequence.Images[0][0]);
+			ConvolvedTextureTwo.LoadImageData(m_NewSequence.Images[1][0]);
 			ConvolutionOutputTexture.LoadImageData(m_CombineJob.Output);
 		}
 

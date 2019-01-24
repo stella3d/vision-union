@@ -13,19 +13,22 @@ namespace VisionUnion.Organization
         
         public override void InitializeJobs()
         {
-            for (var i = 0; i < Images.Length; i++)
+            for (int n = 0; n < Images.GetLength(0); n++)
             {
-                var image = Images[i];
-                var sequenceJobs = Jobs[i];
-                var previous = InputImage;
-
-                for (var j = 0; j < sequenceJobs.Length; j++)
+                for (var i = 0; i < Images.GetLength(1); i++)
                 {
-                    var newJob = new FloatWithFloatConvolveJob(Convolutions[i, j], previous, image);
-                    sequenceJobs[j] = newJob;
+                    var image = Images[n][i];
+                    var sequenceJobs = Jobs[n][i];
+                    var previous = InputImage;
 
-                    // we assign each job in the sequence the result of the previous convolution
-                    previous = newJob.Output;
+                    for (var j = 0; j < sequenceJobs.Length; j++)
+                    {
+                        var newJob = new FloatWithFloatConvolveJob(Convolutions[n][i, j], previous, image);
+                        sequenceJobs[j] = newJob;
+
+                        // we assign each job in the sequence the result of the previous convolution
+                        previous = newJob.Output;
+                    }
                 }
             }
         }
