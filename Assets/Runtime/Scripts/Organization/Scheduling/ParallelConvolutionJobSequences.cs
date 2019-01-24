@@ -42,7 +42,7 @@ namespace VisionUnion.Organization
         {
             InputImage = input;
             Convolutions = convolutions;
-            Jobs = new ParallelJobSequences<TJob>(convolutions.Width, 1);
+            Jobs = new ParallelJobSequences<TJob>(convolutions.Depth, 1);
 
             var pad = convolutions[0, 0].Padding;
 

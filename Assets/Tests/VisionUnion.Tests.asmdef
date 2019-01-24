@@ -1,5 +1,5 @@
 {
-    "name": "Tests",
+    "name": "VisionUnion.Tests",
     "references": [
         "VisionUnion",
         "VisionUnion.Editor"

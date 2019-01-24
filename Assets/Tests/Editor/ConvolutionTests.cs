@@ -75,8 +75,11 @@ namespace VisionUnion.Tests
 			var convolution = new Convolution<float>(kernel, 1, 1);
 			
 			var image = new ImageData<float>(input, width, height, Allocator.Temp);
+
+			var outWidth = width - convolution.Padding.x * 2;
+			var outHeight = height - convolution.Padding.y * 2;
 			var expected = new ImageData<float>(expectedInput, width, height, Allocator.Temp);
-			var output = new ImageData<float>(new float[width * height], width, height, Allocator.Temp);
+			var output = new ImageData<float>(outWidth, outHeight, Allocator.Temp);
 
 			convolution.Convolve(image, output);
 			output.Print();
