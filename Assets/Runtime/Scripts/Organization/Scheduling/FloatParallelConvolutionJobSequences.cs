@@ -1,5 +1,4 @@
 ﻿using Unity.Jobs;
-using UnityEngine;
 using VisionUnion.Jobs;
 
 namespace VisionUnion.Organization
@@ -13,7 +12,6 @@ namespace VisionUnion.Organization
             : base(convolutions, dependency, 
                 (jobs, sequence, arg3) =>
             {
-                Debug.Log("start float jobs init");
                 var output = sequence.Output;
                 var firstConvolution = sequence.Convolution[0];
                 jobs[0] = new FloatWithFloatConvolveJob()
@@ -22,7 +20,7 @@ namespace VisionUnion.Organization
                     Input = input,
                     Output = output
                 };
-                for (int i = 1; i < sequence.Convolution.Length; i++)
+                for (var i = 1; i < sequence.Convolution.Length; i++)
                 {
                     var convolution = sequence.Convolution[i];
                     jobs[i] = new FloatWithFloatConvolveJob()
