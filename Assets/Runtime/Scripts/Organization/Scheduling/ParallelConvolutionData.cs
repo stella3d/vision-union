@@ -62,20 +62,7 @@ namespace VisionUnion.Organization
 
         public readonly ImageData<TData>[] InputImages;
 
-        //public Channel this[int index] => Channels[index];
-        
-        /*
-        public KeyValuePair<ParallelConvolutions<TData>, ImageData<TData>[]> 
-            this[int channel]
-        {
-            get
-            {
-                var conv = Convolutions[channel];
-                var images = OutputImages[channel];
-                return new KeyValuePair<ParallelConvolutions<TData>, ImageData<TData>[]>(conv, images);
-            }
-        }
-        */
+        public Channel this[int index] => Channels[index];
         
         public Sequence this[int channel, int sequence]
         {
@@ -102,7 +89,7 @@ namespace VisionUnion.Organization
             }
         }
 
-        public int channelCount => Channels.Length;
+        public int channelCount => Convolutions.Length;
         public int convolutionsPerChannel => Convolutions[0].Depth;
 
         const int k_MaxSequences = 32;
@@ -112,19 +99,30 @@ namespace VisionUnion.Organization
         public ParallelConvolutionData(ImageData<TData> input, 
             ParallelConvolutions<TData> convolution)
         {
-            Channels = new Channel[1];
             InputImages = new [] { input };
-            Convolutions = new ParallelConvolutions<TData>[1];
-            Convolutions[0] = convolution;
-
-            var pad = Convolutions[0][0, 0].Padding;
+            Convolutions = new[] { convolution };
 
             OutputImages = new ImageData<TData>[channelCount][];
-            
-            
             InitializeImageData(input.Width, input.Height);
 
-            Channels[0] = new Channel(input, OutputImages[0], convolution);
+            Channels = new[] { new Channel(input, OutputImages[0], convolution) };
+        }
+        
+        public ParallelConvolutionData(ImageData<TData>[] inputs, 
+            ParallelConvolutions<TData>[] convolutions)
+        {
+            InputImages = inputs;
+            Convolutions = convolutions;
+            OutputImages = new ImageData<TData>[channelCount][];
+            
+            var firstInput = inputs[0];
+            InitializeImageData(firstInput.Width, firstInput.Height);
+
+            Channels = new Channel[inputs.Length];
+            for (var i = 0; i < Channels.Length; i++)
+            {
+                Channels[i] = new Channel(inputs[i], OutputImages[i], convolutions[i]);
+            }
         }
         
         public void InitializeImageData(int width, int height)
@@ -143,7 +141,11 @@ namespace VisionUnion.Organization
         public void Dispose()
         {
             m_ParallelHandles.Dispose();
-            OutputImages[0].Dispose();
+            Convolutions.Dispose();
+            foreach (var outImage in OutputImages)
+            {
+                outImage.Dispose();
+            }
         }
     }
 }
