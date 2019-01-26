@@ -45,7 +45,7 @@ namespace VisionUnion.Examples
 
 		Convolution<float> m_GaussianBlur3x3;
 		
-		ParallelConvolutionSequences<float> m_ParallelConvolutionSequences;
+		ParallelConvolutions<float> _mParallelConvolutions;
 
 		SobelFloatPrototype m_Sobel;
 

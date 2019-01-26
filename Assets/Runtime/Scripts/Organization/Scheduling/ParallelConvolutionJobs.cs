@@ -14,57 +14,46 @@ namespace VisionUnion.Organization
         where TData: struct
         where TJob: struct, IJob
     {
-        // TODO - split out or merge the convolution + image data with the jobs, since the jobs duplicate all that
-        
-        /// <summary>
-        /// The definition of the set of convolution sequences to run
-        /// </summary>
-        public readonly ParallelConvolutionSequences<TData>[] Convolutions;
-
         /// <summary>
         /// The jobs that will execute the convolution definitions
         /// </summary>
         public readonly ParallelJobSequences<TJob>[] Jobs;
 
-        /// <summary>
-        /// The image outputs of each sequence
-        /// </summary>
-        public readonly ImageData<TData>[][] Images;
-
-        public ImageData<TData> InputImage;
+        public readonly ImageData<TData>[] InputImages;
 
         const int k_MaxSequences = 32;
         protected readonly NativeList<JobHandle> m_ParallelHandles = 
             new NativeList<JobHandle>(k_MaxSequences, Allocator.Persistent);
         
         protected ParallelConvolutionJobs(ImageData<TData> input, 
-            ParallelConvolutionSequences<TData> convolutions)
+            ParallelConvolutionData<TData> data)
         {
-            InputImage = input;
-            Convolutions = new [] {convolutions};
-            Jobs = new ParallelJobSequences<TJob>[3];
+            InputImages = new [] { input };
+            Jobs = new ParallelJobSequences<TJob>[1];
 
-            var pad = Convolutions[0][0, 0].Padding;
-
-            Images = new ImageData<TData>[Jobs[0].Width][];
-            InitializeImageData(input.Width - pad.x * 2, input.Height - pad.y * 2);
-            
             InitializeJobs();
         }
         
-        protected ParallelConvolutionJobs(ImageData<TData> input, 
-            ParallelConvolutionSequences<TData>[] convolutions)
+        protected ParallelConvolutionJobs(ParallelConvolutionData<TData> data, 
+            Action<TJob, ParallelConvolutionData<TData>.Sequence> action)
         {
-            InputImage = input;
-            Convolutions = convolutions;
-            Jobs = new ParallelJobSequences<TJob>[3];
+            InputImages = data.InputImages;
+            Jobs = new ParallelJobSequences<TJob>[3];        
 
-            var pad = convolutions[0][0, 0].Padding;
-
-            Images = new ImageData<TData>[Jobs[0].Width][];
-            InitializeImageData(input.Width - pad.x * 2, input.Height - pad.y * 2);
-            
-            InitializeJobs();
+            for (int c = 0; c < data.Channels.Length; c++)
+            {
+                var jobs = Jobs[c];
+                var inputImage = InputImages[c];
+                for (int i = 0; i < data.OutputImages.Length; i++)
+                {
+                    for (int j = 0; j < jobs.Width; j++)
+                    {
+                        var jobData = data[i, j];
+                        var job = jobs[i, j];
+                        action(job, jobData);
+                    }
+                }
+            }
         }
 
         public JobHandle Schedule(JobHandle dependency)
@@ -83,27 +72,44 @@ namespace VisionUnion.Organization
             return handle;
         }
         
-        public void InitializeImageData(int width, int height)
+        // for scheduling each channel, without waiting for other channels in the image to complete.
+        public void ScheduleSplit(JobHandle dependency, ref JobHandle[] handles)
         {
-            for (var n = 0; n < Jobs.Length; n++)
+            var handle = dependency;
+            for (var i = 0; i < Jobs.Length; i++)
             {
-                var channel = Jobs[n];
-                for (var i = 0; i < Images.Length; i++)
+                var channel = Jobs[i];
+                m_ParallelHandles.Clear();
+                foreach (JobSequence<TJob> jobSequence in channel)
                 {
-                    var existing = Images[n][i];
-                    if (existing != default(ImageData<TData>) && existing.Buffer.IsCreated)
-                        existing.Dispose();
-
-                    Images[n][i] = new ImageData<TData>(width, height);
+                    m_ParallelHandles.Add(jobSequence.Schedule(handle));
                 }
+                
+                handles[i] = JobHandle.CombineDependencies(m_ParallelHandles);
+            }
+        }
+        
+        // for scheduling each channel, without waiting for other channels in the image to complete,
+        // with separate dependencies per channel.  can be used to chain channels
+        public void ScheduleSplit(JobHandle[] dependencies, ref JobHandle[] handles)
+        {
+            for (var i = 0; i < Jobs.Length; i++)
+            {
+                var channel = Jobs[i];
+                var dependency = dependencies[i];
+                m_ParallelHandles.Clear();
+                foreach (JobSequence<TJob> jobSequence in channel)
+                {
+                    m_ParallelHandles.Add(jobSequence.Schedule(dependency));
+                }
+                
+                handles[i] = JobHandle.CombineDependencies(m_ParallelHandles);
             }
         }
         
         public void Dispose()
         {
             m_ParallelHandles.Dispose();
-            //Convolutions.Dispose();
-            Images[0].Dispose();
         }
         
         /// <summary>

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace VisionUnion.Organization
 {
-    public class ParallelConvolutionSequences<T> : IDisposable, IEnumerable<ConvolutionSequence<T>>
+    public class ParallelConvolutions<T> : IDisposable, IEnumerable<ConvolutionSequence<T>>
         where T: struct
     {
         public readonly ConvolutionSequence<T>[] Sequences;
@@ -14,13 +14,13 @@ namespace VisionUnion.Organization
         /// </summary>
         public int Depth => Sequences.Length;
         
-        public ParallelConvolutionSequences(ConvolutionSequence<T> sequence)
+        public ParallelConvolutions(ConvolutionSequence<T> sequence)
         {
             Sequences = new ConvolutionSequence<T>[1];
             Sequences[0] = sequence;
         }
         
-        public ParallelConvolutionSequences(ConvolutionSequence<T>[] sequences)
+        public ParallelConvolutions(ConvolutionSequence<T>[] sequences)
         {
             Sequences = sequences;
         }

@@ -6,27 +6,33 @@ namespace VisionUnion.Organization
         ParallelConvolutionJobs<float, FloatWithFloatConvolveJob>
     {
         public FloatParallelConvolutionJobs(ImageData<float> input,
-            ParallelConvolutionSequences<float> convolutions) 
+            ParallelConvolutionData<float> convolutions) 
             : base(input, convolutions)
         {
         }
         
         public override void InitializeJobs()
         {
-            for (int n = 0; n < Images.GetLength(0); n++)
+            var filterCount = Jobs.GetLength(1);
+            for (var c = 0; c < Jobs.GetLength(0); c++)
             {
-                for (var i = 0; i < Images.GetLength(1); i++)
+                var jobChannel = Jobs[c];
+                
+                for (var i = 0; i < filterCount; i++)
                 {
-                    var image = Images[n][i];
-                    var sequenceJobs = Jobs[n][i];
-                    var previous = InputImage;
+                    var sequenceJobs = jobChannel[i];
+                    var previous = InputImages[0];
 
                     for (var j = 0; j < sequenceJobs.Length; j++)
                     {
-                        var newJob = new FloatWithFloatConvolveJob(Convolutions[n][i, j], previous, image);
+                        var job = jobChannel[i, j];
+                        var conv = job.Convolution;
+                        var image = job.Output;
+                        var newJob = new FloatWithFloatConvolveJob(conv, previous, image);
                         sequenceJobs[j] = newJob;
 
-                        // we assign each job in the sequence the result of the previous convolution
+                        // we assign each job in the sequence the result of the previous convolution.
+                        // this supports both separated kernels as well as general stacks of kernels
                         previous = newJob.Output;
                     }
                 }

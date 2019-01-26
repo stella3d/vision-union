@@ -20,7 +20,8 @@ namespace VisionUnion.Organization
 		JobHandle m_GrayScaleJobHandle;
 		JobHandle m_JobHandle;
 		
-		ParallelConvolutionSequences<float> m_ParallelConvolutionSequences;
+		ParallelConvolutions<float> m_ParallelConvolutions;
+		ParallelConvolutionData<float> m_ParallelConvolutionData;
 
 		FloatParallelConvolutionJobs m_NewSequence;
 
@@ -38,11 +39,13 @@ namespace VisionUnion.Organization
 		
 		void SetupFilter()
 		{
-			m_ParallelConvolutionSequences = new ParallelConvolutionSequences<float>(new []
+			m_ParallelConvolutions = new ParallelConvolutions<float>(new []
 			{
 				new ConvolutionSequence<float>(Kernels.Short.Sobel.X.ToFloat()), 
 				new ConvolutionSequence<float>(Kernels.Short.Sobel.Y.ToFloat())
 			});
+
+			m_ParallelConvolutionData = new ParallelConvolutionData<float>(m_InputData, m_ParallelConvolutions);
 		}
 		
 		void SetupJobs()
@@ -50,12 +53,12 @@ namespace VisionUnion.Organization
 			m_PadJob = new ImagePadJob<float>(m_InputData, m_PaddedGrayscaleInputData, m_Pad);
 			m_PadJob.Run();
 			
-			m_NewSequence = new FloatParallelConvolutionJobs(m_PadJob.Output, m_ParallelConvolutionSequences);
+			m_NewSequence = new FloatParallelConvolutionJobs(m_PadJob.Output, m_ParallelConvolutionData);
 			
 			m_CombineJob = new SquareCombineJob()
 			{
-				A = m_NewSequence.Images[0][0],
-				B = m_NewSequence.Images[1][0],
+				A = m_ParallelConvolutionData.OutputImages[0][0],
+				B = m_ParallelConvolutionData.OutputImages[1][0],
 				Output = m_CombinedConvolutionData,
 			};
 		}
@@ -64,7 +67,7 @@ namespace VisionUnion.Organization
 		{
 			var handle = m_PadJob.Schedule(dependency);
 			handle = m_NewSequence.Schedule(handle);
-			handle = m_CombineJob.Schedule(m_NewSequence.Images[0][0].Buffer.Length, 2048, handle);
+			handle = m_CombineJob.Schedule(m_ParallelConvolutionData.OutputImages[0][0].Buffer.Length, 2048, handle);
 			m_JobHandle = handle;
 			return handle;
 		}
@@ -76,8 +79,8 @@ namespace VisionUnion.Organization
 
 		public void OnJobsComplete()
 		{
-			ConvolvedTextureOne.LoadImageData(m_NewSequence.Images[0][0]);
-			ConvolvedTextureTwo.LoadImageData(m_NewSequence.Images[1][0]);
+			ConvolvedTextureOne.LoadImageData(m_ParallelConvolutionData.OutputImages[0][0]);
+			ConvolvedTextureTwo.LoadImageData(m_ParallelConvolutionData.OutputImages[1][0]);
 			ConvolutionOutputTexture.LoadImageData(m_CombineJob.Output);
 		}
 
@@ -85,7 +88,7 @@ namespace VisionUnion.Organization
 		{
 			m_InputData = new ImageData<float>(input);
 
-			m_Pad = Pad.GetSamePad(m_InputData, m_ParallelConvolutionSequences[0][0]);
+			m_Pad = Pad.GetSamePad(m_InputData, m_ParallelConvolutions[0][0]);
 			var newSize = Pad.GetNewSize(m_InputData.Width, m_InputData.Height, m_Pad);
 			m_PaddedGrayscaleInputData = new ImageData<float>(newSize.x, newSize.y);
 
@@ -104,7 +107,7 @@ namespace VisionUnion.Organization
 		public void Dispose()
 		{
 			m_PaddedGrayscaleInputData.Dispose();
-			m_ParallelConvolutionSequences.Dispose();
+			m_ParallelConvolutions.Dispose();
 			m_NewSequence.Dispose();
 		}
 	}
