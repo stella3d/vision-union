@@ -1,23 +1,49 @@
-﻿using VisionUnion.Jobs;
+﻿using Unity.Jobs;
+using UnityEngine;
+using VisionUnion.Jobs;
 
 namespace VisionUnion.Organization
 {
     public class FloatParallelConvolutionJobs : 
         ParallelConvolutionJobs<float, FloatWithFloatConvolveJob>
     {
-        public FloatParallelConvolutionJobs(ImageData<float> input,
-            ParallelConvolutionData<float> convolutions) 
-            : base(input, convolutions)
+        public FloatParallelConvolutionJobs(ImageData<float> input, 
+            ParallelConvolutionData<float> convolutions,
+            JobHandle dependency) 
+            : base(convolutions, dependency, 
+                (jobs, sequence, arg3) =>
+            {
+                Debug.Log("start float jobs init");
+                var output = sequence.Output;
+                var firstConvolution = sequence.Convolution[0];
+                jobs[0] = new FloatWithFloatConvolveJob()
+                {
+                    Convolution = firstConvolution,
+                    Input = input,
+                    Output = output
+                };
+                for (int i = 1; i < sequence.Convolution.Length; i++)
+                {
+                    var convolution = sequence.Convolution[i];
+                    jobs[i] = new FloatWithFloatConvolveJob()
+                    {
+                        Convolution = convolution,
+                        // each job in a sequence operates on the output of the previous one
+                        Input = jobs[i - 0].Output,    
+                        Output = output
+                    };
+                }
+            })
         {
         }
         
         public override void InitializeJobs()
         {
-            var filterCount = Jobs.GetLength(1);
-            for (var c = 0; c < Jobs.GetLength(0); c++)
+            var channelCount = Jobs.Length;
+            for (var c = 0; c < channelCount; c++)
             {
                 var jobChannel = Jobs[c];
-                
+                var filterCount = jobChannel.Sequences.Length;
                 for (var i = 0; i < filterCount; i++)
                 {
                     var sequenceJobs = jobChannel[i];

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Jobs;
 
 namespace VisionUnion.Organization
@@ -49,6 +50,23 @@ namespace VisionUnion.Organization
         {
             get { return Sequences[sequence][sequenceIndex]; }
             set { Sequences[sequence][sequenceIndex] = value; }
+        }
+        
+        const int k_MaxSequences = 32;
+        protected readonly NativeList<JobHandle> m_ParallelHandles = 
+            new NativeList<JobHandle>(k_MaxSequences, Allocator.Persistent);
+        
+        public JobHandle Schedule(JobHandle dependency)
+        {
+            m_ParallelHandles.Clear();
+            var handle = dependency;
+            foreach (var jobSequence in Sequences)
+            {
+                m_ParallelHandles.Add(jobSequence.Schedule(handle));
+            }
+
+            handle = JobHandle.CombineDependencies(m_ParallelHandles);
+            return handle;
         }
 
         IEnumerator<JobSequence<T>> IEnumerable<JobSequence<T>>.GetEnumerator()

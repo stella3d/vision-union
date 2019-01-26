@@ -25,33 +25,31 @@ namespace VisionUnion.Organization
         protected readonly NativeList<JobHandle> m_ParallelHandles = 
             new NativeList<JobHandle>(k_MaxSequences, Allocator.Persistent);
         
-        protected ParallelConvolutionJobs(ImageData<TData> input, 
-            ParallelConvolutionData<TData> data)
-        {
-            InputImages = new [] { input };
-            Jobs = new ParallelJobSequences<TJob>[1];
-
-            InitializeJobs();
-        }
-        
-        protected ParallelConvolutionJobs(ParallelConvolutionData<TData> data, 
-            Action<TJob, ParallelConvolutionData<TData>.Sequence> action)
+        protected ParallelConvolutionJobs(ParallelConvolutionData<TData> data)
         {
             InputImages = data.InputImages;
-            Jobs = new ParallelJobSequences<TJob>[3];        
+            Jobs = new ParallelJobSequences<TJob>[data.channelCount];
+        }
+        
+        public ParallelConvolutionJobs(ParallelConvolutionData<TData> data, JobHandle dependency, 
+            Action<JobSequence<TJob>, ParallelConvolutionData<TData>.Sequence, int> action)
+        {
+            InputImages = data.InputImages;
+            Jobs = new ParallelJobSequences<TJob>[data.channelCount];
+            for (int i = 0; i < Jobs.Length; i++)
+            {
+                Jobs[i] = new ParallelJobSequences<TJob>(data.convolutionsPerChannel, 1);
+            }
 
             for (int c = 0; c < data.Channels.Length; c++)
             {
                 var jobs = Jobs[c];
                 var inputImage = InputImages[c];
-                for (int i = 0; i < data.OutputImages.Length; i++)
+                for (int i = 0; i < data.convolutionsPerChannel; i++)
                 {
-                    for (int j = 0; j < jobs.Width; j++)
-                    {
-                        var jobData = data[i, j];
-                        var job = jobs[i, j];
-                        action(job, jobData);
-                    }
+                    var sequence = data[c, i];
+                    var sequenceJobs = jobs[i];
+                    action(sequenceJobs, sequence, i);
                 }
             }
         }

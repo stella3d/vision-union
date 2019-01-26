@@ -56,8 +56,6 @@ namespace VisionUnion.Examples
 			m_GaussianBlur3x3 = new Convolution<float>(Kernels.Float.GaussianBlurApproximate3x3);
 			
 			SetupTextures();
-			
-			m_Sobel = new SobelFloatPrototype(m_GrayscaleInputTexture);
 		}
 
 		void SetupTextures()
@@ -83,7 +81,8 @@ namespace VisionUnion.Examples
 		{
 			//m_KernelOne.Dispose();
 			//m_KernelTwo.Dispose();
-			m_Sobel.Dispose();
+			
+			m_Sobel?.Dispose();
 		}
 
 		FloatWithFloatConvolveJob m_GaussJob;
@@ -93,7 +92,6 @@ namespace VisionUnion.Examples
 			switch (Time.frameCount)
 			{
 				case 3:
-					m_Sobel.Dispose();
 					m_GreyscaleJob = new GreyscaleByLuminanceFloatJob24(m_InputTexture.GetRawTextureData<Color24>(),
 						m_GrayscaleInputData.Buffer, LuminanceWeights.FloatNormalized);
 			
@@ -117,7 +115,7 @@ namespace VisionUnion.Examples
 					
 					m_GaussTexture.LoadImageData(m_GaussJob.Output);
 				
-					m_Sobel = new SobelFloatPrototype(m_GaussTexture);
+					m_Sobel = new SobelFloatPrototype(m_GaussJob.Output);
 					break;
 				case 9:
 					m_JobHandle = m_Sobel.Schedule(m_GrayScaleJobHandle);

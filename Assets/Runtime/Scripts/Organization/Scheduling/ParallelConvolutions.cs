@@ -8,6 +8,8 @@ namespace VisionUnion.Organization
         where T: struct
     {
         public readonly ConvolutionSequence<T>[] Sequences;
+
+        public int sequenceLength => Sequences.Length > 0 ? Sequences[0].Length : 0;
         
         /// <summary>
         /// The number of parallel filter sequences.  Width & Height come from the image

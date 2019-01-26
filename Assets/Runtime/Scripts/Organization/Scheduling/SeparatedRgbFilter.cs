@@ -1,4 +1,5 @@
 using System;
+using Unity.Jobs;
 using VisionUnion.Jobs;
 
 namespace VisionUnion.Organization
@@ -15,9 +16,11 @@ namespace VisionUnion.Organization
         public SeparatedFloatRgbFilter(ImageData<float>[] channels, 
             ParallelConvolutionData<float>[] data)
         {
-            m_Red = new FloatParallelConvolutionJobs(channels[0], data[0]);
-            m_Green = new FloatParallelConvolutionJobs(channels[1], data[1]);
-            m_Blue = new FloatParallelConvolutionJobs(channels[2], data[2]);
+            var handle = new JobHandle();
+            handle.Complete();
+            m_Red = new FloatParallelConvolutionJobs(channels[0], data[0], handle);
+            m_Green = new FloatParallelConvolutionJobs(channels[1], data[1], handle);
+            m_Blue = new FloatParallelConvolutionJobs(channels[2], data[2], handle);
         }
 
         public void Dispose()
