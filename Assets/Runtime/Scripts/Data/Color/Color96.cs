@@ -5,7 +5,7 @@ using UnityEngine;
 namespace VisionUnion
 {
     ///<summary>
-    /// Representation of RGB colors in 96 bit format
+    /// Representation of RGB colors in floating point format
     ///</summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct Color96 : IEquatable<Color96>
