@@ -3,7 +3,7 @@ using System;
 namespace VisionUnion
 {
     /// <summary>
-    /// Specifies how many units of padding to add to each side
+    /// Specifies how many units of padding to add to each side of an image
     /// </summary>
     public struct Padding : IEquatable<Padding>
     {
@@ -18,6 +18,14 @@ namespace VisionUnion
             bottom = uniformSize;
             left = uniformSize;
             right = uniformSize;
+        }
+        
+        public Padding(int horizontal, int vertical)
+        {
+            top = vertical;
+            bottom = vertical;
+            left = horizontal;
+            right = horizontal;
         }
         
         public Padding(int top, int bottom, int left, int right)
