@@ -273,7 +273,7 @@ PrefabInstance:
     - target: {fileID: 2138527147702088852, guid: 03be29ffa3e1e9c48987b2860c3d5d3a,
         type: 3}
       propertyPath: m_Name
-      value: RGB
+      value: RGB Copy Test
       objectReference: {fileID: 0}
     - target: {fileID: 2138527147702088854, guid: 03be29ffa3e1e9c48987b2860c3d5d3a,
         type: 3}
@@ -330,27 +330,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2138527146935540971, guid: 03be29ffa3e1e9c48987b2860c3d5d3a,
-        type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2138527147835635119, guid: 03be29ffa3e1e9c48987b2860c3d5d3a,
-        type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2138527148211544556, guid: 03be29ffa3e1e9c48987b2860c3d5d3a,
-        type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2136395840, guid: 03be29ffa3e1e9c48987b2860c3d5d3a, type: 3}
-      propertyPath: m_Input
-      value: 
-      objectReference: {fileID: 2800000, guid: 83d66f0a2b4a65d43ab9d4d4d13e66c9, type: 3}
-    m_RemovedComponents:
-    - {fileID: 2138527147835635153, guid: 03be29ffa3e1e9c48987b2860c3d5d3a, type: 3}
-    - {fileID: 2138527146935540973, guid: 03be29ffa3e1e9c48987b2860c3d5d3a, type: 3}
-    - {fileID: 2138527148211544558, guid: 03be29ffa3e1e9c48987b2860c3d5d3a, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 03be29ffa3e1e9c48987b2860c3d5d3a, type: 3}
