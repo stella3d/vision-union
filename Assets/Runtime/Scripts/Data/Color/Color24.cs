@@ -25,6 +25,11 @@ namespace VisionUnion
         {
             return new Color24(color.r, color.g, color.b);
         }
+        
+        public static implicit operator Color32(Color24 color)
+        {
+            return new Color32(color.r, color.g, color.b, 1);
+        }
 
         public bool Equals(Color24 other)
         {

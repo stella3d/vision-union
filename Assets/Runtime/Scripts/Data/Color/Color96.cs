@@ -5,28 +5,33 @@ using UnityEngine;
 namespace VisionUnion
 {
     ///<summary>
-    /// Representation of RGB colors in 48 bit format
+    /// Representation of RGB colors in 96 bit format
     ///</summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct Color48 : IEquatable<Color48>
+    public struct Color96 : IEquatable<Color96>
     {
         public float r;
         public float g;
         public float b;
 
-        public Color48(float r, float g, float b)
+        public Color96(float r, float g, float b)
         {
             this.r = r;
             this.g = g;
             this.b = b;
         }
         
-        public static implicit operator Color48(Color color)
+        public static implicit operator Color96(Color color)
         {
-            return new Color48(color.r, color.g, color.b);
+            return new Color96(color.r, color.g, color.b);
+        }
+        
+        public static implicit operator Color(Color96 color)
+        {
+            return new Color(color.r, color.g, color.b, 1f);
         }
 
-        public bool Equals(Color48 other)
+        public bool Equals(Color96 other)
         {
             return r.Equals(other.r) && g.Equals(other.g) && b.Equals(other.b);
         }
