@@ -40,13 +40,8 @@ namespace VisionUnion.Examples
 		JobHandle m_GrayScaleJobHandle;
 		JobHandle m_JobHandle;
 
-		Kernel<float> m_KernelOne;
-		Kernel<float> m_KernelTwo;
-
 		Convolution<float> m_GaussianBlur3x3;
 		
-		ParallelConvolutions<float> _mParallelConvolutions;
-
 		SobelFloatPrototype m_Sobel;
 
 		GreyscaleByLuminanceFloatJob24 m_GreyscaleJob;
@@ -69,7 +64,7 @@ namespace VisionUnion.Examples
 		Texture2D SetupTexture<T>(Texture2D input, Renderer r, out ImageData<T> data)
 			where T: struct
 		{
-			var texture = new Texture2D(m_InputTexture.width, m_InputTexture.height, 
+			var texture = new Texture2D(input.width, input.height, 
 				TextureFormat.RFloat, false);
 
 			data = new ImageData<T>(texture);
@@ -79,9 +74,7 @@ namespace VisionUnion.Examples
 
 		void OnDestroy()
 		{
-			//m_KernelOne.Dispose();
-			//m_KernelTwo.Dispose();
-			
+			m_GaussianBlur3x3.Dispose();
 			m_Sobel?.Dispose();
 		}
 

@@ -35,6 +35,7 @@ namespace VisionUnion.Organization
         {
         }
         
+        /*
         public override void InitializeJobs()
         {
             var channelCount = Jobs.Length;
@@ -62,6 +63,7 @@ namespace VisionUnion.Organization
                 }
             }
         }
+        */
     }
 }
 

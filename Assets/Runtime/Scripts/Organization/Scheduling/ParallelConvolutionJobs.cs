@@ -107,17 +107,9 @@ namespace VisionUnion.Organization
         
         public void Dispose()
         {
+            Jobs.Dispose();
             m_ParallelHandles.Dispose();
         }
-        
-        /// <summary>
-        /// Inside the implementation:
-        /// 1) create all the job structs
-        /// 2) assign the same input image to every job
-        /// 3) assign an output image to every job - one image per sequence
-        /// As well as whatever else is needed for that job type
-        /// </summary>
-        public abstract void InitializeJobs();
     }
 }
 

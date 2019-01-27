@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
 
 namespace VisionUnion.Organization
 {
-    public class ParallelJobSequences<T> : IEnumerable<JobSequence<T>> 
+    public class ParallelJobSequences<T> : IEnumerable<JobSequence<T>> , IDisposable
         where T: struct, IJob
     {
         public readonly JobSequence<T>[] Sequences;
@@ -77,6 +78,11 @@ namespace VisionUnion.Organization
         public IEnumerator GetEnumerator()
         {
             return Sequences.GetEnumerator();
+        }
+
+        public void Dispose()
+        {
+            m_ParallelHandles.Dispose();
         }
     }
 }
