@@ -45,6 +45,8 @@ namespace VisionUnion.Examples
 		SobelFloatPrototype m_Sobel;
 
 		GreyscaleByLuminanceFloatJob24 m_GreyscaleJob;
+
+		BiasedReluActivationJob _mBiasedReluJob;
 	
 		void Awake()
 		{
@@ -128,13 +130,10 @@ namespace VisionUnion.Examples
 					m_Sobel.Complete();
 					m_Sobel.OnJobsComplete();
 					break;
-				case 28:
+				case 24:
 					m_KernelOneRenderer.material.mainTexture = m_Sobel.ConvolvedTextureOne;
 					m_KernelTwoRenderer.material.mainTexture = m_Sobel.ConvolvedTextureTwo;
 					m_ConvolutionOutputRenderer.material.mainTexture = m_Sobel.ConvolutionOutputTexture;
-					break;
-				case 30:
-					Debug.Log("awake done");
 					break;
 			}
 			

@@ -10,17 +10,17 @@ namespace VisionUnion.Jobs
     // default weights for relative luminance calculation
     internal static class LuminanceWeights
     {
-        public static Color48 Float
+        public static Color96 Float
         {
-            get { return new Color48(0.2126f, 0.7152f, 0.0722f); }
+            get { return new Color96(0.2126f, 0.7152f, 0.0722f); }
         }
         
-        public static Color48 FloatNormalized
+        public static Color96 FloatNormalized
         {
             get
             {
                 const float oneOver255 = 0.0039215686f;
-                return new Color48(0.2126f * oneOver255, 0.7152f * oneOver255, 0.0722f * oneOver255);
+                return new Color96(0.2126f * oneOver255, 0.7152f * oneOver255, 0.0722f * oneOver255);
             }
         }
 
@@ -36,23 +36,23 @@ namespace VisionUnion.Jobs
         }
     }
     
-    //[BurstCompile]
+    [BurstCompile]
     public struct GreyscaleByLuminanceFloatJob : IJobParallelFor
     {
-        public Color48 Weights;
+        public Color96 Weights;
         
-        [ReadOnly] public NativeArray<Color48> InputTexture;
+        [ReadOnly] public NativeArray<Color96> InputTexture;
     
         [WriteOnly] public NativeArray<float> Grayscale;
 
-        public GreyscaleByLuminanceFloatJob(NativeArray<Color48> input, 
+        public GreyscaleByLuminanceFloatJob(NativeArray<Color96> input, 
             NativeArray<float> grayscale, 
-            Color48 weights)
+            Color96 weights)
         {
             InputTexture = input;
             Grayscale = grayscale;
             Weights = weights;
-            if (Weights.Equals(default(Color48)))
+            if (Weights.Equals(default(Color96)))
                 Weights = LuminanceWeights.Float;
         }
         
@@ -66,7 +66,7 @@ namespace VisionUnion.Jobs
     [BurstCompile]
     public struct GreyscaleByLuminanceFloatJob24 : IJobParallelFor
     {
-        public Color48 Weights;
+        public Color96 Weights;
         
         [ReadOnly] public NativeArray<Color24> InputTexture;
     
@@ -74,7 +74,7 @@ namespace VisionUnion.Jobs
 
         public GreyscaleByLuminanceFloatJob24(NativeArray<Color24> input, 
             NativeArray<float> grayscale, 
-            Color48 weights)
+            Color96 weights)
         {
             InputTexture = input;
             Grayscale = grayscale;
@@ -85,7 +85,7 @@ namespace VisionUnion.Jobs
             weights.g *= oneOver255;
             weights.b *= oneOver255;
             
-            if (Weights.Equals(default(Color48)))
+            if (Weights.Equals(default(Color96)))
                 Weights = LuminanceWeights.Float;
         }
         
