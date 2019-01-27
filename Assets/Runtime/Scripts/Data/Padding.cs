@@ -28,7 +28,7 @@ namespace VisionUnion
             this.right = right;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return string.Format("top: {0}, bottom:{1}, left:{2}, right:{3}", top, bottom, left, right);
         }

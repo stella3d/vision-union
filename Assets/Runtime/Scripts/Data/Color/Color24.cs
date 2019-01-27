@@ -35,5 +35,10 @@ namespace VisionUnion
         {
             return r == other.r && g == other.g && b == other.b;
         }
+
+        public override string ToString()
+        {
+            return $"r: {r.ToString()}, g: {g.ToString()}, b: {b.ToString()}";
+        }
     }
 }

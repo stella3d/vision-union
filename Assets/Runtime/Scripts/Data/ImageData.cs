@@ -97,6 +97,15 @@ namespace VisionUnion
             return Width == other.Width && Height == other.Height && Buffer.Equals(other.Buffer);
         }
 
+        public override bool Equals(object other)
+        {
+            if (other == null)
+                return false;
+
+            var cast = (ImageData<TPixelData>)other;
+            return Equals(cast);
+        }
+
         public override int GetHashCode()
         {
             unchecked
