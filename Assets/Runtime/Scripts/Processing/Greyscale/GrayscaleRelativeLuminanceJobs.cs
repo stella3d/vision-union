@@ -28,9 +28,9 @@ namespace VisionUnion.Jobs
         {
             get
             {
-                var red = (byte)(Float.r * 255f);
-                var green = (byte)(Float.g * 255f);
-                var blue = (byte)(Float.b * 255f);
+                var red = Convert.ToByte(Float.r * 255f);
+                var green = Convert.ToByte(Float.g * 255f);
+                var blue = Convert.ToByte(Float.b * 255f);
                 return new Color24(red, green, blue);
             }
         }
@@ -96,7 +96,7 @@ namespace VisionUnion.Jobs
         }
     }
 
-    //[BurstCompile]
+    [BurstCompile]
     public struct GreyscaleLuminanceByteJob : IJobParallelFor
     {
         public Color24 Weights;

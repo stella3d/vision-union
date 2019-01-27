@@ -6,18 +6,21 @@ using Unity.Mathematics;
 namespace VisionUnion
 {
     [BurstCompile]
-    public struct ReluActivationSelfJob : IJobParallelFor
+    public struct BiasedReluActivationSelfJob : IJobParallelFor
     {
+        public float Bias;
+        
         public NativeArray<float> Input;
 
-        public ReluActivationSelfJob(NativeArray<float> input)
+        public BiasedReluActivationSelfJob(NativeArray<float> input, float bias = 0f)
         {
             Input = input;
+            Bias = bias;
         }
 
         public void Execute(int index)
         {
-            Input[index] = math.max(Input[index], 0f);
+            Input[index] = math.max(Input[index] + Bias, 0f);
         }
     }
     
@@ -29,7 +32,7 @@ namespace VisionUnion
         [ReadOnly] public NativeArray<float> Input;
         [WriteOnly] public NativeArray<float> Output;
 
-        public BiasedReluActivationJob(NativeArray<float> input, NativeArray<float> output, float bias)
+        public BiasedReluActivationJob(NativeArray<float> input, NativeArray<float> output, float bias = 0f)
         {
             Input = input;
             Output = output;

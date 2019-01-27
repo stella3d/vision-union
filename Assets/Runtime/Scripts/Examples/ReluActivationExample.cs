@@ -85,15 +85,6 @@ namespace VisionUnion.Examples
 					m_ConvolvedTexture.LoadImageData(m_ConvolvedData);
 					m_ActivatedConvolvedTexture.LoadImageData(m_ActivatedData);
 					break;
-				case 10:
-					//m_JobHandle = m_ConvolveJob.Schedule();
-					//m_JobHandle = m_ReluOtherJob.Schedule(m_ConvolvedData.Buffer.Length, 4096, m_JobHandle);
-					break;
-				case 13:
-					//m_JobHandle.Complete();
-					break;
-				case 15:
-					break;
 			}
 		}
 	}
