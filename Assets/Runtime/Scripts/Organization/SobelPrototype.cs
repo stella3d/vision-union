@@ -1,5 +1,4 @@
 using System;
-using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 using VisionUnion.Jobs;
@@ -69,12 +68,12 @@ namespace VisionUnion.Organization
 			
 			m_NewSequence = new FloatParallelConvolutionJobs(m_PadJob.Output, m_ParallelConvolutionData , m_JobHandle);
 
-			var outImages = m_ParallelConvolutionData.OutputImages[0][0];
+			var outImages = m_ParallelConvolutionData.OutputImages[0];
 			
 			m_CombineJob = new SquareCombineJob()
 			{
-				A = m_ParallelConvolutionData.OutputImages[0][0],
-				B = m_ParallelConvolutionData.OutputImages[0][1],
+				A = outImages[0],
+				B = outImages[1],
 				Output = m_CombinedConvolutionData,
 			};
 			
@@ -135,7 +134,6 @@ namespace VisionUnion.Organization
 		public void Dispose()
 		{
 			m_PaddedGrayscaleInputData.Dispose();
-			//m_ParallelConvolutions.Dispose();
 			m_ParallelConvolutionData.Dispose();
 			m_NewSequence.Dispose();
 		}
