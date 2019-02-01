@@ -340,6 +340,16 @@ PrefabInstance:
       propertyPath: m_InputTexture
       value: 
       objectReference: {fileID: 2800000, guid: 83d66f0a2b4a65d43ab9d4d4d13e66c9, type: 3}
+    - target: {fileID: 4643708803225492307, guid: 2afccb91787a5a9459f536e1f1185dd5,
+        type: 3}
+      propertyPath: m_ActivatedOutputRendererOne
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4643708803225492307, guid: 2afccb91787a5a9459f536e1f1185dd5,
+        type: 3}
+      propertyPath: m_ActivatedOutputRendererTwo
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4643708803404947787, guid: 2afccb91787a5a9459f536e1f1185dd5,
         type: 3}
       propertyPath: m_LocalPosition.y
