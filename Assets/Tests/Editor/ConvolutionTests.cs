@@ -48,7 +48,7 @@ namespace VisionUnion.Tests
 		[Test]
 		public void ConvolutionWithIdentityKernel_OutputEqualsInput_1x1()
 		{
-			var kernel = new Kernel<short>(Kernels.Short.Identity1x1);
+			var kernel = new Kernel2D<short>(Kernels.Short.Identity1x1);
 			var convolution = new Convolution<short>(kernel, 1, 0);
 			
 			convolution.Convolve(m_InputImage, m_IntermediateImage);
@@ -59,7 +59,7 @@ namespace VisionUnion.Tests
 		[Test]
 		public void ConvolutionWithIdentityKernel_OutputEqualsInput_3x3()
 		{
-			var kernel = new Kernel<short>(Kernels.Short.Identity3x3);
+			var kernel = new Kernel2D<short>(Kernels.Short.Identity3x3);
 			var convolution = new Convolution<short>(kernel, 1, 1);
 			
 			convolution.Convolve(m_InputImage, m_IntermediateImage);
@@ -71,7 +71,7 @@ namespace VisionUnion.Tests
 		public void ConvolutionWith_1x1Stride_1x1Pad(int width, int height, 
 			float[,] kernelInput, float[] input, float[] expectedInput)
 		{
-			var kernel = new Kernel<float>(kernelInput, Allocator.Temp);
+			var kernel = new Kernel2D<float>(kernelInput, Allocator.Temp);
 			var convolution = new Convolution<float>(kernel, 1, 1);
 			
 			var image = new ImageData<float>(input, width, height, Allocator.Temp);

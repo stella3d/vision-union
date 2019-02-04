@@ -8,7 +8,7 @@ namespace VisionUnion
             var outputBuffer = output.Buffer;
             var imageWidth = image.Width;
             var stride = convolution.Stride;
-            var kernel = convolution.Kernel;
+            var kernel = convolution.Kernel2D;
             var pad = convolution.Padding;
             
             for (var r = pad.y; r < image.Height - pad.y; r += stride.y)
@@ -28,7 +28,7 @@ namespace VisionUnion
             var outputBuffer = output.Buffer;
             var imageWidth = image.Width;
             var stride = convolution.Stride;
-            var kernel = convolution.Kernel;
+            var kernel = convolution.Kernel2D;
             var pad = convolution.Padding;
             
             for (var r = pad.y; r < image.Height - pad.y; r += stride.y)
@@ -49,7 +49,7 @@ namespace VisionUnion
             var outWidth = output.Width;
             var outputBuffer = output.Buffer;
             var stride = convolution.Stride;
-            var kernel = convolution.Kernel;
+            var kernel = convolution.Kernel2D;
             var pad = convolution.Padding;
 
             var outputRow = 0;

@@ -12,32 +12,32 @@ namespace VisionUnion
     {
         public Vector2Int Stride;
         public Vector2Int Padding;
-        public Kernel<T> Kernel;
+        public Kernel2D<T> Kernel2D;
         
-        public Convolution(Kernel<T> kernel, int stride = 1, int pad = 1)
+        public Convolution(Kernel2D<T> kernel, int stride = 1, int pad = 1)
         {
-            Kernel = kernel;
+            Kernel2D = kernel;
             Stride = new Vector2Int(stride, stride);
             Padding = new Vector2Int(pad, pad);
         }
         
-        public Convolution(Kernel<T> kernel, Vector2Int stride, Vector2Int padding)
+        public Convolution(Kernel2D<T> kernel, Vector2Int stride, Vector2Int padding)
         {
-            Kernel = kernel;
+            Kernel2D = kernel;
             Stride = stride;
             Padding = padding;
         }
         
         public Convolution(T[,] kernel, int stride = 1, int pad = 1)
         {
-            Kernel = new Kernel<T>(kernel);
+            Kernel2D = new Kernel2D<T>(kernel);
             Stride = new Vector2Int(stride, stride);
             Padding = new Vector2Int(pad, pad);
         }
 
         public void Dispose()
         {
-            Kernel.Dispose();
+            Kernel2D.Dispose();
         }
     }
 }

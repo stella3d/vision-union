@@ -5,7 +5,7 @@ namespace VisionUnion
     public static class KernelOperations
     {
         public static void RunHorizontal1D(NativeArray<byte> pixelBuffer, NativeArray<float> pixelOut,
-            Kernel<short> kernel, int width, int height)
+            Kernel2D<short> kernel, int width, int height)
         {
             var xPad = (kernel.Width - 1) / 2;
             
@@ -33,7 +33,7 @@ namespace VisionUnion
         }
         
         public static void RunVertical1D(NativeArray<float> pixelBuffer, NativeArray<float> pixelOut,
-            Kernel<short> kernel, int width, int height)
+            Kernel2D<short> kernel, int width, int height)
         {
             var yPad = (kernel.Height - 1) / 2;
             

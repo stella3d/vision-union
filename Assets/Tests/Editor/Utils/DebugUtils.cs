@@ -45,7 +45,7 @@ namespace  VisionUnion.Tests
             Debug.Log(s_String);
         }
         
-        public static void Print<T>(this Kernel<T> kernel) 
+        public static void Print<T>(this Kernel2D<T> kernel) 
             where T: struct
         {
             s_String.Length = 0;

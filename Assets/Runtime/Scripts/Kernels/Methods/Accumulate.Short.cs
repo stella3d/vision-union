@@ -2,7 +2,7 @@ namespace VisionUnion
 {
     public static partial class KernelMethods
     {   
-        public static short Accumulate(this Kernel<short> kernel, 
+        public static short Accumulate(this Kernel2D<short> kernel, 
             ImageData<byte> imageData, int centerPixelIndex)
         {
             var kernelIndex = 0;
@@ -27,7 +27,7 @@ namespace VisionUnion
             return (short)sum;
         }
         
-        public static short Accumulate(this Kernel<short> kernel, 
+        public static short Accumulate(this Kernel2D<short> kernel, 
             ImageData<short> imageData, int centerPixelIndex)
         {
             var kernelIndex = 0;
@@ -52,7 +52,7 @@ namespace VisionUnion
             return (short)sum;
         }
         
-        public static float Accumulate(this Kernel<short> kernel, 
+        public static float Accumulate(this Kernel2D<short> kernel, 
             ImageData<float> imageData, int centerPixelIndex)
         {
             var kernelIndex = 0;

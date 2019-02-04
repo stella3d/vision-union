@@ -40,8 +40,8 @@ namespace VisionUnion.Tests
 		[Test]
 		public void SeparatedResultIsTheSame()
 		{
-			var kX = new Kernel<short>(Kernels.Short.Sobel.xHorizontal);
-			var kY = new Kernel<short>(Kernels.Short.Sobel.xVertical);
+			var kX = new Kernel2D<short>(Kernels.Short.Sobel.xHorizontal);
+			var kY = new Kernel2D<short>(Kernels.Short.Sobel.xVertical);
 
 			KernelOperations.RunHorizontal1D(m_GrayTextureData8, m_SobelTextureDataX, kX,
 				m_GrayScaleTexture8.width, m_GrayScaleTexture8.height);

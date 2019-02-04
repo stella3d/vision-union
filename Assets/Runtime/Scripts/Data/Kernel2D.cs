@@ -7,7 +7,7 @@ namespace VisionUnion
     /// Represents a 2D convolution kernel
     /// </summary>
     /// <typeparam name="T">The data type of the kernel multiplier</typeparam>
-    public struct Kernel<T> : IDisposable
+    public struct Kernel2D<T> : IDisposable
         where T: struct
     {
         public readonly int Width;
@@ -15,7 +15,7 @@ namespace VisionUnion
         public readonly KernelBounds Bounds;
         public NativeArray<T> Weights;
 
-        public Kernel(T[,] input, Allocator allocator = Allocator.Persistent)
+        public Kernel2D(T[,] input, Allocator allocator = Allocator.Persistent)
         {
             Width = input.GetLength(0);
             Height = input.GetLength(1);
@@ -35,7 +35,7 @@ namespace VisionUnion
             }
         }
         
-        public Kernel(T[] input, bool horizontal = true, Allocator allocator = Allocator.Persistent)
+        public Kernel2D(T[] input, bool horizontal = true, Allocator allocator = Allocator.Persistent)
         {
             Weights = new NativeArray<T>(input, allocator);
             Width = horizontal ? input.Length : 1;
@@ -43,7 +43,7 @@ namespace VisionUnion
             Bounds = new KernelBounds(Width, Height);
         }
         
-        public Kernel(int width, int height, Allocator allocator = Allocator.Persistent)
+        public Kernel2D(int width, int height, Allocator allocator = Allocator.Persistent)
         {
             Width = width;
             Height = height;

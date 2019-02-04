@@ -76,7 +76,7 @@ namespace VisionUnion
             where TConvolution: struct
         {
             var strides = convolution.Stride;
-            var kernel = convolution.Kernel;
+            var kernel = convolution.Kernel2D;
 
             var outHeight = (int)math.ceil((float)(input.Height - kernel.Height + 1) / strides.y);
             var outWidth = (int)math.ceil((float)(input.Width - kernel.Width + 1) / strides.x);

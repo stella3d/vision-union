@@ -4,7 +4,7 @@ namespace VisionUnion
 {
     public static partial class KernelMethods
     {
-        public static void ConvolveHorizontal(this Kernel<byte> kernel,
+        public static void ConvolveHorizontal(this Kernel2D<byte> kernel,
             ImageData<byte> imageData, NativeArray<float> pixelOut,
             int xPad)
         {

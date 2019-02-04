@@ -15,7 +15,7 @@ namespace VisionUnion.Tests
 		[TestCase(3, 1)]
 		public void ConstructBlankFromDimensions(short x, short y)
 		{
-			var kernel = new Kernel<short>(x, y, Allocator.Temp);
+			var kernel = new Kernel2D<short>(x, y, Allocator.Temp);
 			Assert.IsTrue(kernel.Weights.IsCreated);
 			Assert.AreEqual(x, kernel.Width);
 			Assert.AreEqual(y, kernel.Height);
@@ -26,12 +26,12 @@ namespace VisionUnion.Tests
 		[Test]
 		public void ContructFrom2dInput()
 		{
-			var sY = new Kernel<short>(Kernels.Short.Sobel.X, Allocator.Temp);
+			var sY = new Kernel2D<short>(Kernels.Short.Sobel.X, Allocator.Temp);
 			sY.Print();
 			AssertFlatRepresentationValid(Kernels.Short.Sobel.X, sY.Weights);
 			sY.Dispose();
 
-			var sX = new Kernel<short>(Kernels.Short.Sobel.Y, Allocator.Temp);
+			var sX = new Kernel2D<short>(Kernels.Short.Sobel.Y, Allocator.Temp);
 			sX.Print();
 			AssertFlatRepresentationValid(Kernels.Short.Sobel.Y, sX.Weights);
 			sX.Dispose();
@@ -41,7 +41,7 @@ namespace VisionUnion.Tests
 		public void ContructFrom1dInput_Horizontal()
 		{
 			var kernelLength = Kernels.Short.Sobel.yHorizontal.Length;
-			var sX = new Kernel<short>(Kernels.Short.Sobel.yHorizontal, true, Allocator.Temp);
+			var sX = new Kernel2D<short>(Kernels.Short.Sobel.yHorizontal, true, Allocator.Temp);
 			sX.Print();
 			Assert.AreEqual(1, sX.Height);
 			Assert.AreEqual(kernelLength, sX.Width);
@@ -53,7 +53,7 @@ namespace VisionUnion.Tests
 		public void ContructFrom1dInput_Vertical()
 		{
 			var kernelLength = Kernels.Short.Sobel.yHorizontal.Length;
-			var sY = new Kernel<short>(Kernels.Short.Sobel.yVertical, false, Allocator.Temp);
+			var sY = new Kernel2D<short>(Kernels.Short.Sobel.yVertical, false, Allocator.Temp);
 			sY.Print();
 			Assert.AreEqual(1, sY.Width);
 			Assert.AreEqual(kernelLength, sY.Height);
@@ -64,7 +64,7 @@ namespace VisionUnion.Tests
 		[Test]
 		public void BracketAccessorsWork()
 		{
-			var kernel = new Kernel<short>(3, 3, Allocator.Temp);
+			var kernel = new Kernel2D<short>(3, 3, Allocator.Temp);
 			kernel[0, 0] = 10;
 			kernel[0, 2] = 20;
 			Assert.AreEqual(10, kernel[0, 0]);
@@ -75,7 +75,7 @@ namespace VisionUnion.Tests
 		[Test]
 		public void GetRow()
 		{
-			var kernel = new Kernel<short>(Kernels.Short.Sobel.X, Allocator.Temp);
+			var kernel = new Kernel2D<short>(Kernels.Short.Sobel.X, Allocator.Temp);
 			var row = kernel.GetRow(1);
 			Assert.AreEqual(row[0], Kernels.Short.Sobel.X[1, 0]);
 			Assert.AreEqual(row[1], Kernels.Short.Sobel.X[1, 1]);
@@ -87,7 +87,7 @@ namespace VisionUnion.Tests
 		public void GetColumn()
 		{
 			var sobel = Kernels.Short.Sobel.X;
-			var kernel = new Kernel<short>(sobel, Allocator.Temp);
+			var kernel = new Kernel2D<short>(sobel, Allocator.Temp);
 			var column = kernel.GetColumn(1);
 			Assert.AreEqual(column[0], sobel[0, 1]);
 			Assert.AreEqual(column[1], sobel[1, 1]);
@@ -99,7 +99,7 @@ namespace VisionUnion.Tests
 		public void VerifyGetBounds_SquareKernels(int size, Vector2Int nBound, Vector2Int pBound)
 		{
 			var count = size * size;
-			var kernel = new Kernel<short>(size, size, Allocator.Temp);
+			var kernel = new Kernel2D<short>(size, size, Allocator.Temp);
 			Assert.AreEqual(count, kernel.Weights.Length);
 			
 			Debug.Log(kernel.Bounds);
