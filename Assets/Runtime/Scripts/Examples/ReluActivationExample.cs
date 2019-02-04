@@ -1,5 +1,4 @@
-﻿using Unity.Collections;
-using Unity.Jobs;
+﻿using Unity.Jobs;
 using UnityEngine;
 using VisionUnion.Jobs;
 using VisionUnion.Organization;
@@ -32,7 +31,7 @@ namespace VisionUnion.Examples
 
 		GreyscaleByLuminanceFloatJob24 m_GreyscaleJob;
 		FloatWithFloatConvolveJob m_ConvolveJob;
-		BiasedReluActivationJob m_BiasedReluJob;
+		BiasedReluActivationCopyJob m_BiasedReluJob;
 	
 		void Awake()
 		{
@@ -45,7 +44,7 @@ namespace VisionUnion.Examples
 				m_GrayscaleInputData.Buffer, LuminanceWeights.FloatNormalized);
 			
 			m_ConvolveJob = new FloatWithFloatConvolveJob(m_Convolution, m_GrayscaleInputData, m_ConvolvedData);
-			m_BiasedReluJob = new BiasedReluActivationJob(m_ConvolvedData.Buffer, m_ActivatedData.Buffer, 0f);
+			m_BiasedReluJob = new BiasedReluActivationCopyJob(m_ConvolvedData.Buffer, m_ActivatedData.Buffer, 0f);
 
 			m_JobHandle = m_GreyscaleJob.Schedule(m_GrayscaleInputData.Buffer.Length, 4096);
 			m_JobHandle = m_ConvolveJob.Schedule(m_JobHandle);
