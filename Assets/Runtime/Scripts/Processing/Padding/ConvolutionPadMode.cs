@@ -5,6 +5,7 @@
     /// </summary>
     public enum ConvolutionPadMode : short
     {
+        Unknown,        
         Same,        
         Valid
     }
