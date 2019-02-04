@@ -4,7 +4,7 @@ namespace VisionUnion
 {
     public static partial class KernelMethods
     {   
-        // intended for use with each member of the float3 being a color channel
+        // intended for use with each member of the float3 being a color channel : x=r, y=g, z=b
         public static float3 Accumulate(this Kernel2D<float3> kernel, 
             ImageData<float3> imageData, int centerPixelIndex)
         {
