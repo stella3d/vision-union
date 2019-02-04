@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace VisionUnion
 {
-    public static partial class Texture2dExtensions
+    public static class Texture2dExtensions
     {
         public static void LoadImageData(this Texture2D texture, ImageData<byte> data, bool apply = true)
         {
@@ -26,8 +26,6 @@ namespace VisionUnion
             if(apply)
                 texture.Apply();
         }
-        
-        
         
         public static Texture2D SetupImage<T>(int width, int height, out ImageData<T> data, TextureFormat format)
             where T: struct
