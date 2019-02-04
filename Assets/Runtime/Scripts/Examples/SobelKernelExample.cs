@@ -40,7 +40,7 @@ namespace VisionUnion.Examples
 		JobHandle m_GrayScaleJobHandle;
 		JobHandle m_JobHandle;
 
-		Convolution<float> m_GaussianBlur3x3;
+		Convolution2D<float> m_GaussianBlur3x3;
 		
 		SobelFloatPrototype m_Sobel;
 
@@ -50,7 +50,7 @@ namespace VisionUnion.Examples
 	
 		void Awake()
 		{
-			m_GaussianBlur3x3 = new Convolution<float>(Kernels.Float.GaussianBlurApproximate3x3);
+			m_GaussianBlur3x3 = new Convolution2D<float>(Kernels.Float.GaussianBlurApproximate3x3);
 			
 			SetupTextures();
 		}

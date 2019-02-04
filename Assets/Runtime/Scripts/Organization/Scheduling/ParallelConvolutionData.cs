@@ -39,7 +39,7 @@ namespace VisionUnion.Organization
             public ImageData<TData> Output;
             public ConvolutionSequence<TData> Convolution;
 
-            public Convolution<TData> this[int i] => Convolution[i];
+            public Convolution2D<TData> this[int i] => Convolution[i];
 
             public Sequence(ImageData<TData> output, ConvolutionSequence<TData> convolution)
             {
@@ -79,7 +79,7 @@ namespace VisionUnion.Organization
             }
         }
         
-        public Convolution<TData> this[int channel, int sequence, int sequenceIndex]
+        public Convolution2D<TData> this[int channel, int sequence, int sequenceIndex]
         {
             get
             {

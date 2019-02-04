@@ -48,7 +48,7 @@ namespace VisionUnion
         }
         
         public static ImageData<TImage> ConvolutionInput<TImage, TConvolution>(ImageData<TImage> input, 
-            Convolution<TConvolution> convolution, 
+            Convolution2D<TConvolution> convolution, 
             ConvolutionPadMode mode = ConvolutionPadMode.Same,
             TImage constantValue = default(TImage), 
             Allocator allocator = Allocator.Persistent)
@@ -71,7 +71,7 @@ namespace VisionUnion
         }
 
         public static Padding GetSamePad<TInput, TConvolution>(ImageData<TInput> input, 
-            Convolution<TConvolution> convolution)
+            Convolution2D<TConvolution> convolution)
             where TInput: struct
             where TConvolution: struct
         {

@@ -33,7 +33,7 @@ namespace VisionUnion.Organization
             set { Sequences[sequence] = value; }
         }
         
-        public Convolution<T> this[int sequence, int sequenceIndex]
+        public Convolution2D<T> this[int sequence, int sequenceIndex]
         {
             get { return Sequences[sequence][sequenceIndex]; }
             set { Sequences[sequence][sequenceIndex] = value;}

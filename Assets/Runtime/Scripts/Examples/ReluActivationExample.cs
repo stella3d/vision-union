@@ -25,7 +25,7 @@ namespace VisionUnion.Examples
 		ImageData<float> m_ConvolvedData;
 		ImageData<float> m_ActivatedData;
 
-		Convolution<float> m_Convolution;
+		Convolution2D<float> m_Convolution;
 
 		JobHandle m_JobHandle;
 
@@ -35,7 +35,7 @@ namespace VisionUnion.Examples
 	
 		void Awake()
 		{
-			m_Convolution = new Convolution<float>(Kernels.Short.Sobel.X.ToFloat());
+			m_Convolution = new Convolution2D<float>(Kernels.Short.Sobel.X.ToFloat());
 			
 			SetupTextures();
 

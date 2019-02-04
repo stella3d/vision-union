@@ -7,11 +7,11 @@ namespace VisionUnion.Jobs
     //[BurstCompile]
     public struct ByteWithShortConvolveJob : IJob
     {
-        [ReadOnly] public Convolution<short> Convolution;
+        [ReadOnly] public Convolution2D<short> Convolution;
         [ReadOnly] public ImageData<byte> Input;
         [WriteOnly] public ImageData<short> Output;
 
-        public ByteWithShortConvolveJob(Convolution<short> convolution, 
+        public ByteWithShortConvolveJob(Convolution2D<short> convolution, 
             ImageData<byte> input, ImageData<short> output)
         {
             Convolution = convolution;
@@ -28,11 +28,11 @@ namespace VisionUnion.Jobs
     //[BurstCompile]
     public struct ShortWithShortConvolveJob : IJob
     {
-        [ReadOnly] public Convolution<short> Convolution;
+        [ReadOnly] public Convolution2D<short> Convolution;
         [ReadOnly] public ImageData<short> Input;
         [WriteOnly] public ImageData<short> Output;
 
-        public ShortWithShortConvolveJob(Convolution<short> convolution, 
+        public ShortWithShortConvolveJob(Convolution2D<short> convolution, 
             ImageData<short> input, ImageData<short> output)
         {
             Convolution = convolution;
@@ -49,11 +49,11 @@ namespace VisionUnion.Jobs
     //[BurstCompile]
     public struct FloatWithShortConvolveJob : IJob
     {
-        [ReadOnly] public Convolution<short> Convolution;
+        [ReadOnly] public Convolution2D<short> Convolution;
         [ReadOnly] public ImageData<float> Input;
         [WriteOnly] public ImageData<float> Output;
 
-        public FloatWithShortConvolveJob(Convolution<short> convolution, 
+        public FloatWithShortConvolveJob(Convolution2D<short> convolution, 
             ImageData<float> input, ImageData<float> output)
         {
             Convolution = convolution;

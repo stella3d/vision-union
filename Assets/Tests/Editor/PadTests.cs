@@ -6,7 +6,7 @@ namespace VisionUnion.Tests
 	public class PadTests
 	{
 		[TestCaseSource(typeof(GetSamePadCases), "Uniform")]
-		public void GetSamePadCases<T>(ImageData<byte> input, Convolution<T> convolution, Padding expected)
+		public void GetSamePadCases<T>(ImageData<byte> input, Convolution2D<T> convolution, Padding expected)
 			where T: struct
 		{
 			var output = Pad.GetSamePad(input, convolution);
@@ -37,7 +37,7 @@ namespace VisionUnion.Tests
 		}
 
 		[TestCaseSource(typeof(PadConvolutionInputCases), "Uniform")]
-		public void ConvolveWithSameZeroPad<T>(ImageData<byte> input, Convolution<T> convolution, 
+		public void ConvolveWithSameZeroPad<T>(ImageData<byte> input, Convolution2D<T> convolution, 
 			ImageData<byte> expected)
 			where T: struct
 		{
