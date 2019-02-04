@@ -56,7 +56,7 @@ namespace VisionUnion.Tests
 			var intensities5x5MeanPooled3x3Stride2x2 =
 				new NativeArray<float>(k_Intensities5x5MeanPooled3x3Stride2x2.Length, Allocator.Temp);
 
-			Pool.Mean(s_Intensities5x5Native, intensities5x5MeanPooled3x3Stride2x2, 5, 5, 3, 3, 2, 2);
+			Pool.Average(s_Intensities5x5Native, intensities5x5MeanPooled3x3Stride2x2, 5, 5, 3, 3, 2, 2);
 
 			intensities5x5MeanPooled3x3Stride2x2.AssertCollectionEqual(k_Intensities5x5MeanPooled3x3Stride2x2);
 			intensities5x5MeanPooled3x3Stride2x2.Dispose();

@@ -2,7 +2,8 @@ namespace VisionUnion
 {
     public enum PoolFunction
     {
+        Unknown,
         Max,
-        Mean
+        Average
     }
 }
