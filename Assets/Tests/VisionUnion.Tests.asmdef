@@ -2,7 +2,8 @@
     "name": "VisionUnion.Tests",
     "references": [
         "VisionUnion",
-        "VisionUnion.Editor"
+        "VisionUnion.Editor",
+        "Unity.Mathematics"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
