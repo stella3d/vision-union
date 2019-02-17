@@ -1,5 +1,5 @@
 ﻿Label {
-    font-size: 14;
+    font-size: 12;
     font-weight: bold;
     color: rgb(200, 200, 200);
 }
@@ -15,11 +15,15 @@
     max-width: 64;
 }
 
+
 .Node {
-    border-color : rgb(180, 180, 255);
-    border-radius : 4px;
     display: inline;
-    flex-direction: row;
+    flex: flex-grow;
+    position: relative;
+}
+
+.Node > #extension {
+    position : relative;
 }
 
 .output {
@@ -27,8 +31,12 @@
 }
 
 Text {
-    font-size: 14;
+    font-size: 12;
     color: rgb(68, 138, 255);
+}
+
+.port > Label {
+    font-size: 9;
 }
 
 NodeView {
@@ -38,4 +46,11 @@ NodeView {
 }
 
 
+#contents > #top > #output {
+    width: 64;
+}
+
+Texture2DPreviewNode > IMGUIContainer {
+    position: relative;
+}
 
