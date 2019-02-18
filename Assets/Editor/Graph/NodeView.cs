@@ -11,6 +11,7 @@ using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine.Experimental.UIElements.StyleEnums;
 using UnityEngine.Experimental.UIElements.StyleSheets;
 using VisionUnion;
+using VisionUnion.Graph.Nodes;
 using Edge = UnityEditor.Experimental.UIElements.GraphView.Edge;
 
 
@@ -82,15 +83,6 @@ public class NodeView : GraphView
 
     public void OnEnable()
     {
-    }
-}
-
-public class CustomNode : Node
-{
-    public CustomNode()
-    {
-        AddToClassList("Node");
-        SetSize(new Vector2(256, 128));
     }
 }
 
@@ -192,7 +184,7 @@ public class CustomPort : Port
     }
 }
 
-public class Convolution2dNode<T> : CustomNode
+public class Convolution2dNode<T> : VisionNode
     where T: struct
 {
     Convolution2D<T> m_Convolution;
@@ -256,7 +248,7 @@ public class Convolution2dNode<T> : CustomNode
     }
 }
 
-public class Texture2DPreviewNode<T> : CustomNode
+public class Texture2DPreviewNode<T> : VisionNode
     where T: struct
 {
     Texture2D m_Texture;
@@ -302,7 +294,7 @@ public class Texture2DPreviewNode<T> : CustomNode
 }
 
 
-public class Texture2DInputNode<T> : CustomNode
+public class Texture2DInputNode<T> : VisionNode
     where T: struct
 {
     Texture2D m_Texture;
@@ -350,7 +342,7 @@ public class Texture2DInputNode<T> : CustomNode
     }
 }
 
-public abstract class ImageMixNode<T> : CustomNode
+public abstract class ImageMixNode<T> : VisionNode
     where T: struct
 {
     Texture2D m_Texture;
