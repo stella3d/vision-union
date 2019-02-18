@@ -22,7 +22,7 @@ namespace VisionUnion.Graph.Nodes
             m_Texture = texture;
 
             title = "Texture Input";
-            output = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
+            output = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
                 typeof(Image<T>));
 
             output.portName = string.Format("Image<{0}>", typeof(T).Name);

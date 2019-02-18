@@ -5,6 +5,7 @@
     /// </summary>
     public enum PadMode : short
     {
+        None,
         Constant,        // Only supported mode right now
         Reflect,
         Symmetric

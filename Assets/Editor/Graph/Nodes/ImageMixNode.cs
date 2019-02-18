@@ -26,12 +26,12 @@ namespace VisionUnion.Graph.Nodes
             m_ImageDataType = typeof(Image<T>);
             m_PortLabel = string.Format("Image<{0}>", pixelType.Name);
            
-            var input1 = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
+            var input1 = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
                 m_ImageDataType);
 
             input1.portName = m_PortLabel;
         
-            var input2 = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
+            var input2 = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
                 m_ImageDataType);
 
             input2.portName = m_PortLabel;
@@ -39,7 +39,7 @@ namespace VisionUnion.Graph.Nodes
             inputContainer.Add(input1);
             inputContainer.Add(input2);
         
-            output = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
+            output = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
                 m_ImageDataType);
 
             output.portName = m_PortLabel;

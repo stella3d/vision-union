@@ -32,7 +32,7 @@ namespace VisionUnion.Graph.Nodes
             m_ImGui.style.positionType = new StyleValue<PositionType>(PositionType.Relative);
         
             title = "Image Preview";
-            input = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
+            input = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
                 typeof(Image<T>));
 
             input.portName = string.Format("Image<{0}>", typeof(T).Name);

@@ -7,18 +7,18 @@ using UnityEngine.Experimental.UIElements.StyleSheets;
 
 namespace VisionUnion.Graph.Nodes
 {
-    public class Convolution2dNode<T> : VisionNode
+    public class Convolution2d3x3Node<T> : VisionNode
         where T: struct
     {
         Convolution2D<T> m_Convolution;
         public Port Output { get; }
         
-        public Convolution2dNode()
+        public Convolution2d3x3Node()
         {
-            title = "2D Convolution";
+            title = "3x3 2D Convolution";
             SetSize(new Vector2(224, 132));
     
-            var inputImage = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
+            var inputImage = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
                 typeof(Image<T>));
     
             inputImage.portName = string.Format("Image<{0}>", typeof(T).Name);
@@ -27,7 +27,7 @@ namespace VisionUnion.Graph.Nodes
             inputContainer.Add(inputImage);
             inputContainer.style.width = this.style.width / 2;
             
-            Output = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
+            Output = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
                 typeof(Image<T>));
             
             Output.portName = string.Format("Image<{0}>", typeof(T).Name);
