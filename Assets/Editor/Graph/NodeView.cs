@@ -44,7 +44,7 @@ public class NodeView : GraphView
     void SetupSobelExample(Vector3 position)
     {
         var inputNode = new Texture2dInputNode<float>();
-        var padNode = new PadNode<float>();
+        var padNode = new PreConvolutionPadNode<float>();
         
         var t2dNode1 = new Texture2dDisplayNode<float>
             (Texture2D.whiteTexture, new Rect(position.x, position.y, 128, 128));

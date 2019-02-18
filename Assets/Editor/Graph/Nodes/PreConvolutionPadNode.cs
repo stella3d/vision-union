@@ -7,7 +7,7 @@ using UnityEngine.Experimental.UIElements.StyleEnums;
 
 namespace VisionUnion.Graph.Nodes
 {
-    public class PadNode<T> : VisionNode
+    public class PreConvolutionPadNode<T> : VisionNode
         where T: struct
     {
         readonly string m_PortLabel;
@@ -15,7 +15,7 @@ namespace VisionUnion.Graph.Nodes
     
         public Port output { get; }
     
-        public PadNode(string titleLabel = "Image Pad")
+        public PreConvolutionPadNode(string titleLabel = "Pre-Convolution Padding")
         {
             SetSize(new Vector2(224, 100 + style.marginTop));
             inputContainer.style.width = 84;
@@ -45,11 +45,14 @@ namespace VisionUnion.Graph.Nodes
             var modeField = new EnumField(ConvolutionPadMode.Same);
             var sizeField = new Vector2IntField();
             var sizeLabel = new Label("Convolution Size");
+            sizeLabel.style.minWidth = 92;
+
             
             var modeContainer = new VisualContainer();
             modeContainer.style.flexDirection = FlexDirection.Row;
             modeContainer.style.flexWrap = Wrap.NoWrap;
             
+            /*
             var sizeContainer = new VisualContainer();
             sizeContainer.style.flexDirection = FlexDirection.Row;
             sizeContainer.style.flexWrap = Wrap.NoWrap;
@@ -58,13 +61,15 @@ namespace VisionUnion.Graph.Nodes
             sizeField.style.maxWidth = 128;
             sizeContainer.Add(sizeLabel);
             sizeContainer.Add(sizeField);
+            */
 
             modeField.style.minWidth = 64;
             var padLabel = new Label("Pad Mode");
+            padLabel.style.minWidth = 96;
             modeContainer.Add(padLabel);
             modeContainer.Add(modeField);
             
-            extensionContainer.Add(sizeContainer);
+            //extensionContainer.Add(sizeContainer);
             extensionContainer.Add(modeContainer);
         
             titleButtonContainer.style.visibility = Visibility.Hidden;
