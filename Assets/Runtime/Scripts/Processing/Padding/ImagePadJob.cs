@@ -11,10 +11,10 @@ namespace VisionUnion.Jobs
         public T Value;
         public Padding Padding;
         
-        [ReadOnly] public ImageData<T> Input;
-        [WriteOnly] public ImageData<T> Output;
+        [ReadOnly] public Image<T> Input;
+        [WriteOnly] public Image<T> Output;
 
-        public ImagePadJob(ImageData<T> input, ImageData<T> output, Padding padding, T value = default(T))
+        public ImagePadJob(Image<T> input, Image<T> output, Padding padding, T value = default(T))
         {
             Input = input;
             Output = output;

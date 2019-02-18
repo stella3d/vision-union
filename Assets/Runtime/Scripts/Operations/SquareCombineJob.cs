@@ -8,9 +8,9 @@ namespace VisionUnion.Jobs
     [BurstCompile]
     public struct SquareCombineJob : IJobParallelFor
     {
-        [ReadOnly] public ImageData<float> A;
-        [ReadOnly] public ImageData<float> B;
-        [WriteOnly] public ImageData<float> Output;
+        [ReadOnly] public Image<float> A;
+        [ReadOnly] public Image<float> B;
+        [WriteOnly] public Image<float> Output;
 
         public void Execute(int index)
         {

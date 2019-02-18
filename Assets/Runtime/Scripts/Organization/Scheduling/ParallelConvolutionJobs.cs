@@ -19,7 +19,7 @@ namespace VisionUnion.Organization
         /// </summary>
         public readonly ParallelJobSequences<TJob>[] Jobs;
 
-        public readonly ImageData<TData>[] InputImages;
+        public readonly Image<TData>[] InputImages;
 
         const int k_MaxSequences = 32;
         protected readonly NativeList<JobHandle> m_ParallelHandles = 

@@ -16,21 +16,21 @@ namespace VisionUnion.Graph.Nodes
         public Convolution2dNode()
         {
             title = "2D Convolution";
-            SetSize(new Vector2(272, 132));
+            SetSize(new Vector2(224, 132));
     
             var inputImage = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
-                typeof(ImageData<T>));
+                typeof(Image<T>));
     
-            inputImage.portName = string.Format("ImageData<{0}>", typeof(T).Name);
+            inputImage.portName = string.Format("Image<{0}>", typeof(T).Name);
             inputImage.style.fontSize = 9;
     
             inputContainer.Add(inputImage);
             inputContainer.style.width = this.style.width / 2;
             
             Output = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
-                typeof(ImageData<T>));
+                typeof(Image<T>));
             
-            Output.portName = string.Format("ImageData<{0}>", typeof(T).Name);
+            Output.portName = string.Format("Image<{0}>", typeof(T).Name);
             Output.style.fontSize = 9;
             
             outputContainer.Add(Output);

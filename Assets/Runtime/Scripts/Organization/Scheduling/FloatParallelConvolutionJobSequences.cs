@@ -6,7 +6,7 @@ namespace VisionUnion.Organization
     public class FloatParallelConvolutionJobs : 
         ParallelConvolutionJobs<float, FloatWithFloatConvolveJob>
     {
-        public FloatParallelConvolutionJobs(ImageData<float> input, 
+        public FloatParallelConvolutionJobs(Image<float> input, 
             ParallelConvolutionData<float> convolutions,
             JobHandle dependency) 
             : base(convolutions, dependency, 

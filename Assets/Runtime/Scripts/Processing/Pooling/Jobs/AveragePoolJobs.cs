@@ -11,10 +11,10 @@ namespace VisionUnion.Jobs
     {
         public PoolingOptions Options;
         
-        [ReadOnly] public ImageData<byte> Input;
-        [WriteOnly] public ImageData<float> Output;
+        [ReadOnly] public Image<byte> Input;
+        [WriteOnly] public Image<float> Output;
 
-        public AveragePoolByteToFloatJob(ImageData<byte> input, ImageData<float> output, PoolingOptions options)
+        public AveragePoolByteToFloatJob(Image<byte> input, Image<float> output, PoolingOptions options)
         {
             Input = input;
             Output = output;
@@ -32,10 +32,10 @@ namespace VisionUnion.Jobs
     {
         public PoolingOptions Options;
         
-        [ReadOnly] public ImageData<float> Input;
-        [WriteOnly] public ImageData<float> Output;
+        [ReadOnly] public Image<float> Input;
+        [WriteOnly] public Image<float> Output;
 
-        public AveragePoolFloatJob(ImageData<float> input, ImageData<float> output, PoolingOptions options)
+        public AveragePoolFloatJob(Image<float> input, Image<float> output, PoolingOptions options)
         {
             Input = input;
             Output = output;

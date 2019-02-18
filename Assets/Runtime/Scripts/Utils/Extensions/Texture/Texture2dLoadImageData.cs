@@ -5,14 +5,14 @@ namespace VisionUnion
 {
     public static partial class Texture2dExtensions
     {
-        public static void LoadImageData(this Texture2D texture, ImageData<byte> data, bool apply = true)
+        public static void LoadImageData(this Texture2D texture, Image<byte> data, bool apply = true)
         {
             texture.LoadRawTextureData(data.Buffer);
             if(apply)
                 texture.Apply();
         }
         
-        public static void LoadImageData(this Texture2D texture, ImageData<float> data, bool apply = true)
+        public static void LoadImageData(this Texture2D texture, Image<float> data, bool apply = true)
         {
             texture.LoadRawTextureData(data.Buffer);
             if(apply)
@@ -29,11 +29,11 @@ namespace VisionUnion
         
         
         
-        public static Texture2D SetupImage<T>(int width, int height, out ImageData<T> data, TextureFormat format)
+        public static Texture2D SetupImage<T>(int width, int height, out Image<T> data, TextureFormat format)
             where T: struct
         {
             var texture = new Texture2D(width, height, format, false);
-            data = new ImageData<T>(texture);
+            data = new Image<T>(texture);
             return texture;
         }
     }

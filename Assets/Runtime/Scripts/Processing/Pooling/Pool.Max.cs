@@ -36,7 +36,7 @@ namespace VisionUnion
             }
         }
         
-        public static void Max(ImageData<byte> input, ImageData<byte> output, 
+        public static void Max(Image<byte> input, Image<byte> output, 
             Vector2Int size, Vector2Int strides)
         {
             var inBuffer = input.Buffer;
@@ -74,7 +74,7 @@ namespace VisionUnion
             }
         }
         
-        public static void Max(ImageData<float> input, ImageData<float> output, 
+        public static void Max(Image<float> input, Image<float> output, 
             Vector2Int size, Vector2Int strides)
         {
             var inBuffer = input.Buffer;

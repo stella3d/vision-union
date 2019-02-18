@@ -15,11 +15,11 @@ namespace VisionUnion.Tests
 
 		NativeArray<Color24> m_InputTextureData;
 
-		ImageData<byte> m_InputImage;
-		ImageData<short> m_IntermediateImage;
+		Image<byte> m_InputImage;
+		Image<short> m_IntermediateImage;
 		
-		ImageData<float> m_InputFloatImage;
-		ImageData<float> m_IntermediateFloatImage;
+		Image<float> m_InputFloatImage;
+		Image<float> m_IntermediateFloatImage;
 
 		const byte inputColorOne = 42;
 
@@ -27,15 +27,15 @@ namespace VisionUnion.Tests
 		public void BeforeAll()
 		{
 			m_GrayScaleTexture8 = DebugUtils.NewFilledTexture(8, 8, inputColorOne, TextureFormat.R8);
-			m_InputImage = new ImageData<byte>(m_GrayScaleTexture8);
+			m_InputImage = new Image<byte>(m_GrayScaleTexture8);
 			
 			m_IntermediateTexture16 = new Texture2D(8, 8, TextureFormat.R16, false);
-			m_IntermediateImage = new ImageData<short>(m_IntermediateTexture16);
+			m_IntermediateImage = new Image<short>(m_IntermediateTexture16);
 			
 			m_FloatInputTexture = DebugUtils.NewFilledTexture(8, 8, 0.5f, TextureFormat.RFloat);
-			m_InputFloatImage = new ImageData<float>(m_FloatInputTexture);
+			m_InputFloatImage = new Image<float>(m_FloatInputTexture);
 			m_FloatOutputTexture = new Texture2D(8, 8, TextureFormat.RFloat, false);
-			m_IntermediateFloatImage = new ImageData<float>(m_FloatInputTexture);
+			m_IntermediateFloatImage = new Image<float>(m_FloatInputTexture);
 		}
 
 		[OneTimeTearDown]
@@ -74,12 +74,12 @@ namespace VisionUnion.Tests
 			var kernel = new Kernel2D<float>(kernelInput, Allocator.Temp);
 			var convolution = new Convolution2D<float>(kernel, 1, 1);
 			
-			var image = new ImageData<float>(input, width, height, Allocator.Temp);
+			var image = new Image<float>(input, width, height, Allocator.Temp);
 
 			var outWidth = width - convolution.Padding.x * 2;
 			var outHeight = height - convolution.Padding.y * 2;
-			var expected = new ImageData<float>(expectedInput, width, height, Allocator.Temp);
-			var output = new ImageData<float>(outWidth, outHeight, Allocator.Temp);
+			var expected = new Image<float>(expectedInput, width, height, Allocator.Temp);
+			var output = new Image<float>(outWidth, outHeight, Allocator.Temp);
 
 			convolution.Convolve(image, output);
 			output.Print();

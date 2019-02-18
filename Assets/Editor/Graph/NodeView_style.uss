@@ -26,6 +26,10 @@
     position : relative;
 }
 
+#title {
+    font-size : 14;
+}
+
 .output {
     align-self: center;
 }

@@ -11,6 +11,7 @@ using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine.Experimental.UIElements.StyleEnums;
 using UnityEngine.Experimental.UIElements.StyleSheets;
 using VisionUnion;
+using VisionUnion.Graph.Controls;
 using VisionUnion.Graph.Nodes;
 using Edge = UnityEditor.Experimental.UIElements.GraphView.Edge;
 
@@ -54,13 +55,13 @@ public class NodeView : GraphView
 
     void SetupSobelExample(Vector3 position)
     {
-        var inputNode = new Texture2DInputNode<float>(Texture2D.whiteTexture, 
+        var inputNode = new Texture2dInputNode<float>(Texture2D.whiteTexture, 
             new Rect(position.x, position.y, 128, 128));
         
-        var t2dNode1 = new Texture2DPreviewNode<float>
+        var t2dNode1 = new Texture2dDisplayNode<float>
             (Texture2D.whiteTexture, new Rect(position.x, position.y, 128, 128));
         
-        var t2dNode2 = new Texture2DPreviewNode<float>
+        var t2dNode2 = new Texture2dDisplayNode<float>
             (Texture2D.whiteTexture, new Rect(position.x, position.y, 128, 128));
         
         AddElement(inputNode);
@@ -75,7 +76,7 @@ public class NodeView : GraphView
         var mixNode = new FloatSquareMeanImageMixNode();
         AddElement(mixNode);
         
-        var t2dNodeMixed = new Texture2DPreviewNode<float>
+        var t2dNodeMixed = new Texture2dDisplayNode<float>
             (Texture2D.whiteTexture, new Rect(position.x, position.y, 128, 128));
         
         AddElement(t2dNodeMixed);
@@ -183,187 +184,5 @@ public class CustomPort : Port
         return ele;
     }
 }
-
-public class Texture2DPreviewNode<T> : VisionNode
-    where T: struct
-{
-    Texture2D m_Texture;
-    Rect m_Rect;
-
-    IMGUIContainer m_ImGui;
-
-    public Port input { get; }
-    
-    public Texture2DPreviewNode(Texture2D texture, Rect rect)
-    {
-        var labelSize = style.fontSize * 4 + 4;
-        var size = new Vector2(rect.width, rect.height + labelSize);
-        var textureSize = new Vector2(rect.width, rect.height);
-        
-        SetSize(new Vector2(132, rect.height + 78 + style.marginTop));
-        m_Rect = rect;
-        m_Texture = texture;
-        m_ImGui = new IMGUIContainer(OnGUI);
-
-        m_ImGui.SetSize(textureSize);
-        m_ImGui.style.positionType = new StyleValue<PositionType>(PositionType.Relative);
-        
-        title = "Image Preview";
-        input = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
-            typeof(ImageData<T>));
-
-        input.portName = string.Format("ImageData<{0}>", typeof(T).Name);
-        
-        inputContainer.Add(input);
-        
-        extensionContainer.SetSize(textureSize);
-        extensionContainer.Add(m_ImGui);
-        extensionContainer.style.positionType = PositionType.Relative;
-        contentContainer.Add(extensionContainer);
-        RefreshExpandedState();
-    }
-
-    void OnGUI()
-    {
-        EditorGUI.DrawPreviewTexture(m_Rect, m_Texture);
-    }
-}
-
-
-public class Texture2DInputNode<T> : VisionNode
-    where T: struct
-{
-    Texture2D m_Texture;
-    Rect m_Rect;
-
-    public Port output { get; }
-    
-    public Texture2DInputNode(Texture2D texture, Rect rect)
-    {
-        //var labelSize = style.fontSize * 4 + 4;
-        //var size = new Vector2(rect.width, rect.height + labelSize);
-        //var textureSize = new Vector2(rect.width, rect.height);
-        
-        SetSize(new Vector2(272, 78 + style.marginTop));
-        inputContainer.style.width = 84;
-        
-        m_Rect = rect;
-        m_Texture = texture;
-
-        title = "Texture Input";
-        output = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
-            typeof(ImageData<T>));
-
-        output.portName = string.Format("ImageData<{0}>", typeof(T).Name);
-        
-        outputContainer.Add(output);
-        
-        var objField = TypedObjectField<Texture2D>();
-        
-        inputContainer.Add(objField);
-        titleButtonContainer.style.visibility = Visibility.Hidden;
-        RefreshExpandedState();
-    }
-
-    static ObjectField TypedObjectField<TObject>()
-    {
-        var objField = new ObjectField();
-        objField.objectType = typeof(TObject);
-        return objField;
-    }
-
-    void OnGUI()
-    {
-        EditorGUI.DrawPreviewTexture(m_Rect, m_Texture);
-    }
-}
-
-public abstract class ImageMixNode<T> : VisionNode
-    where T: struct
-{
-    Texture2D m_Texture;
-    Rect m_Rect;
-
-    readonly string m_PortLabel;
-    Type m_ImageDataType;
-    
-    public Port output { get; }
-    
-    protected ImageMixNode(string titleLabel = "Image Mix")
-    {
-        SetSize(new Vector2(272, 100 + style.marginTop));
-        inputContainer.style.width = 84;
-        
-        title = titleLabel;
-        var pixelType = typeof(T);
-        m_ImageDataType = typeof(ImageData<T>);
-        m_PortLabel = string.Format("ImageData<{0}>", pixelType.Name);
-           
-        var input1 = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
-            m_ImageDataType);
-
-        input1.portName = m_PortLabel;
-        
-        var input2 = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
-            m_ImageDataType);
-
-        input2.portName = m_PortLabel;
-        
-        inputContainer.Add(input1);
-        inputContainer.Add(input2);
-        
-        output = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
-            m_ImageDataType);
-
-        output.portName = m_PortLabel;
-        outputContainer.style.width = 84;
-        outputContainer.style.flexDirection = FlexDirection.Row;
-        outputContainer.style.alignItems = Align.Center;
-        
-        outputContainer.Add(output);
-        
-        titleButtonContainer.style.visibility = Visibility.Hidden;
-        RefreshExpandedState();
-    }
-
-    public abstract void Mix();
-}
-
-public class FloatSquareMeanImageMixNode : ImageMixNode<float>
-{
-    public FloatSquareMeanImageMixNode() : base("Mix using Square Mean") { }
-    
-    public override void Mix()
-    {
-        // TODO - implement processing here
-    }
-}
-
-public class Color96Control : BaseField<Color96>
-{
-    public Color96Control()
-    {
-        AddToClassList("ScalarValueControl");
-        var field = new ColorField {showAlpha = false};
-        Add(field);
-    }
-}
-
-public class FloatControl : BaseField<float>
-{
-    FloatField m_ValueField;
-    
-    public FloatControl(string labelText)
-    {
-        var label = new Label(labelText);
-
-        m_ValueField = new FloatField {value = 0.50f, maxLength = 4};
-        m_ValueField.style.marginLeft += 16;
-
-        label.Add(m_ValueField);
-        Add(label);
-    }
-}
-
 
 

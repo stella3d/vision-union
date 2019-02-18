@@ -11,11 +11,11 @@ namespace VisionUnion.Organization
 		public Texture2D ConvolvedTextureTwo;
 		public Texture2D ConvolutionOutputTexture;
 
-		ImageData<float> m_InputData;
-		ImageData<float> m_PaddedGrayscaleInputData;
-		ImageData<float> m_ConvDataOne;
-		ImageData<float> m_ConvDataTwo;
-		ImageData<float> m_CombinedConvolutionData;
+		Image<float> m_Input;
+		Image<float> m_PaddedGrayscaleInput;
+		Image<float> m_ConvOne;
+		Image<float> m_ConvTwo;
+		Image<float> m_CombinedConvolution;
 	
 		JobHandle m_GrayScaleJobHandle;
 		JobHandle m_JobHandle;
@@ -32,20 +32,20 @@ namespace VisionUnion.Organization
 
 		public SobelFloatPrototype(Texture2D input)
 		{
-			m_InputData = new ImageData<float>(input);
+			m_Input = new Image<float>(input);
 			Setup();
 		}
 
-		public SobelFloatPrototype(ImageData<float> input)
+		public SobelFloatPrototype(Image<float> input)
 		{
-			m_InputData = input;
+			m_Input = input;
 			Setup();
 		}
 		
 		void Setup()
 		{
 			SetupFilter();
-			SetupTextures(m_InputData);
+			SetupTextures(m_Input);
 			SetupJobs();
 		}
 		
@@ -60,9 +60,9 @@ namespace VisionUnion.Organization
 		
 		void SetupJobs()
 		{
-			m_ParallelConvolutionData = new ParallelConvolutionData<float>(m_InputData, m_ParallelConvolutions);
+			m_ParallelConvolutionData = new ParallelConvolutionData<float>(m_Input, m_ParallelConvolutions);
 
-			m_PadJob = new ImagePadJob<float>(m_InputData, m_PaddedGrayscaleInputData, m_Pad);
+			m_PadJob = new ImagePadJob<float>(m_Input, m_PaddedGrayscaleInput, m_Pad);
 			m_JobHandle = m_PadJob.Schedule();
 			m_JobHandle.Complete();
 			
@@ -74,7 +74,7 @@ namespace VisionUnion.Organization
 			{
 				A = outImages[0],
 				B = outImages[1],
-				Output = m_CombinedConvolutionData,
+				Output = m_CombinedConvolution,
 			};
 			
 		}
@@ -103,37 +103,37 @@ namespace VisionUnion.Organization
 
 		void SetupTextures(Texture2D input)
 		{
-			SetupTextures(m_InputData);
+			SetupTextures(m_Input);
 		}
 		
-		void SetupTextures(ImageData<float> input)
+		void SetupTextures(Image<float> input)
 		{
-			m_Pad = Pad.GetSamePad(m_InputData, m_ParallelConvolutions[0][0]);
-			var newSize = Pad.GetNewSize(m_InputData.Width, m_InputData.Height, m_Pad);
-			m_PaddedGrayscaleInputData = new ImageData<float>(newSize.x, newSize.y);
+			m_Pad = Pad.GetSamePad(m_Input, m_ParallelConvolutions[0][0]);
+			var newSize = Pad.GetNewSize(m_Input.Width, m_Input.Height, m_Pad);
+			m_PaddedGrayscaleInput = new Image<float>(newSize.x, newSize.y);
 
-			ConvolvedTextureOne = SetupTexture(input, out m_ConvDataOne);
-			ConvolvedTextureTwo = SetupTexture(input, out m_ConvDataTwo);
-			ConvolutionOutputTexture = SetupTexture(input, out m_CombinedConvolutionData);
+			ConvolvedTextureOne = SetupTexture(input, out m_ConvOne);
+			ConvolvedTextureTwo = SetupTexture(input, out m_ConvTwo);
+			ConvolutionOutputTexture = SetupTexture(input, out m_CombinedConvolution);
 		}
 
-		Texture2D SetupTexture(Texture2D input, out ImageData<float> data)
+		Texture2D SetupTexture(Texture2D input, out Image<float> data)
 		{
 			var texture = new Texture2D(input.width, input.height, TextureFormat.RFloat, false);
-			data = new ImageData<float>(texture);
+			data = new Image<float>(texture);
 			return texture;
 		}
 		
-		Texture2D SetupTexture(ImageData<float> input, out ImageData<float> data)
+		Texture2D SetupTexture(Image<float> input, out Image<float> data)
 		{
 			var texture = new Texture2D(input.Width, input.Height, TextureFormat.RFloat, false);
-			data = new ImageData<float>(texture);
+			data = new Image<float>(texture);
 			return texture;
 		}
 
 		public void Dispose()
 		{
-			m_PaddedGrayscaleInputData.Dispose();
+			m_PaddedGrayscaleInput.Dispose();
 			m_ParallelConvolutionData.Dispose();
 			m_NewSequence.Dispose();
 		}

@@ -11,8 +11,8 @@ namespace VisionUnion
     /// The type of data that represents a single pixel. If there are multiple channels, the struct
     /// should have members representing each channel, whether sequential or explicit layout.
     /// </typeparam>
-    public struct ImageData<TPixelData> : IDisposable, 
-        IEquatable<ImageData<TPixelData>>
+    public struct Image<TPixelData> : IDisposable, 
+        IEquatable<Image<TPixelData>>
         where TPixelData: struct
     {
         public readonly int Width;
@@ -27,7 +27,7 @@ namespace VisionUnion
         /// When false, will use the source texture's data.
         /// When true, will create a copy of the texture data, which is slower.</param>
         /// <param name="allocator">The allocator to use if copying.  Has no effect if not copying</param>
-        public ImageData(Texture2D texture, bool copy = false, Allocator allocator = Allocator.Persistent)
+        public Image(Texture2D texture, bool copy = false, Allocator allocator = Allocator.Persistent)
         {
             if (!texture.isReadable)
             {
@@ -49,21 +49,21 @@ namespace VisionUnion
             }
         }
 
-        public ImageData(NativeArray<TPixelData> data, int width, int height)
+        public Image(NativeArray<TPixelData> data, int width, int height)
         {
             Width = width;
             Height = height;
             Buffer = data;
         }
         
-        public ImageData(int width, int height, Allocator allocator = Allocator.Persistent)
+        public Image(int width, int height, Allocator allocator = Allocator.Persistent)
         {
             Width = width;
             Height = height;
             Buffer = new NativeArray<TPixelData>(Width * height, allocator);
         }
         
-        public ImageData(TPixelData[] data, int width, int height, Allocator allocator = Allocator.Persistent)
+        public Image(TPixelData[] data, int width, int height, Allocator allocator = Allocator.Persistent)
         {
             Width = width;
             Height = height;
@@ -82,17 +82,17 @@ namespace VisionUnion
             Buffer.DisposeIfCreated();
         }
         
-        public static bool operator ==(ImageData<TPixelData> a, ImageData<TPixelData> b)
+        public static bool operator ==(Image<TPixelData> a, Image<TPixelData> b)
         {
             return a.Equals(b);
         }
 
-        public static bool operator !=(ImageData<TPixelData> a, ImageData<TPixelData> b)
+        public static bool operator !=(Image<TPixelData> a, Image<TPixelData> b)
         {
             return !a.Equals(b);
         }
         
-        public bool Equals(ImageData<TPixelData> other)
+        public bool Equals(Image<TPixelData> other)
         {
             return Width == other.Width && Height == other.Height && Buffer.Equals(other.Buffer);
         }
@@ -102,7 +102,7 @@ namespace VisionUnion
             if (other == null)
                 return false;
 
-            var cast = (ImageData<TPixelData>)other;
+            var cast = (Image<TPixelData>)other;
             return Equals(cast);
         }
 

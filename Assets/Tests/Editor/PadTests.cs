@@ -6,7 +6,7 @@ namespace VisionUnion.Tests
 	public class PadTests
 	{
 		[TestCaseSource(typeof(GetSamePadCases), "Uniform")]
-		public void GetSamePadCases<T>(ImageData<byte> input, Convolution2D<T> convolution, Padding expected)
+		public void GetSamePadCases<T>(Image<byte> input, Convolution2D<T> convolution, Padding expected)
 			where T: struct
 		{
 			var output = Pad.GetSamePad(input, convolution);
@@ -15,7 +15,7 @@ namespace VisionUnion.Tests
 		}
 		
 		[TestCaseSource(typeof(OutputPadImages), "ConstantCases")]
-		public void ZeroPaddingCases(ImageData<byte> input, Padding pad, ImageData<byte> expected)
+		public void ZeroPaddingCases(Image<byte> input, Padding pad, Image<byte> expected)
 		{
 			var output = Pad.Constant(input, pad);
 			output.Print();
@@ -26,7 +26,7 @@ namespace VisionUnion.Tests
 		}
 		
 		[TestCaseSource(typeof(OutputPadImages), "ConstantCases")]
-		public void ConstantPaddingCases(ImageData<byte> input, Padding pad, ImageData<byte> expected)
+		public void ConstantPaddingCases(Image<byte> input, Padding pad, Image<byte> expected)
 		{
 			const byte value = 7;
 			var output = Pad.Constant(input, pad, value);
@@ -37,15 +37,15 @@ namespace VisionUnion.Tests
 		}
 
 		[TestCaseSource(typeof(PadConvolutionInputCases), "Uniform")]
-		public void ConvolveWithSameZeroPad<T>(ImageData<byte> input, Convolution2D<T> convolution, 
-			ImageData<byte> expected)
+		public void ConvolveWithSameZeroPad<T>(Image<byte> input, Convolution2D<T> convolution, 
+			Image<byte> expected)
 			where T: struct
 		{
 			var paddedInput = Pad.ConvolutionInput(input, convolution);
 			expected.Buffer.AssertDeepEqual(paddedInput.Buffer);
 		}
 
-		static void AssertPadValuesAtBounds(ImageData<byte> output, Padding pad, byte value)
+		static void AssertPadValuesAtBounds(Image<byte> output, Padding pad, byte value)
 		{
 			if (pad.top > 1 || pad.left > 1)
 			{

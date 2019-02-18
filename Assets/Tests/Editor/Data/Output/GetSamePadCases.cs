@@ -9,7 +9,7 @@ namespace VisionUnion.Tests
         {
             get
             {
-                var inputImageData = new ImageData<byte>(InputImages.Byte5x5, 5, 5);
+                var inputImageData = new Image<byte>(InputImages.Byte5x5, 5, 5);
                 
                 var outlineKernel = new Kernel2D<short>(Kernels.Short.Outline);
                 var outLineConvolution = new Convolution2D<short>(outlineKernel);

@@ -64,7 +64,7 @@ namespace  VisionUnion.Tests
             Debug.Log(s_String);
         }
         
-        public static void Print(this ImageData<byte> image) 
+        public static void Print(this Image<byte> image) 
         {
             if (image.Height > 12 || image.Width > 12)
             {
@@ -89,7 +89,7 @@ namespace  VisionUnion.Tests
         }
 
         
-        public static void Print(this ImageData<float> image, string decimalFormat = "F2") 
+        public static void Print(this Image<float> image, string decimalFormat = "F2") 
         {
             if (image.Height > 8 || image.Width > 8)
             {

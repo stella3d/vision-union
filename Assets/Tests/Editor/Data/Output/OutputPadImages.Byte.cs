@@ -57,19 +57,19 @@ namespace VisionUnion.Tests
         {
             get
             {
-                var inputImageData = new ImageData<byte>(InputImages.Byte5x5, 5, 5);
+                var inputImageData = new Image<byte>(InputImages.Byte5x5, 5, 5);
                 
                 yield return new TestCaseData(inputImageData, 
                     new Padding(1), 
-                    new ImageData<byte>(Input5x5ZeroPadUniform1, 7, 7));
+                    new Image<byte>(Input5x5ZeroPadUniform1, 7, 7));
 
                 yield return new TestCaseData(inputImageData, 
                     new Padding(1, 1, 2, 2), 
-                    new ImageData<byte>(Input5x5ZeroPad1x1x2x2, 9, 7));
+                    new Image<byte>(Input5x5ZeroPad1x1x2x2, 9, 7));
                 
                 yield return new TestCaseData(inputImageData, 
                     new Padding(2, 2, 0, 0), 
-                    new ImageData<byte>(Input5x5ZeroPad2x2x0x0, 5, 9));
+                    new Image<byte>(Input5x5ZeroPad2x2x0x0, 5, 9));
             }
         }
     }

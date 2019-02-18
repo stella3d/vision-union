@@ -43,7 +43,7 @@ namespace VisionUnion.Tests
             }
         }
         
-        public static void AssertEqualWithin(this ImageData<float> a, ImageData<float> b, float tolerance = 0.01f) 
+        public static void AssertEqualWithin(this Image<float> a, Image<float> b, float tolerance = 0.01f) 
         {
             Assert.AreEqual(a.Buffer.Length, b.Buffer.Length);
             for (var i = 0; i < a.Buffer.Length; i++)

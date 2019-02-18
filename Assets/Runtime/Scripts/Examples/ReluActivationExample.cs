@@ -21,9 +21,9 @@ namespace VisionUnion.Examples
 		Texture2D m_ConvolvedTexture;
 		Texture2D m_ActivatedConvolvedTexture;
 
-		ImageData<float> m_GrayscaleInputData;
-		ImageData<float> m_ConvolvedData;
-		ImageData<float> m_ActivatedData;
+		Image<float> m_GrayscaleInput;
+		Image<float> m_Convolved;
+		Image<float> m_Activated;
 
 		Convolution2D<float> m_Convolution;
 
@@ -39,37 +39,37 @@ namespace VisionUnion.Examples
 			
 			SetupTextures();
 
-			var inputData = new ImageData<Color24>(m_InputTexture);
+			var inputData = new Image<Color24>(m_InputTexture);
 			m_GreyscaleJob = new GreyscaleByLuminanceFloatJob24(inputData.Buffer, 
-				m_GrayscaleInputData.Buffer, LuminanceWeights.FloatNormalized);
+				m_GrayscaleInput.Buffer, LuminanceWeights.FloatNormalized);
 			
-			m_ConvolveJob = new FloatWithFloatConvolveJob(m_Convolution, m_GrayscaleInputData, m_ConvolvedData);
-			m_BiasedReluJob = new BiasedReluActivationCopyJob(m_ConvolvedData.Buffer, m_ActivatedData.Buffer, 0f);
+			m_ConvolveJob = new FloatWithFloatConvolveJob(m_Convolution, m_GrayscaleInput, m_Convolved);
+			m_BiasedReluJob = new BiasedReluActivationCopyJob(m_Convolved.Buffer, m_Activated.Buffer, 0f);
 
-			m_JobHandle = m_GreyscaleJob.Schedule(m_GrayscaleInputData.Buffer.Length, 4096);
+			m_JobHandle = m_GreyscaleJob.Schedule(m_GrayscaleInput.Buffer.Length, 4096);
 			m_JobHandle = m_ConvolveJob.Schedule(m_JobHandle);
-			m_JobHandle = m_BiasedReluJob.Schedule(m_ConvolvedData.Buffer.Length, 4096, m_JobHandle);
+			m_JobHandle = m_BiasedReluJob.Schedule(m_Convolved.Buffer.Length, 4096, m_JobHandle);
 		}
 
 		void SetupTextures()
 		{
 			var input = m_InputTexture;
-			m_GrayscaleInputData = new ImageData<float>(input.width, input.height);
+			m_GrayscaleInput = new Image<float>(input.width, input.height);
 			
 			m_ConvolvedTexture = TextureUtils.SetupImage(input.width, input.height, 
-				out m_ConvolvedData, TextureFormat.RFloat);
+				out m_Convolved, TextureFormat.RFloat);
 
 			m_ConvolutionOutputRenderer.material.mainTexture = m_ConvolvedTexture;
 			
 			m_ActivatedConvolvedTexture = TextureUtils.SetupImage(input.width, input.height, 
-				out m_ActivatedData, TextureFormat.RFloat);
+				out m_Activated, TextureFormat.RFloat);
 			
 			m_ActivatedOutputRenderer.material.mainTexture = m_ActivatedConvolvedTexture;
 		}
 
 		void OnDestroy()
 		{
-			m_GrayscaleInputData.Dispose();
+			m_GrayscaleInput.Dispose();
 			m_Convolution.Dispose();
 		}
 
@@ -81,8 +81,8 @@ namespace VisionUnion.Examples
 					m_JobHandle.Complete();
 					break;
 				case 4:
-					m_ConvolvedTexture.LoadImageData(m_ConvolvedData);
-					m_ActivatedConvolvedTexture.LoadImageData(m_ActivatedData);
+					m_ConvolvedTexture.LoadImageData(m_Convolved);
+					m_ActivatedConvolvedTexture.LoadImageData(m_Activated);
 					break;
 			}
 		}

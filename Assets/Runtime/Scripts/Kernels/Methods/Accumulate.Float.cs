@@ -3,16 +3,16 @@ namespace VisionUnion
     public static partial class KernelMethods
     {   
         public static float Accumulate(this Kernel2D<float> kernel, 
-            ImageData<float> imageData, int centerPixelIndex)
+            Image<float> image, int centerPixelIndex)
         {
             var kernelIndex = 0;
             var sum = 0f;
-            var pixelBuffer = imageData.Buffer;
+            var pixelBuffer = image.Buffer;
             var negativeBound = kernel.Bounds.negative;
             var positiveBound = kernel.Bounds.positive;
             for (var y = negativeBound.y; y <= positiveBound.y; y++)
             {
-                var rowOffset = y * imageData.Width;
+                var rowOffset = y * image.Width;
                 var rowIndex = centerPixelIndex + rowOffset;
                 for (var x = negativeBound.x; x <= positiveBound.x; x++)
                 {
@@ -28,16 +28,16 @@ namespace VisionUnion
         }
         
         public static float Accumulate(this Kernel2D<float> kernel, 
-            ImageData<short> imageData, int centerPixelIndex)
+            Image<short> image, int centerPixelIndex)
         {
             var kernelIndex = 0;
             var sum = 0f;
-            var pixelBuffer = imageData.Buffer;
+            var pixelBuffer = image.Buffer;
             var negativeBound = kernel.Bounds.negative;
             var positiveBound = kernel.Bounds.positive;
             for (var y = negativeBound.y; y <= positiveBound.y; y++)
             {
-                var rowOffset = y * imageData.Width;
+                var rowOffset = y * image.Width;
                 var rowIndex = centerPixelIndex + rowOffset;
                 for (var x = negativeBound.x; x <= positiveBound.x; x++)
                 {
@@ -55,16 +55,16 @@ namespace VisionUnion
         }
         
         public static float Accumulate(this Kernel2D<float> kernel, 
-            ImageData<byte> imageData, int centerPixelIndex)
+            Image<byte> image, int centerPixelIndex)
         {
             var kernelIndex = 0;
             var sum = 0f;
-            var pixelBuffer = imageData.Buffer;
+            var pixelBuffer = image.Buffer;
             var negativeBound = kernel.Bounds.negative;
             var positiveBound = kernel.Bounds.positive;
             for (var y = negativeBound.y; y <= positiveBound.y; y++)
             {
-                var rowOffset = y * imageData.Width;
+                var rowOffset = y * image.Width;
                 var rowIndex = centerPixelIndex + rowOffset;
                 for (var x = negativeBound.x; x <= positiveBound.x; x++)
                 {

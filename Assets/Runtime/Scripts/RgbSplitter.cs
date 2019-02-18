@@ -43,7 +43,7 @@ public static class RgbSplitter
         return handle;
     }
     
-    public static JobHandle ScheduleArraySplit(NativeArray<Color24> image, ImageData<byte>[] split)
+    public static JobHandle ScheduleArraySplit(NativeArray<Color24> image, Image<byte>[] split)
     {
         var rgb = image.Slice(0);
         var handles = new NativeList<JobHandle>(3, Allocator.Temp);

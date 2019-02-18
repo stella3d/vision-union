@@ -17,12 +17,12 @@ namespace VisionUnion.Organization
         // TODO - split out or merge the convolution + image data with the jobs, since the jobs duplicate all that
         public class Channel
         {
-            public ImageData<TData> Input;
+            public Image<TData> Input;
             public Sequence[] Sequences;
             
             public Sequence this [int i] => Sequences[i];
 
-            public Channel(ImageData<TData> input, ImageData<TData>[] outputs, 
+            public Channel(Image<TData> input, Image<TData>[] outputs, 
                 ParallelConvolutions<TData> convolutions)
             {
                 Input = input;
@@ -36,12 +36,12 @@ namespace VisionUnion.Organization
         
         public class Sequence
         {
-            public ImageData<TData> Output;
+            public Image<TData> Output;
             public ConvolutionSequence<TData> Convolution;
 
             public Convolution2D<TData> this[int i] => Convolution[i];
 
-            public Sequence(ImageData<TData> output, ConvolutionSequence<TData> convolution)
+            public Sequence(Image<TData> output, ConvolutionSequence<TData> convolution)
             {
                 Output = output;
                 Convolution = convolution;
@@ -56,11 +56,11 @@ namespace VisionUnion.Organization
         /// <summary>
         /// The image outputs of each sequence
         /// </summary>
-        public readonly ImageData<TData>[][] OutputImages;
+        public readonly Image<TData>[][] OutputImages;
 
         public Channel[] Channels;
 
-        public readonly ImageData<TData>[] InputImages;
+        public readonly Image<TData>[] InputImages;
 
         public Channel this[int index] => Channels[index];
         
@@ -96,24 +96,24 @@ namespace VisionUnion.Organization
         protected readonly NativeList<JobHandle> m_ParallelHandles = 
             new NativeList<JobHandle>(k_MaxSequences, Allocator.Persistent);
         
-        public ParallelConvolutionData(ImageData<TData> input, 
+        public ParallelConvolutionData(Image<TData> input, 
             ParallelConvolutions<TData> convolution)
         {
             InputImages = new [] { input };
             Convolutions = new[] { convolution };
 
-            OutputImages = new ImageData<TData>[channelCount][];
+            OutputImages = new Image<TData>[channelCount][];
             InitializeImageData(input.Width, input.Height);
 
             Channels = new[] { new Channel(input, OutputImages[0], convolution) };
         }
         
-        public ParallelConvolutionData(ImageData<TData>[] inputs, 
+        public ParallelConvolutionData(Image<TData>[] inputs, 
             ParallelConvolutions<TData>[] convolutions)
         {
             InputImages = inputs;
             Convolutions = convolutions;
-            OutputImages = new ImageData<TData>[channelCount][];
+            OutputImages = new Image<TData>[channelCount][];
             
             var firstInput = inputs[0];
             InitializeImageData(firstInput.Width, firstInput.Height);
@@ -129,11 +129,11 @@ namespace VisionUnion.Organization
         {
             for (var i = 0; i < OutputImages.Length; i++)
             {
-                var arr = new ImageData<TData>[convolutionsPerChannel];
+                var arr = new Image<TData>[convolutionsPerChannel];
                 OutputImages[i] = arr;
                 for (var j = 0; j < arr.Length; j++)
                 {
-                    arr[j] = new ImageData<TData>(width, height);
+                    arr[j] = new Image<TData>(width, height);
                 }
             }
         }

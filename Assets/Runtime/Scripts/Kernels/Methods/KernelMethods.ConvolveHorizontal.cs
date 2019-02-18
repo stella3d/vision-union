@@ -5,12 +5,12 @@ namespace VisionUnion
     public static partial class KernelMethods
     {
         public static void ConvolveHorizontal(this Kernel2D<byte> kernel,
-            ImageData<byte> imageData, NativeArray<float> pixelOut,
+            Image<byte> image, NativeArray<float> pixelOut,
             int xPad)
         {
-            var pixelBuffer = imageData.Buffer;
-            var height = imageData.Height;
-            var width = imageData.Width;
+            var pixelBuffer = image.Buffer;
+            var height = image.Height;
+            var width = image.Width;
             for (var r = 0; r < height; r++)
             {
                 var rowIndex = r * width;

@@ -78,11 +78,11 @@ namespace VisionUnion.Jobs
     public struct FloatWithFloatConvolveJob : IJob
     {
         [ReadOnly] public Convolution2D<float> Convolution;
-        [ReadOnly] public ImageData<float> Input;
-        [WriteOnly] public ImageData<float> Output;
+        [ReadOnly] public Image<float> Input;
+        [WriteOnly] public Image<float> Output;
 
         public FloatWithFloatConvolveJob(Convolution2D<float> convolution, 
-            ImageData<float> input, ImageData<float> output)
+            Image<float> input, Image<float> output)
         {
             Convolution = convolution;
             Input = input;

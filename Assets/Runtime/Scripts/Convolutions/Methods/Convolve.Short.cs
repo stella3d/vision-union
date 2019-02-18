@@ -3,7 +3,7 @@ namespace VisionUnion
     public static partial class ConvolutionMethods
     {
         public static void Convolve(this Convolution2D<short> convolution, 
-            ImageData<byte> image, ImageData<short> output)
+            Image<byte> image, Image<short> output)
         {
             var outputBuffer = output.Buffer;
             var imageWidth = image.Width;
@@ -23,7 +23,7 @@ namespace VisionUnion
         }
         
         public static void Convolve(this Convolution2D<short> convolution, 
-            ImageData<float> image, ImageData<float> output)
+            Image<float> image, Image<float> output)
         {
             var outputBuffer = output.Buffer;
             var imageWidth = image.Width;
@@ -43,7 +43,7 @@ namespace VisionUnion
         }
         
         public static void Convolve(this Convolution2D<short> convolution, 
-            ImageData<short> image, ImageData<short> output)
+            Image<short> image, Image<short> output)
         {
             var outputBuffer = output.Buffer;
             var imageWidth = image.Width;

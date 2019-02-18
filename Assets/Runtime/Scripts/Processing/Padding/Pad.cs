@@ -7,11 +7,11 @@ namespace VisionUnion
 {
     public static class Pad
     {
-        public static ImageData<T> Image<T>(ImageData<T> input, Padding padding, PadMode mode, 
+        public static Image<T> Image<T>(Image<T> input, Padding padding, PadMode mode, 
             T constantValue = default(T), Allocator allocator = Allocator.Persistent)
             where T: struct
         {
-            var output = default(ImageData<T>);
+            var output = default(Image<T>);
             switch (mode)
             {
                 // constant is the only method supported so far
@@ -23,7 +23,7 @@ namespace VisionUnion
             return output;
         }
         
-        public static ImageData<TImage> ConvolutionInput<TImage, TConvolution>(ImageData<TImage> input, 
+        public static Image<TImage> ConvolutionInput<TImage, TConvolution>(Image<TImage> input, 
             ParallelConvolutions<TConvolution> convolutions, 
             ConvolutionPadMode mode = ConvolutionPadMode.Same,
             TImage constantValue = default(TImage), 
@@ -31,7 +31,7 @@ namespace VisionUnion
             where TImage: struct
             where TConvolution : struct
         {
-            var output = default(ImageData<TImage>);
+            var output = default(Image<TImage>);
             var firstConvolution = convolutions.Sequences[0].Convolutions[0];
             switch (mode)
             {
@@ -47,7 +47,7 @@ namespace VisionUnion
             return output;
         }
         
-        public static ImageData<TImage> ConvolutionInput<TImage, TConvolution>(ImageData<TImage> input, 
+        public static Image<TImage> ConvolutionInput<TImage, TConvolution>(Image<TImage> input, 
             Convolution2D<TConvolution> convolution, 
             ConvolutionPadMode mode = ConvolutionPadMode.Same,
             TImage constantValue = default(TImage), 
@@ -55,7 +55,7 @@ namespace VisionUnion
             where TImage: struct
             where TConvolution : struct
         {
-            var output = default(ImageData<TImage>);
+            var output = default(Image<TImage>);
             switch (mode)
             {
                 case ConvolutionPadMode.Same:
@@ -70,7 +70,7 @@ namespace VisionUnion
             return output;
         }
 
-        public static Padding GetSamePad<TInput, TConvolution>(ImageData<TInput> input, 
+        public static Padding GetSamePad<TInput, TConvolution>(Image<TInput> input, 
             Convolution2D<TConvolution> convolution)
             where TInput: struct
             where TConvolution: struct
@@ -127,14 +127,14 @@ namespace VisionUnion
             return new Vector2Int(newWidth, newHeight);
         }
         
-        public static ImageData<T> Constant<T>(ImageData<T> input, Padding pad, T value = default(T), 
+        public static Image<T> Constant<T>(Image<T> input, Padding pad, T value = default(T), 
             Allocator allocator = Allocator.Persistent)
             where T: struct
         {
             var newWidth = input.Width + pad.left + pad.right;
             var newHeight = input.Height + pad.top + pad.bottom;
            
-            var newImage = new ImageData<T>(newWidth, newHeight, allocator);
+            var newImage = new Image<T>(newWidth, newHeight, allocator);
             var outBuffer = newImage.Buffer;
             var inBuffer = input.Buffer;
 
@@ -183,7 +183,7 @@ namespace VisionUnion
             return newImage;
         }
         
-        public static void Constant<T>(ImageData<T> input, ImageData<T> output, 
+        public static void Constant<T>(Image<T> input, Image<T> output, 
             Padding pad, T value = default(T))
             where T: struct
         {

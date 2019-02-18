@@ -9,10 +9,10 @@ namespace VisionUnion.Jobs
     {
         public PoolingOptions Options;
         
-        [ReadOnly] public ImageData<byte> Input;
-        [WriteOnly] public ImageData<byte> Output;
+        [ReadOnly] public Image<byte> Input;
+        [WriteOnly] public Image<byte> Output;
 
-        public MaxPoolByteJob(ImageData<byte> input, ImageData<byte> output, PoolingOptions options)
+        public MaxPoolByteJob(Image<byte> input, Image<byte> output, PoolingOptions options)
         {
             Input = input;
             Output = output;
@@ -30,10 +30,10 @@ namespace VisionUnion.Jobs
     {
         public PoolingOptions Options;
         
-        [ReadOnly] public ImageData<float> Input;
-        [WriteOnly] public ImageData<float> Output;
+        [ReadOnly] public Image<float> Input;
+        [WriteOnly] public Image<float> Output;
 
-        public MaxPoolFloatJob(ImageData<float> input, ImageData<float> output, PoolingOptions options)
+        public MaxPoolFloatJob(Image<float> input, Image<float> output, PoolingOptions options)
         {
             Input = input;
             Output = output;

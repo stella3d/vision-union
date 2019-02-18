@@ -35,7 +35,7 @@ namespace VisionUnion
             }
         }
         
-        public static void Average(ImageData<byte> input, ImageData<float> output, PoolingOptions options)
+        public static void Average(Image<byte> input, Image<float> output, PoolingOptions options)
         {
             var inBuffer = input.Buffer;
             var outBuffer = output.Buffer;
@@ -74,7 +74,7 @@ namespace VisionUnion
             }
         }
         
-        public static void Average(ImageData<float> input, ImageData<float> output, 
+        public static void Average(Image<float> input, Image<float> output, 
             PoolingOptions options)
         {
             var inBuffer = input.Buffer;

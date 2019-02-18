@@ -8,9 +8,9 @@ namespace VisionUnion
     public struct IntegralImageFromGrayscaleJob : IJob
     {
         [ReadOnly] 
-        public ImageData<float> Input;
+        public Image<float> Input;
         
-        public ImageData<float> Output;
+        public Image<float> Output;
         
         public void Execute()
         {
@@ -68,9 +68,9 @@ namespace VisionUnion
     public struct IntegralImageFromGrayscaleByteJob : IJob
     {
         [ReadOnly] 
-        public ImageData<byte> Input;
+        public Image<byte> Input;
         
-        public ImageData<int> Output;
+        public Image<int> Output;
 
         public void Execute()
         {

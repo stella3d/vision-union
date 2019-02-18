@@ -8,13 +8,13 @@ namespace VisionUnion
     public struct ImageDataSplitRGB<T> : IDisposable
         where T: struct
     {
-        public ImageData<T> r;
-        public ImageData<T> g;
-        public ImageData<T> b;
+        public Image<T> r;
+        public Image<T> g;
+        public Image<T> b;
         
-        static readonly ImageData<T>[] k_Channels  = new ImageData<T>[3];
+        static readonly Image<T>[] k_Channels  = new Image<T>[3];
         
-        public ImageDataSplitRGB(ImageData<T> r, ImageData<T> g, ImageData<T> b)
+        public ImageDataSplitRGB(Image<T> r, Image<T> g, Image<T> b)
         {
             this.r = r;
             this.g = g;
@@ -24,12 +24,12 @@ namespace VisionUnion
         public ImageDataSplitRGB(NativeArray<T> r, NativeArray<T> g, NativeArray<T> b, 
             int width, int height)
         {
-            this.r = new ImageData<T>(r, width, height);
-            this.g = new ImageData<T>(g, width, height);
-            this.b = new ImageData<T>(b, width, height);
+            this.r = new Image<T>(r, width, height);
+            this.g = new Image<T>(g, width, height);
+            this.b = new Image<T>(b, width, height);
         }
         
-        public ImageData<T>? this[int index]
+        public Image<T>? this[int index]
         {
             get
             {
@@ -47,7 +47,7 @@ namespace VisionUnion
             }
         }
         
-        public JobHandle ScheduleChannels(Func<ImageData<T>, int, JobHandle, JobHandle> scheduleFunction, JobHandle dependency)
+        public JobHandle ScheduleChannels(Func<Image<T>, int, JobHandle, JobHandle> scheduleFunction, JobHandle dependency)
         {
             var redHandle = scheduleFunction(r, 1, dependency);
             var greenHandle = scheduleFunction(g, 2, dependency);
