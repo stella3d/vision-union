@@ -11,15 +11,16 @@ namespace VisionUnion.Graph.Nodes
         Texture2D m_Texture;
         Rect m_Rect;
 
+        Image<T> m_Image;
+
         public Port output { get; }
     
-        public Texture2dInputNode(Texture2D texture, Rect rect)
+        public Texture2dInputNode()
         {
             SetSize(new Vector2(256, 78 + style.marginTop));
             inputContainer.style.width = 84;
         
             m_Rect = rect;
-            m_Texture = texture;
 
             title = "Texture Input";
             output = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
@@ -34,6 +35,8 @@ namespace VisionUnion.Graph.Nodes
             inputContainer.Add(objField);
             titleButtonContainer.style.visibility = Visibility.Hidden;
             RefreshExpandedState();
+            
+            
         }
 
         static ObjectField TypedObjectField<TObject>()

@@ -25,7 +25,7 @@ namespace VisionUnion.Graph.Nodes
             m_ImageDataType = typeof(Image<T>);
             m_PortLabel = string.Format("Image<{0}>", pixelType.Name);
            
-            var input1 = VisionPort.Create<Edge>(Orientation.Vertical, Direction.Input, Port.Capacity.Single,
+            var input1 = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
                 m_ImageDataType);
 
             input1.portName = m_PortLabel;
