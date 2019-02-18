@@ -64,5 +64,10 @@ namespace VisionUnion.Graph.Nodes
         {
             // TODO - implement processing here
         }
+
+        public override void UpdateData()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

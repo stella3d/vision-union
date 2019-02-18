@@ -17,6 +17,8 @@ public sealed class NodeViewWindow : EditorWindow
     {
         // Each editor window contains a root VisualElement object
         VisualElement root = this.GetRootVisualContainer();
+        root.SetSize(new Vector2(1280, 720));
+
 
         var nodeEditorView = new NodeGraphEditorView(this);
         nodeEditorView.AddStyleSheetPath("Assets/Editor/Graph/NodeView_style.uss");

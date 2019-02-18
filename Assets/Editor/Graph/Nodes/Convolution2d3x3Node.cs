@@ -11,29 +11,32 @@ namespace VisionUnion.Graph.Nodes
         where T: struct
     {
         Convolution2D<T> m_Convolution;
-        public Port Output { get; }
+        
+        protected Image<T> m_InputImage;
+        protected Image<T> m_OutputImage;
+    
+        public VisionPort<Image<T>> input { get; protected set; }
+        public VisionPort<Image<T>> output { get; protected set; }
         
         public Convolution2d3x3Node()
         {
             title = "3x3 2D Convolution";
             SetSize(new Vector2(224, 132));
     
-            var inputImage = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
-                typeof(Image<T>));
+            input = VisionPort.Create<Edge, Image<T>>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single);
     
-            inputImage.portName = string.Format("Image<{0}>", typeof(T).Name);
-            inputImage.style.fontSize = 9;
+            input.portName = string.Format("Image<{0}>", typeof(T).Name);
+            input.style.fontSize = 9;
     
-            inputContainer.Add(inputImage);
+            inputContainer.Add(input);
             inputContainer.style.width = this.style.width / 2;
             
-            Output = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
-                typeof(Image<T>));
+            output = VisionPort.Create<Edge, Image<T>>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi);
             
-            Output.portName = string.Format("Image<{0}>", typeof(T).Name);
-            Output.style.fontSize = 9;
+            output.portName = string.Format("Image<{0}>", typeof(T).Name);
+            output.style.fontSize = 9;
             
-            outputContainer.Add(Output);
+            outputContainer.Add(output);
             outputContainer.style.width = this.style.width / 2;
             
             SetupFloatFields();
@@ -68,6 +71,19 @@ namespace VisionUnion.Graph.Nodes
                 
                 Add(container);
             }
+        }
+        
+        void OnInputUpdate(Image<T> inputImage)
+        {
+            if (m_OutputImage == default(Image<T>))
+            {
+                m_OutputImage = new Image<T>(inputImage.Width, inputImage.Height);
+            }
+        }
+
+        public override void UpdateData()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

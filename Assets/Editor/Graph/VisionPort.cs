@@ -89,5 +89,35 @@ namespace VisionUnion.Graph
             ele.AddManipulator(ele.m_EdgeConnector);
             return ele;
         }
+        
+        public static VisionPort<TData> Create<TEdge, TData>(Orientation orientation, Direction direction, Capacity capacity) 
+            where TEdge : Edge, new()
+        {
+            var connectorListener = new OverrideEdgeConnectorListener();
+            var ele = new VisionPort<TData>(orientation, direction, capacity, typeof(TData))
+            {
+                m_EdgeConnector = new EdgeConnector<TEdge>(connectorListener)
+            };
+            ele.AddManipulator(ele.m_EdgeConnector);
+            return ele;
+        }
+    }
+    
+    public class VisionPort<T> : VisionPort
+    {
+        T Value;
+
+        public Action<T> onUpdate;
+        
+        public VisionPort(Orientation portOrientation, Direction portDirection, Capacity portCapacity, Type type) 
+            : base(portOrientation, portDirection, portCapacity, type)
+        {
+        }
+        
+        public virtual void UpdateData(T value)
+        {
+            Value = value;
+            onUpdate?.Invoke(value);
+        }
     }
 }

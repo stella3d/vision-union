@@ -75,5 +75,10 @@ namespace VisionUnion.Graph.Nodes
             titleButtonContainer.style.visibility = Visibility.Hidden;
             RefreshExpandedState();
         }
+
+        public override void UpdateData()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
