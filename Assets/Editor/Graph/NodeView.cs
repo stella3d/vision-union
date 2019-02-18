@@ -26,24 +26,13 @@ public class NodeView : GraphView
         
         style.alignItems = StyleValue<Align>.Create(Align.FlexStart);
 
-        var position = this.transform.position;
-        var t2dNode = new Texture2DPreviewNode<float>
-            (Texture2D.whiteTexture, new Rect(position.x, position.y, 128, 128));
-
-        
-        var inputNode = new Texture2DInputNode<float>(Texture2D.whiteTexture, 
-            new Rect(position.x, position.y, 128, 128));
-        
-        AddElement(inputNode);
-        AddElement(t2dNode);
-        
-        var convNode = new Convolution2dNode<float>();
-        AddElement(convNode);
+        SetupSobelExample(transform.position);
     }
 
     static readonly List<Port> k_Ports = new List<Port>();
     static readonly List<Port> k_CompatiblePorts = new List<Port>();
 
+    // this override is necessary - the default implementation does not work
     public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
     {
         Debug.Log("custom GetCompatiblePorts");
@@ -60,6 +49,35 @@ public class NodeView : GraphView
         }
 
         return k_CompatiblePorts;
+    }
+
+    void SetupSobelExample(Vector3 position)
+    {
+        var inputNode = new Texture2DInputNode<float>(Texture2D.whiteTexture, 
+            new Rect(position.x, position.y, 128, 128));
+        
+        var t2dNode1 = new Texture2DPreviewNode<float>
+            (Texture2D.whiteTexture, new Rect(position.x, position.y, 128, 128));
+        
+        var t2dNode2 = new Texture2DPreviewNode<float>
+            (Texture2D.whiteTexture, new Rect(position.x, position.y, 128, 128));
+        
+        AddElement(inputNode);
+        AddElement(t2dNode1);
+        AddElement(t2dNode2);
+        
+        var convNode1 = new Convolution2dNode<float>();
+        AddElement(convNode1);
+        var convNode2 = new Convolution2dNode<float>();
+        AddElement(convNode2);
+
+        var mixNode = new FloatSquareMeanImageMixNode();
+        AddElement(mixNode);
+        
+        var t2dNodeMixed = new Texture2DPreviewNode<float>
+            (Texture2D.whiteTexture, new Rect(position.x, position.y, 128, 128));
+        
+        AddElement(t2dNodeMixed);
     }
 
     public void OnEnable()
@@ -194,7 +212,7 @@ public class Convolution2dNode<T> : CustomNode
         inputContainer.Add(inputImage);
         inputContainer.style.width = this.style.width / 2;
         
-        Output = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single,
+        Output = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
             typeof(ImageData<T>));
         
         Output.portName = string.Format("ImageData<{0}>", typeof(T).Name);
@@ -283,19 +301,6 @@ public class Texture2DPreviewNode<T> : CustomNode
     }
 }
 
-[Serializable]
-public class InputObject<T> where T: UnityEngine.Object
-{
-    public T value;
-
-    public SerializedObject serializedObject;
-
-    public InputObject(T value)
-    {
-        this.value = value;
-        serializedObject = new SerializedObject(value);
-    }
-}
 
 public class Texture2DInputNode<T> : CustomNode
     where T: struct
@@ -303,32 +308,20 @@ public class Texture2DInputNode<T> : CustomNode
     Texture2D m_Texture;
     Rect m_Rect;
 
-    IMGUIContainer m_ImGui;
-
-    InputObject<Texture2D> m_Input;
-    
-    SerializedProperty m_Property;
-
     public Port output { get; }
     
     public Texture2DInputNode(Texture2D texture, Rect rect)
     {
-        var labelSize = style.fontSize * 4 + 4;
-        var size = new Vector2(rect.width, rect.height + labelSize);
-        var textureSize = new Vector2(rect.width, rect.height);
+        //var labelSize = style.fontSize * 4 + 4;
+        //var size = new Vector2(rect.width, rect.height + labelSize);
+        //var textureSize = new Vector2(rect.width, rect.height);
         
-        SetSize(new Vector2(224, rect.height + 78 + style.marginTop));
-        
-        m_Input = new InputObject<Texture2D>(texture);
-        m_Property = m_Input.serializedObject.GetIterator();
+        SetSize(new Vector2(272, 78 + style.marginTop));
+        inputContainer.style.width = 84;
         
         m_Rect = rect;
         m_Texture = texture;
-        m_ImGui = new IMGUIContainer(OnGUI);
 
-        m_ImGui.SetSize(textureSize);
-        m_ImGui.style.positionType = new StyleValue<PositionType>(PositionType.Relative);
-        
         title = "Texture Input";
         output = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
             typeof(ImageData<T>));
@@ -337,31 +330,84 @@ public class Texture2DInputNode<T> : CustomNode
         
         outputContainer.Add(output);
         
-        extensionContainer.SetSize(textureSize);
-
-        var objField = Texture2DField();
+        var objField = TypedObjectField<Texture2D>();
         
         inputContainer.Add(objField);
-        
-        
         titleButtonContainer.style.visibility = Visibility.Hidden;
-        extensionContainer.Add(m_ImGui);
-        extensionContainer.style.positionType = PositionType.Relative;
-        extensionContainer.style.alignContent = Align.Center;
-        contentContainer.Add(extensionContainer);
         RefreshExpandedState();
     }
 
-    ObjectField Texture2DField()
+    static ObjectField TypedObjectField<TObject>()
     {
         var objField = new ObjectField();
-        objField.objectType = typeof(Texture2D);
+        objField.objectType = typeof(TObject);
         return objField;
     }
 
     void OnGUI()
     {
         EditorGUI.DrawPreviewTexture(m_Rect, m_Texture);
+    }
+}
+
+public abstract class ImageMixNode<T> : CustomNode
+    where T: struct
+{
+    Texture2D m_Texture;
+    Rect m_Rect;
+
+    readonly string m_PortLabel;
+    Type m_ImageDataType;
+    
+    public Port output { get; }
+    
+    protected ImageMixNode(string titleLabel = "Image Mix")
+    {
+        SetSize(new Vector2(272, 100 + style.marginTop));
+        inputContainer.style.width = 84;
+        
+        title = titleLabel;
+        var pixelType = typeof(T);
+        m_ImageDataType = typeof(ImageData<T>);
+        m_PortLabel = string.Format("ImageData<{0}>", pixelType.Name);
+           
+        var input1 = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
+            m_ImageDataType);
+
+        input1.portName = m_PortLabel;
+        
+        var input2 = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
+            m_ImageDataType);
+
+        input2.portName = m_PortLabel;
+        
+        inputContainer.Add(input1);
+        inputContainer.Add(input2);
+        
+        output = CustomPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
+            m_ImageDataType);
+
+        output.portName = m_PortLabel;
+        outputContainer.style.width = 84;
+        outputContainer.style.flexDirection = FlexDirection.Row;
+        outputContainer.style.alignItems = Align.Center;
+        
+        outputContainer.Add(output);
+        
+        titleButtonContainer.style.visibility = Visibility.Hidden;
+        RefreshExpandedState();
+    }
+
+    public abstract void Mix();
+}
+
+public class FloatSquareMeanImageMixNode : ImageMixNode<float>
+{
+    public FloatSquareMeanImageMixNode() : base("Mix using Square Mean") { }
+    
+    public override void Mix()
+    {
+        // TODO - implement processing here
     }
 }
 
