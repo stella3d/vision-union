@@ -46,6 +46,8 @@ public class NodeView : GraphView
         var inputNode = new Texture2dInputNode<float>(Texture2D.whiteTexture, 
             new Rect(position.x, position.y, 128, 128));
         
+        var padNode = new PadNode<float>();
+        
         var t2dNode1 = new Texture2dDisplayNode<float>
             (Texture2D.whiteTexture, new Rect(position.x, position.y, 128, 128));
         
@@ -53,6 +55,7 @@ public class NodeView : GraphView
             (Texture2D.whiteTexture, new Rect(position.x, position.y, 128, 128));
         
         AddElement(inputNode);
+        AddElement(padNode);
         AddElement(t2dNode1);
         AddElement(t2dNode2);
         
