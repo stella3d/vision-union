@@ -51,6 +51,7 @@ public class NodeView : GraphView
         var texture2 = new Texture2D(512, 512, TextureFormat.RFloat, false);
         var texture3 = new Texture2D(512, 512, TextureFormat.RFloat, false);
         var texture4 = new Texture2D(512, 512, TextureFormat.RFloat, false);
+        
         var t2dNode0 = new Texture2dDisplayNode<float>
             (texture1, new Rect(position.x, position.y, 128, 128));
         

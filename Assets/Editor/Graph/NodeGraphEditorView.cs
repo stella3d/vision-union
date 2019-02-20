@@ -27,8 +27,8 @@ namespace VisionUnion.Graph
                 
             m_View.SetupZoom(0.05f, ContentZoomer.DefaultMaxScale);
 
-            m_SelectionDragger.panSpeed *= 0.333f;
-            m_ContentDragger.panSpeed *= 0.333f;
+            m_SelectionDragger.panSpeed *= 2f;
+            m_ContentDragger.panSpeed *= 2f;
             m_View.AddManipulator(m_SelectionDragger);
             m_View.AddManipulator(m_ContentDragger);
             m_View.AddManipulator(new RectangleSelector());
