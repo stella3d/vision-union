@@ -25,7 +25,7 @@ CustomRenderTexture:
   m_TextureSettings:
     serializedVersion: 2
     m_FilterMode: 1
-    m_Aniso: 1
+    m_Aniso: 0
     m_MipBias: 0
     m_WrapU: 1
     m_WrapV: 1
@@ -43,7 +43,7 @@ CustomRenderTexture:
   m_CurrentUpdateZoneSpace: 1
   m_UpdateZones: []
   m_UpdatePeriod: 0
-  m_ShaderPass: 0
+  m_ShaderPass: 2
   m_CubemapFaceMask: 4294967295
   m_DoubleBuffered: 0
   m_WrapUpdateZones: 0
