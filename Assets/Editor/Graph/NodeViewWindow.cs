@@ -6,7 +6,7 @@ using VisionUnion.Graph;
 
 public sealed class NodeViewWindow : EditorWindow
 {
-    [MenuItem("Window/UIElements/NodeViewWindow")]
+    [MenuItem("VisionUnion/NodeViewWindow")]
     public static void ShowExample()
     {
         NodeViewWindow wnd = GetWindow<NodeViewWindow>();

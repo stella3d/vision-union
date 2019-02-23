@@ -11,10 +11,10 @@ namespace VisionUnion.Graph.Nodes
     {
         public static Material GrayscaleFloatMaterial { get; private set; }
         
-        public static CustomRenderTexture GrayscaleRenderTexture { get; private set; }
+        public static ComputeShader RFloatToRGBAFloatCompute { get; private set; }
 
         static string k_GrayFloatMaterialSearch = "t:Material FloatVisualizer";
-        static string k_CustomRenderTextureSearch = "t: CustomRenderTexture";
+        static string k_ComputeSearch = "t: ComputeShader Grayscale";
 
         static CommonResources()
         {
@@ -30,11 +30,11 @@ namespace VisionUnion.Graph.Nodes
                 GrayscaleFloatMaterial = AssetDatabase.LoadAssetAtPath<Material>(path);
             }
             
-            var renderTexPaths = AssetDatabase.FindAssets(k_CustomRenderTextureSearch);
-            if (renderTexPaths.Length > 0)
+            var computeGuids = AssetDatabase.FindAssets(k_ComputeSearch);
+            if (computeGuids.Length > 0)
             {
-                var path = AssetDatabase.GUIDToAssetPath(renderTexPaths[0]);
-                GrayscaleRenderTexture = AssetDatabase.LoadAssetAtPath<CustomRenderTexture>(path);
+                var path = AssetDatabase.GUIDToAssetPath(computeGuids[0]);
+                RFloatToRGBAFloatCompute = AssetDatabase.LoadAssetAtPath<ComputeShader>(path);
             }
         }
     }
@@ -45,11 +45,12 @@ namespace VisionUnion.Graph.Nodes
         Image<T> m_InputImage;
 
         Texture2D m_Texture;
+        RenderTexture m_RenderTexture;
         Rect m_Rect;
 
-
-        CustomRenderTexture m_RenderTexture;
         IMGUIContainer m_ImGui;
+
+        ComputeShader m_DisplayConversionCompute;
 
         public VisionPort<Image<T>> input { get; }
     
@@ -62,18 +63,10 @@ namespace VisionUnion.Graph.Nodes
             SetSize(new Vector2(132, rect.height + 78 + style.marginTop));
             m_Rect = rect;
             m_Texture = texture;
-            m_RenderTexture = CommonResources.GrayscaleRenderTexture;
-            /*
-            m_RenderTexture = new CustomRenderTexture(texture.width, texture.height,
-                RenderTextureFormat.RFloat, RenderTextureReadWrite.Default)
-            {
-                updateMode = CustomRenderTextureUpdateMode.OnDemand,
-                material = CommonResources.GrayscaleFloatMaterial
-            };
+            m_RenderTexture = new RenderTexture(m_Texture.width, m_Texture.height, 1, RenderTextureFormat.ARGBFloat);
+            m_RenderTexture.enableRandomWrite = true;
 
-            m_RenderTexture.material.mainTexture = m_Texture;
-            */
-            m_RenderTexture.Initialize();
+            m_DisplayConversionCompute = CommonResources.RFloatToRGBAFloatCompute;
             
             m_ImGui = new IMGUIContainer(OnGUI);
 
@@ -96,17 +89,7 @@ namespace VisionUnion.Graph.Nodes
 
         void OnGUI()
         {
-            //RenderTexture.active = m_RenderTexture;
-            //GL.PushMatrix();
-            //GL.LoadPixelMatrix();
-            if (m_RenderTexture == null)
-                return;
             Graphics.DrawTexture(m_Rect, m_RenderTexture);
-            //Graphics.DrawTexture(m_Rect, m_RenderTexture);
-            //m_RenderTexture.Update();
-            //GL.PopMatrix();
-            //RenderTexture.active = null;
-            //EditorGUI.DrawPreviewTexture(m_Rect, m_RenderTexture);
         }
         
         public void OnInputUpdate(Image<T> image)
@@ -114,9 +97,11 @@ namespace VisionUnion.Graph.Nodes
             Debug.Log("on input update event in image display node");
             m_InputImage = image;
             m_Texture.LoadImageData(image);
-            Graphics.Blit(m_Texture, m_RenderTexture);
-            //Graphics.CopyTexture(m_Texture, m_RenderTexture);
-            m_RenderTexture.Update();
+
+            var kernelNumber = m_DisplayConversionCompute.FindKernel("CSMain");
+            m_DisplayConversionCompute.SetTexture(kernelNumber, "Input", m_Texture);
+            m_DisplayConversionCompute.SetTexture(kernelNumber, "Result", m_RenderTexture);
+            m_DisplayConversionCompute.Dispatch(kernelNumber, m_Texture.width, m_Texture.height, 1);
         }
 
         public override void UpdateData()
