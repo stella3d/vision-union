@@ -1,11 +1,13 @@
 using System;
 using Unity.Jobs;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Experimental.UIElements.StyleEnums;
 using UnityEngine.Experimental.UIElements.StyleSheets;
+using VisionUnion.Jobs;
 
 namespace VisionUnion.Graph.Nodes
 {
@@ -14,9 +16,11 @@ namespace VisionUnion.Graph.Nodes
         public static Material GrayscaleFloatMaterial { get; private set; }
         
         public static ComputeShader RFloatToRGBAFloatCompute { get; private set; }
+        public static ComputeShader RGBFloatToRGBAFloatCompute { get; private set; }
 
         static string k_GrayFloatMaterialSearch = "t:Material FloatVisualizer";
         static string k_ComputeSearch = "t: ComputeShader Grayscale";
+        const string RGB2RGBAFloatComputeSearch = "t: ComputeShader RGBFloat3ToRGBAFloat4";
 
         static CommonResources()
         {
@@ -38,21 +42,28 @@ namespace VisionUnion.Graph.Nodes
                 var path = AssetDatabase.GUIDToAssetPath(computeGuids[0]);
                 RFloatToRGBAFloatCompute = AssetDatabase.LoadAssetAtPath<ComputeShader>(path);
             }
+            
+            var computeGuids2 = AssetDatabase.FindAssets(RGB2RGBAFloatComputeSearch);
+            if (computeGuids2.Length > 0)
+            {
+                var path = AssetDatabase.GUIDToAssetPath(computeGuids2[0]);
+                RGBFloatToRGBAFloatCompute = AssetDatabase.LoadAssetAtPath<ComputeShader>(path);
+            }
         }
     }
 
     public class Texture2dDisplayNode<T> : VisionNode
         where T: struct
     {
-        Image<T> m_InputImage;
+        protected Image<T> m_InputImage;
 
-        Texture2D m_Texture;
-        RenderTexture m_RenderTexture;
-        Rect m_Rect;
+        protected Texture2D m_Texture;
+        protected RenderTexture m_RenderTexture;
+        protected Rect m_Rect;
 
-        IMGUIContainer m_ImGui;
+        protected IMGUIContainer m_ImGui;
 
-        ComputeShader m_DisplayConversionCompute;
+        protected ComputeShader m_DisplayConversionCompute;
 
         public VisionPort<Image<T>> input { get; }
     
@@ -89,12 +100,12 @@ namespace VisionUnion.Graph.Nodes
             RefreshExpandedState();
         }
 
-        void OnGUI()
+        protected virtual void OnGUI()
         {
             Graphics.DrawTexture(m_Rect, m_RenderTexture);
         }
         
-        public void OnInputUpdate(Image<T> image, JobHandle dependency)
+        public virtual void OnInputUpdate(Image<T> image, JobHandle dependency)
         {
             Debug.Log("on input update event in image display node");
             m_InputImage = image;
@@ -118,6 +129,75 @@ namespace VisionUnion.Graph.Nodes
         public override void UpdateData()
         {
             
+        }
+    }
+    
+    public class Texture2dDisplayNodeFloat : Texture2dDisplayNode<float>
+    {
+        public Texture2dDisplayNodeFloat(Texture2D texture, Rect rect) : base(texture, rect)
+        {
+            m_DisplayConversionCompute = CommonResources.RFloatToRGBAFloatCompute;
+        }
+    }
+    
+    public class Texture2dDisplayNodeFloat3 : Texture2dDisplayNode<float3>
+    {
+        //protected Image<float4> m_Float4Image;
+        
+        Float3ToFloat4Job m_Float4ConvertJob;
+        
+        public Texture2dDisplayNodeFloat3(Texture2D texture, Rect rect) : base(texture, rect)
+        {
+            m_DisplayConversionCompute = CommonResources.RGBFloatToRGBAFloatCompute;
+
+            m_Float4ConvertJob = new Float3ToFloat4Job
+            {
+                Output = texture.GetRawTextureData<float4>(),
+                Alpha = 1f
+            };
+        }
+        
+        protected override void OnGUI()
+        {
+            Graphics.DrawTexture(m_Rect, m_Texture);
+        }
+        
+        public override void OnInputUpdate(Image<float3> image, JobHandle dependency)
+        {
+            /*
+            if (image.Width != m_Float4Image.Width || image.Height != m_Float4Image.Height)
+            {
+                m_Float4Image.Buffer.DisposeIfCreated();
+                m_Float4Image = new Image<float4>(image.Width, image.Height);
+            }
+            */
+
+            Debug.Log("on input update event in float3 image display node");
+
+            m_InputImage = image;
+            m_Float4ConvertJob.Input = image.Buffer;
+            
+            
+            m_InputImage = image;
+            m_JobHandle = m_Float4ConvertJob.Schedule(m_Float4ConvertJob.Output.Length, 4096, dependency);
+            m_JobHandle.Complete();
+            m_Texture.LoadImageData(m_Float4ConvertJob.Output);
+            try
+            {
+                //Graphics.Blit(m_Texture, m_RenderTexture);
+                //Graphics.CopyTexture(m_Texture, m_RenderTexture);
+            }
+            catch (Exception e)
+            {
+                // BLACK HOLE
+            }
+
+            /*
+            var kernelNumber = m_DisplayConversionCompute.FindKernel("CSMain");
+            m_DisplayConversionCompute.SetTexture(kernelNumber, "Input", m_Texture);
+            m_DisplayConversionCompute.SetTexture(kernelNumber, "Result", m_RenderTexture);
+            m_DisplayConversionCompute.Dispatch(kernelNumber, m_Texture.width, m_Texture.height, 1);
+            */
         }
     }
 }

@@ -2,6 +2,7 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.Mathematics;
 
 // Luma vs "relative luminance" and their RGB->greyscale conversions
 // are covered at:  https://en.wikipedia.org/wiki/Luma_(video)
@@ -10,6 +11,8 @@ namespace VisionUnion.Jobs
     // default weights for relative luminance calculation
     public static class LuminanceWeights
     {
+        public const float oneOver255 = 0.0039215686f;
+        
         public static Color96 Float
         {
             get { return new Color96(0.2126f, 0.7152f, 0.0722f); }
@@ -19,7 +22,6 @@ namespace VisionUnion.Jobs
         {
             get
             {
-                const float oneOver255 = 0.0039215686f;
                 return new Color96(0.2126f * oneOver255, 0.7152f * oneOver255, 0.0722f * oneOver255);
             }
         }
@@ -88,6 +90,56 @@ namespace VisionUnion.Jobs
         {
             var p = InputTexture[index];
             Grayscale[index] = p.r * Weights.r + p.g * Weights.g + p.b * Weights.b;
+        }
+    }
+    
+    [BurstCompile]
+    public struct Color24ToFloat3Job : IJobParallelFor
+    {
+        public float3 Weights;
+        
+        [ReadOnly] public NativeArray<Color24> Input;
+    
+        [WriteOnly] public NativeArray<float3> Output;
+
+        public Color24ToFloat3Job(NativeArray<Color24> input, NativeArray<float3> output, Color96 weights = default(Color96))
+        {
+            Input = input;
+            Output = output;
+            if (weights.Equals(default(Color96)))
+                weights = LuminanceWeights.FloatNormalized;
+
+            Weights = weights;
+        }
+        
+        public void Execute(int index)
+        {
+            var p = Input[index];
+            const float oneOver255 = 0.0039215686f;
+            Output[index] = new float3(p.r * oneOver255, p.g * oneOver255, p.b * oneOver255);
+        }
+    }
+    
+    [BurstCompile]
+    public struct Float3ToFloat4Job : IJobParallelFor
+    {
+        public float Alpha;
+        
+        [ReadOnly] public NativeArray<float3> Input;
+    
+        [WriteOnly] public NativeArray<float4> Output;
+
+        public Float3ToFloat4Job(NativeArray<float3> input, NativeArray<float4> output, float alpha = 1f)
+        {
+            Input = input;
+            Output = output;
+            Alpha = alpha;
+        }
+        
+        public void Execute(int index)
+        {
+            var p = Input[index];
+            Output[index] = new float4(p.x, p.y, p.z, Alpha);
         }
     }
 

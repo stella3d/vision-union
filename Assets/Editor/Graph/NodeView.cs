@@ -41,10 +41,12 @@ public class NodeView : GraphView
 
         return k_CompatiblePorts;
     }
-
+    
     void SetupSobelExample(Vector3 position)
     {
         var inputNode = new Texture2dInputNode<Color24>();
+        AddElement(inputNode);
+        /*
         var inputNode2 = new Texture2dInputNode<Color24>();
         var rgbToGrayNode = new Color24ToFloatGrayscaleNode();
         var rgbToGrayNode2 = new Color24ToFloatGrayscaleNode();
@@ -54,15 +56,14 @@ public class NodeView : GraphView
         var texture3 = new Texture2D(512, 512, TextureFormat.RFloat, false);
         var texture4 = new Texture2D(512, 512, TextureFormat.RFloat, false);
         
-        var t2dNode0 = new Texture2dDisplayNode<float>
-            (texture1, new Rect(position.x, position.y, 128, 128));
+        var t2dNode0 = new Texture2dDisplayNodeFloat(texture1, new Rect(position.x, position.y, 128, 128));
         
         var padNode = new ConstantPadNode<float>();
         
-        var t2dNode1 = new Texture2dDisplayNode<float>
+        var t2dNode1 = new Texture2dDisplayNodeFloat
             (texture3, new Rect(position.x, position.y, 128, 128));
         
-        var t2dNode2 = new Texture2dDisplayNode<float>
+        var t2dNode2 = new Texture2dDisplayNodeFloat
             (texture2, new Rect(position.x, position.y, 128, 128));
         
         AddElement(inputNode);
@@ -88,6 +89,16 @@ public class NodeView : GraphView
             (texture4, new Rect(position.x, position.y, 128, 128));
         
         AddElement(t2dNodeMixed);
+        */
+
+        var float3Conv = new Float3Convolution2d3x3Node();
+        AddElement(float3Conv);
+        var rgbToFloatNode = new Color24ToFloat3Node();
+        AddElement(rgbToFloatNode);
+
+        var texture5 = new Texture2D(512, 512, TextureFormat.RGBAFloat, false);
+        var float3Display = new Texture2dDisplayNodeFloat3(texture5, new Rect(position.x, position.y, 128, 128));
+        AddElement(float3Display);
     }
 
     public void OnEnable()

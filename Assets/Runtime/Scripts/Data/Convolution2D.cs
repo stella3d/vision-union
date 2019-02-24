@@ -14,6 +14,8 @@ namespace VisionUnion
         public Vector2Int Padding;
         public Kernel2D<T> Kernel2D;
         
+        
+        
         public Convolution2D(Kernel2D<T> kernel, int stride = 1, int pad = 1)
         {
             Kernel2D = kernel;

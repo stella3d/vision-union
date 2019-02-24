@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace VisionUnion
@@ -26,9 +27,19 @@ namespace VisionUnion
             return new Color96(color.r, color.g, color.b);
         }
         
+        public static implicit operator Color96(float3 color)
+        {
+            return new Color96(color.x, color.y, color.z);
+        }
+        
         public static implicit operator Color(Color96 color)
         {
             return new Color(color.r, color.g, color.b, 1f);
+        }
+        
+        public static implicit operator float3(Color96 color)
+        {
+            return new float3(color.r, color.g, color.b);
         }
 
         public bool Equals(Color96 other)
