@@ -101,8 +101,8 @@ namespace VisionUnion.Graph.Nodes
                 container.style.flexDirection = FlexDirection.Row;
                 for (var j = 0; j < height; j++)
                 {
-                    var input = new FloatField(4);
-                    input.style.width = fieldWidth - 18;
+                    var input = new FloatField(6);
+                    input.style.width = fieldWidth - 16;
                     input.style.positionLeft = x;
                     input.style.positionTop = fieldHeight * j;
                     input.style.positionType = PositionType.Absolute;

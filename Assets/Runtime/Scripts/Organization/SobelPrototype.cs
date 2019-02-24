@@ -25,7 +25,7 @@ namespace VisionUnion.Organization
 
 		FloatParallelConvolutionJobs m_NewSequence;
 
-		SquareCombineJob m_CombineJob;
+		SquareCombineJobFloat m_CombineJobFloat;
 		ImagePadJob<float> m_PadJob;
 		
 		Padding m_Pad;
@@ -70,7 +70,7 @@ namespace VisionUnion.Organization
 
 			var outImages = m_ParallelConvolutionData.OutputImages[0];
 			
-			m_CombineJob = new SquareCombineJob()
+			m_CombineJobFloat = new SquareCombineJobFloat()
 			{
 				A = outImages[0],
 				B = outImages[1],
@@ -84,7 +84,7 @@ namespace VisionUnion.Organization
 			var handle = m_PadJob.Schedule(dependency);
 			handle.Complete();
 			handle = m_NewSequence.Schedule(handle);
-			handle = m_CombineJob.Schedule(m_ParallelConvolutionData.OutputImages[0][0].Buffer.Length, 2048, handle);
+			handle = m_CombineJobFloat.Schedule(m_ParallelConvolutionData.OutputImages[0][0].Buffer.Length, 2048, handle);
 			m_JobHandle = handle;
 			return handle;
 		}
@@ -98,7 +98,7 @@ namespace VisionUnion.Organization
 		{
 			ConvolvedTextureOne.LoadImageData(m_ParallelConvolutionData.OutputImages[0][0]);
 			ConvolvedTextureTwo.LoadImageData(m_ParallelConvolutionData.OutputImages[0][1]);
-			ConvolutionOutputTexture.LoadImageData(m_CombineJob.Output);
+			ConvolutionOutputTexture.LoadImageData(m_CombineJobFloat.Output);
 		}
 
 		void SetupTextures(Texture2D input)

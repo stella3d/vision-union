@@ -1,7 +1,9 @@
 using System;
+using Unity.Jobs;
 using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements.StyleEnums;
+using VisionUnion.Jobs;
 
 namespace VisionUnion.Graph.Nodes
 {
@@ -12,9 +14,10 @@ namespace VisionUnion.Graph.Nodes
         Rect m_Rect;
 
         readonly string m_PortLabel;
-        Type m_ImageDataType;
     
-        public Port output { get; }
+        public VisionPort<Image<T>> input1 { get; }
+        public VisionPort<Image<T>> input2 { get; }
+        public VisionPort<Image<T>> output { get; }
     
         protected ImageMixNode(string titleLabel = "Image Mix")
         {
@@ -23,24 +26,18 @@ namespace VisionUnion.Graph.Nodes
         
             title = titleLabel;
             var pixelType = typeof(T);
-            m_ImageDataType = typeof(Image<T>);
             m_PortLabel = string.Format("Image<{0}>", pixelType.Name);
            
-            var input1 = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
-                m_ImageDataType);
-
+            input1 = VisionPort.Create<Edge, Image<T>>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single);
             input1.portName = m_PortLabel;
         
-            var input2 = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single,
-                m_ImageDataType);
-
+            input2 = VisionPort.Create<Edge, Image<T>>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single);
             input2.portName = m_PortLabel;
         
             inputContainer.Add(input1);
             inputContainer.Add(input2);
         
-            output = VisionPort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi,
-                m_ImageDataType);
+            output = VisionPort.Create<Edge, Image<T>>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi);
 
             output.portName = m_PortLabel;
             outputContainer.style.width = 84;
@@ -55,19 +52,80 @@ namespace VisionUnion.Graph.Nodes
 
         public abstract void Mix();
     }
+    
+    
 
     public class FloatSquareMeanImageMixNode : ImageMixNode<float>
     {
-        public FloatSquareMeanImageMixNode() : base("Mix using Square Mean") { }
-    
+        SquareCombineJobFloat m_Job;
+
+        JobHandle m_Dependency1;
+        JobHandle m_Dependency2;
+
+        Image<float> m_OutputImage;
+
+        public FloatSquareMeanImageMixNode() : base("Mix using Square Mean")
+        {
+            m_Job = new SquareCombineJobFloat();
+            input1.onUpdate += OnInput1Update;
+            input2.onUpdate += OnInput2Update;
+        }
+
+        ~FloatSquareMeanImageMixNode()
+        {
+            m_OutputImage.Buffer.DisposeIfCreated();
+        }
+
+        void OnInput1Update(Image<float> inputImage, JobHandle dependency)
+        {
+            if (m_OutputImage.Width != inputImage.Width || m_OutputImage.Height != inputImage.Height)
+            {
+                m_OutputImage = new Image<float>(inputImage.Width,inputImage.Height);
+                m_Job.Output = m_OutputImage;
+            }
+
+            // TODO - warn / prevent incompatible images ?
+            m_Job.A = inputImage;
+            m_Dependency1 = dependency;
+            m_Dependency = JobHandle.CombineDependencies(m_Dependency1, m_Dependency2);
+            Mix();
+        }
+        
+        void OnInput2Update(Image<float> inputImage, JobHandle dependency)
+        {
+            if (m_OutputImage.Width != inputImage.Width || m_OutputImage.Height != inputImage.Height)
+            {
+                m_OutputImage = new Image<float>(inputImage.Width,inputImage.Height);
+                m_Job.Output = m_OutputImage;
+            }
+            
+            // TODO - warn / prevent incompatible images ?
+            m_Job.B = inputImage;
+            m_Dependency2 = dependency;
+            m_Dependency = JobHandle.CombineDependencies(m_Dependency1, m_Dependency2);
+            Mix();
+        }
+        
         public override void Mix()
         {
-            // TODO - implement processing here
+            // don't mix if we don't have two inputs
+            if (!m_Job.A.Buffer.IsCreated || !m_Job.B.Buffer.IsCreated)
+                return;
+            
+            m_JobHandle = m_Job.Schedule(m_OutputImage.Buffer.Length, 4096, m_Dependency);
+            // TODO - delay scheduling when asked for
+            m_JobHandle.Complete();
+            UpdateData();
         }
 
         public override void UpdateData()
         {
-            throw new NotImplementedException();
+            foreach(var edge in output.connections)
+            {
+                var edgeInput = edge.input as VisionPort<Image<float>>;
+                edgeInput?.UpdateData(m_OutputImage, m_JobHandle);
+            }
         }
+
     }
 }

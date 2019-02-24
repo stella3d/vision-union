@@ -6,7 +6,7 @@ using Unity.Mathematics;
 namespace VisionUnion.Jobs
 {
     [BurstCompile]
-    public struct SquareCombineJob : IJobParallelFor
+    public struct SquareCombineJobFloat : IJobParallelFor
     {
         [ReadOnly] public Image<float> A;
         [ReadOnly] public Image<float> B;

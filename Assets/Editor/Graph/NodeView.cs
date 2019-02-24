@@ -74,6 +74,9 @@ public class NodeView : GraphView
         AddElement(convNode1);
         var convNode2 = new FloatConvolution2d3x3Node();
         AddElement(convNode2);
+        
+        var convNode3 = new FloatConvolution2d3x3Node();
+        AddElement(convNode3);
 
         var mixNode = new FloatSquareMeanImageMixNode();
         AddElement(mixNode);
