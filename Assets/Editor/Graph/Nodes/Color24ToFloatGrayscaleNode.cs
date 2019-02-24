@@ -18,8 +18,7 @@ namespace VisionUnion.Graph.Nodes
         public Port output { get; }
 
         GreyscaleByLuminanceFloatJob24 m_Job;
-        JobHandle m_JobHandle;
-        
+
         public Color24ToFloatGrayscaleNode()
         {
             SetSize(new Vector2(288, 74 + style.marginTop));
@@ -43,8 +42,9 @@ namespace VisionUnion.Graph.Nodes
             RefreshExpandedState();
         }
 
-        void OnInputUpdate(Image<Color24> rgbImage)
+        void OnInputUpdate(Image<Color24> rgbImage, JobHandle dependency)
         {
+            m_Dependency = dependency;
             if (m_OutputImage == default(Image<float>))
             {
                 m_OutputImage = new Image<float>(rgbImage.Width, rgbImage.Height);
@@ -67,10 +67,11 @@ namespace VisionUnion.Graph.Nodes
             UpdateData();
         }
         
+        // TODO - separate job execution from output passing
         public override void UpdateData()
         {
             // TODO - not this, proper scheduling
-            m_JobHandle = m_Job.Schedule(m_Job.InputTexture.Length, 4096);
+            m_JobHandle = m_Job.Schedule(m_Job.InputTexture.Length, 4096, m_Dependency);
             m_JobHandle.Complete();
             
             foreach(var edge in output.connections)

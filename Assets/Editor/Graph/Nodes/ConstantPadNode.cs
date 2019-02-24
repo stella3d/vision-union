@@ -72,7 +72,7 @@ namespace VisionUnion.Graph.Nodes
             RefreshExpandedState();
         }
         
-        void OnInputUpdate(Image<T> inputImage)
+        void OnInputUpdate(Image<T> inputImage, JobHandle dependency)
         {
             if (m_OutputImage == default(Image<T>))
             {

@@ -1,3 +1,5 @@
+using System;
+using Unity.Jobs;
 using UnityEditor;
 using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
@@ -92,10 +94,19 @@ namespace VisionUnion.Graph.Nodes
             Graphics.DrawTexture(m_Rect, m_RenderTexture);
         }
         
-        public void OnInputUpdate(Image<T> image)
+        public void OnInputUpdate(Image<T> image, JobHandle dependency)
         {
             Debug.Log("on input update event in image display node");
             m_InputImage = image;
+            try
+            {
+                Graphics.CopyTexture(m_Texture, m_RenderTexture);
+            }
+            catch (Exception e)
+            {
+                // BLACK HOLE
+            }
+
             m_Texture.LoadImageData(image);
 
             var kernelNumber = m_DisplayConversionCompute.FindKernel("CSMain");
@@ -106,7 +117,7 @@ namespace VisionUnion.Graph.Nodes
 
         public override void UpdateData()
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }

@@ -70,9 +70,9 @@ public class NodeView : GraphView
         AddElement(t2dNode1);
         AddElement(t2dNode2);
         
-        var convNode1 = new Convolution2d3x3Node<float>();
+        var convNode1 = new FloatConvolution2d3x3Node();
         AddElement(convNode1);
-        var convNode2 = new Convolution2d3x3Node<float>();
+        var convNode2 = new FloatConvolution2d3x3Node();
         AddElement(convNode2);
 
         var mixNode = new FloatSquareMeanImageMixNode();

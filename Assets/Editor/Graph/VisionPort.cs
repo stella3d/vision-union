@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Jobs;
 using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
@@ -107,17 +108,17 @@ namespace VisionUnion.Graph
     {
         T Value;
 
-        public Action<T> onUpdate;
+        public Action<T, JobHandle> onUpdate;
         
         public VisionPort(Orientation portOrientation, Direction portDirection, Capacity portCapacity, Type type) 
             : base(portOrientation, portDirection, portCapacity, type)
         {
         }
         
-        public virtual void UpdateData(T value)
+        public virtual void UpdateData(T value, JobHandle dependency = default(JobHandle))
         {
             Value = value;
-            onUpdate?.Invoke(value);
+            onUpdate?.Invoke(value, dependency);
         }
     }
 }

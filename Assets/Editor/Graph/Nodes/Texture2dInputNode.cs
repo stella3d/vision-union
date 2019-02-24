@@ -50,11 +50,6 @@ namespace VisionUnion.Graph.Nodes
         
             outputContainer.Add(output);
             
-            RegisterCallback<ImageChangeEvent<T>>(imageChangeEvent =>
-            {
-                Debug.Log("image change event?");
-            });
-            
             var objField = TypedObjectField<Texture2D>();
             objField.OnValueChanged(evt =>
             {
@@ -67,17 +62,8 @@ namespace VisionUnion.Graph.Nodes
                 m_Image = new Image<T>(texture);
                 output.source = m_Image;
                 UpdateData();
-
-                /*
-                m_ImageChangeEvent = new ImageChangeEvent<T>(ref m_Image);
-                Debug.Log("image change event float(T) type id: " + m_ImageChangeEvent.GetEventTypeId());
-                foreach(var edge in output.connections)
-                {
-                    m_ImageChangeEvent.target = edge.input;
-                    edge.input?.SendEvent(m_ImageChangeEvent);
-                }
-                */
             });
+            
         
             inputContainer.Add(objField);
             titleButtonContainer.style.visibility = Visibility.Hidden;
