@@ -78,6 +78,8 @@ namespace VisionUnion.Graph.Nodes
 
         void OnInput1Update(Image<float> inputImage, JobHandle dependency)
         {
+            InputUpdate(inputImage, dependency, out m_Job.A, out m_Dependency1, Mix);
+            /*
             if (m_OutputImage.Width != inputImage.Width || m_OutputImage.Height != inputImage.Height)
             {
                 m_OutputImage = new Image<float>(inputImage.Width,inputImage.Height);
@@ -89,10 +91,13 @@ namespace VisionUnion.Graph.Nodes
             m_Dependency1 = dependency;
             m_Dependency = JobHandle.CombineDependencies(m_Dependency1, m_Dependency2);
             Mix();
+            */
         }
         
         void OnInput2Update(Image<float> inputImage, JobHandle dependency)
         {
+            InputUpdate(inputImage, dependency, out m_Job.B, out m_Dependency2, Mix);
+            /*
             if (m_OutputImage.Width != inputImage.Width || m_OutputImage.Height != inputImage.Height)
             {
                 m_OutputImage = new Image<float>(inputImage.Width,inputImage.Height);
@@ -104,8 +109,26 @@ namespace VisionUnion.Graph.Nodes
             m_Dependency2 = dependency;
             m_Dependency = JobHandle.CombineDependencies(m_Dependency1, m_Dependency2);
             Mix();
+            */
         }
-        
+
+        void InputUpdate(Image<float> inputImage, JobHandle dependency, out Image<float> jobData, 
+            out JobHandle dependencyCache, Action completionCallback = null)
+        {
+            if (m_OutputImage.Width != inputImage.Width || m_OutputImage.Height != inputImage.Height)
+            {
+                m_OutputImage.Buffer.DisposeIfCreated();
+                m_OutputImage = new Image<float>(inputImage.Width,inputImage.Height);
+                m_Job.Output = m_OutputImage;
+            }
+            
+            // TODO - warn / prevent incompatible images ?
+            jobData = inputImage;
+            dependencyCache = dependency;
+            m_Dependency = JobHandle.CombineDependencies(m_Dependency1, m_Dependency2);
+            completionCallback?.Invoke();
+        }
+
         public override void Mix()
         {
             // don't mix if we don't have two inputs

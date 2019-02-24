@@ -45,7 +45,9 @@ public class NodeView : GraphView
     void SetupSobelExample(Vector3 position)
     {
         var inputNode = new Texture2dInputNode<Color24>();
+        var inputNode2 = new Texture2dInputNode<Color24>();
         var rgbToGrayNode = new Color24ToFloatGrayscaleNode();
+        var rgbToGrayNode2 = new Color24ToFloatGrayscaleNode();
         
         var texture1 = new Texture2D(512, 512, TextureFormat.RFloat, false);
         var texture2 = new Texture2D(512, 512, TextureFormat.RFloat, false);
@@ -64,7 +66,9 @@ public class NodeView : GraphView
             (texture2, new Rect(position.x, position.y, 128, 128));
         
         AddElement(inputNode);
+        AddElement(inputNode2);
         AddElement(rgbToGrayNode);
+        AddElement(rgbToGrayNode2);
         AddElement(t2dNode0);
         AddElement(padNode);
         AddElement(t2dNode1);
@@ -74,7 +78,6 @@ public class NodeView : GraphView
         AddElement(convNode1);
         var convNode2 = new FloatConvolution2d3x3Node();
         AddElement(convNode2);
-        
         var convNode3 = new FloatConvolution2d3x3Node();
         AddElement(convNode3);
 
