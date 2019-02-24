@@ -17,21 +17,18 @@ Efficient runtime inference / serving of existing computer vision models on the 
 
 ### Input Processing
 
-Utilities such as RGB -> grayscale conversion and integral image calculation.
+Utilities such as RGB -> grayscale conversion, integral image calculation.
 
 ### Convolution
 
-A system for convolving generic 2D kernels over images
+2D spatial convolutions across multiple channels.  TODO - depthwise convolutions
 
 ### Pooling
 
-Max & average pooling implementations
+Max2D & Average2D
 
 ### Activation
 
-ReLu activation, TODO - softmax 
+ReLu & ReLu6, TODO - softmax 
 
 
-## Network Representation
-
-2d convultion networks only right now.
