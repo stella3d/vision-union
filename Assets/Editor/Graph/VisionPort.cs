@@ -115,7 +115,7 @@ namespace VisionUnion.Graph
         {
         }
         
-        public virtual void UpdateData(T value, JobHandle dependency = default(JobHandle))
+        public void UpdateData(T value, JobHandle dependency = default(JobHandle))
         {
             Value = value;
             onUpdate?.Invoke(value, dependency);
