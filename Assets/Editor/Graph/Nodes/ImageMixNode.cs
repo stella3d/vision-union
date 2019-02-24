@@ -1,5 +1,6 @@
 using System;
 using Unity.Jobs;
+using Unity.Mathematics;
 using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements.StyleEnums;
@@ -53,8 +54,6 @@ namespace VisionUnion.Graph.Nodes
         public abstract void Mix();
     }
     
-    
-
     public class FloatSquareMeanImageMixNode : ImageMixNode<float>
     {
         SquareCombineJobFloat m_Job;
@@ -123,6 +122,75 @@ namespace VisionUnion.Graph.Nodes
                 edgeInput?.UpdateData(m_OutputImage, m_JobHandle);
             }
         }
+    }
+    
+    public class Float3SquareMeanImageMixNode : ImageMixNode<float3>
+    {
+        SquareCombineJobFloat3 m_Job;
 
+        JobHandle m_Dependency1;
+        JobHandle m_Dependency2;
+
+        Image<float3> m_OutputImage;
+
+        public Float3SquareMeanImageMixNode() : base("Mix using Square Mean")
+        {
+            m_Job = new SquareCombineJobFloat3();
+            input1.onUpdate += OnInput1Update;
+            input2.onUpdate += OnInput2Update;
+        }
+
+        ~Float3SquareMeanImageMixNode()
+        {
+            m_OutputImage.Buffer.DisposeIfCreated();
+        }
+
+        void OnInput1Update(Image<float3> inputImage, JobHandle dependency)
+        {
+            InputUpdate(inputImage, dependency, out m_Job.A, out m_Dependency1, Mix);
+        }
+        
+        void OnInput2Update(Image<float3> inputImage, JobHandle dependency)
+        {
+            InputUpdate(inputImage, dependency, out m_Job.B, out m_Dependency2, Mix);
+        }
+
+        void InputUpdate(Image<float3> inputImage, JobHandle dependency, out Image<float3> jobData, 
+            out JobHandle dependencyCache, Action completionCallback = null)
+        {
+            if (m_OutputImage.Width != inputImage.Width || m_OutputImage.Height != inputImage.Height)
+            {
+                m_OutputImage.Buffer.DisposeIfCreated();
+                m_OutputImage = new Image<float3>(inputImage.Width,inputImage.Height);
+                m_Job.Output = m_OutputImage;
+            }
+            
+            // TODO - warn / prevent incompatible images ?
+            jobData = inputImage;
+            dependencyCache = dependency;
+            m_Dependency = JobHandle.CombineDependencies(m_Dependency1, m_Dependency2);
+            completionCallback?.Invoke();
+        }
+
+        public override void Mix()
+        {
+            // don't mix if we don't have two inputs
+            if (!m_Job.A.Buffer.IsCreated || !m_Job.B.Buffer.IsCreated)
+                return;
+            
+            m_JobHandle = m_Job.Schedule(m_OutputImage.Buffer.Length, 4096, m_Dependency);
+            // TODO - delay scheduling when asked for
+            m_JobHandle.Complete();
+            UpdateData();
+        }
+
+        public override void UpdateData()
+        {
+            foreach(var edge in output.connections)
+            {
+                var edgeInput = edge.input as VisionPort<Image<float3>>;
+                edgeInput?.UpdateData(m_OutputImage, m_JobHandle);
+            }
+        }
     }
 }

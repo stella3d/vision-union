@@ -46,6 +46,7 @@ public class NodeView : GraphView
     {
         var inputNode = new Texture2dInputNode<Color24>();
         AddElement(inputNode);
+        
         /*
         var inputNode2 = new Texture2dInputNode<Color24>();
         var rgbToGrayNode = new Color24ToFloatGrayscaleNode();
@@ -91,14 +92,38 @@ public class NodeView : GraphView
         AddElement(t2dNodeMixed);
         */
 
+        SetupColorExample(position);
+    }
+
+    void SetupColorExample(Vector3 position)
+    {
         var float3Conv = new Float3Convolution2d3x3Node();
         AddElement(float3Conv);
+        var float3Conv2 = new Float3Convolution2d3x3Node();
+        AddElement(float3Conv2);
+        var float3Conv3 = new Float3Convolution2d3x3Node();
+        AddElement(float3Conv3);
+        
         var rgbToFloatNode = new Color24ToFloat3Node();
         AddElement(rgbToFloatNode);
 
         var texture5 = new Texture2D(512, 512, TextureFormat.RGBAFloat, false);
         var float3Display = new Texture2dDisplayNodeFloat3(texture5, new Rect(position.x, position.y, 128, 128));
         AddElement(float3Display);
+        
+        var texture6 = new Texture2D(512, 512, TextureFormat.RGBAFloat, false);
+        var texture7 = new Texture2D(512, 512, TextureFormat.RGBAFloat, false);
+        var texture8 = new Texture2D(512, 512, TextureFormat.RGBAFloat, false);
+        AddElement(float3Display);
+        var float3Display2 = new Texture2dDisplayNodeFloat3(texture6, new Rect(position.x, position.y, 128, 128));
+        AddElement(float3Display2);
+        var float3Display3 = new Texture2dDisplayNodeFloat3(texture7, new Rect(position.x, position.y, 128, 128));
+        AddElement(float3Display3);
+        var float3Display4 = new Texture2dDisplayNodeFloat3(texture8, new Rect(position.x, position.y, 128, 128));
+        AddElement(float3Display4);
+
+        var mixNode = new Float3SquareMeanImageMixNode();
+        AddElement(mixNode);
     }
 
     public void OnEnable()
