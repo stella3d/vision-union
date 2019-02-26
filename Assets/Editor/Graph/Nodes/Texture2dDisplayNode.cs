@@ -111,12 +111,12 @@ namespace VisionUnion.Graph.Nodes
             m_InputImage = image;
             try
             {
+                // TODO - fix this for real.  something about this makes it work but errors ?
+                Debug.unityLogger.logEnabled = false;
                 Graphics.CopyTexture(m_Texture, m_RenderTexture);
+                Debug.unityLogger.logEnabled = true;
             }
-            catch (Exception e)
-            {
-                // BLACK HOLE
-            }
+            catch (Exception e) { }
 
             m_Texture.LoadImageData(image);
 
@@ -128,7 +128,6 @@ namespace VisionUnion.Graph.Nodes
 
         public override void UpdateData()
         {
-            
         }
     }
     
@@ -142,8 +141,6 @@ namespace VisionUnion.Graph.Nodes
     
     public class Texture2dDisplayNodeFloat3 : Texture2dDisplayNode<float3>
     {
-        //protected Image<float4> m_Float4Image;
-        
         Float3ToFloat4Job m_Float4ConvertJob;
         
         public Texture2dDisplayNodeFloat3(Texture2D texture, Rect rect) : base(texture, rect)
@@ -164,40 +161,15 @@ namespace VisionUnion.Graph.Nodes
         
         public override void OnInputUpdate(Image<float3> image, JobHandle dependency)
         {
-            /*
-            if (image.Width != m_Float4Image.Width || image.Height != m_Float4Image.Height)
-            {
-                m_Float4Image.Buffer.DisposeIfCreated();
-                m_Float4Image = new Image<float4>(image.Width, image.Height);
-            }
-            */
-
             Debug.Log("on input update event in float3 image display node");
 
             m_InputImage = image;
             m_Float4ConvertJob.Input = image.Buffer;
             
-            
             m_InputImage = image;
             m_JobHandle = m_Float4ConvertJob.Schedule(m_Float4ConvertJob.Output.Length, 4096, dependency);
             m_JobHandle.Complete();
             m_Texture.LoadImageData(m_Float4ConvertJob.Output);
-            try
-            {
-                //Graphics.Blit(m_Texture, m_RenderTexture);
-                //Graphics.CopyTexture(m_Texture, m_RenderTexture);
-            }
-            catch (Exception e)
-            {
-                // BLACK HOLE
-            }
-
-            /*
-            var kernelNumber = m_DisplayConversionCompute.FindKernel("CSMain");
-            m_DisplayConversionCompute.SetTexture(kernelNumber, "Input", m_Texture);
-            m_DisplayConversionCompute.SetTexture(kernelNumber, "Result", m_RenderTexture);
-            m_DisplayConversionCompute.Dispatch(kernelNumber, m_Texture.width, m_Texture.height, 1);
-            */
         }
     }
 }
