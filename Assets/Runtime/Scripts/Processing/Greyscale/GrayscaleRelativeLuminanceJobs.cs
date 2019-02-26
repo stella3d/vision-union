@@ -37,22 +37,34 @@ namespace VisionUnion.Jobs
             }
         }
     }
+
+    public interface IFormatConversionJob<TFrom, TTo> : IJobParallelFor
+        where TFrom: struct
+        where TTo: struct
+    {
+        void SetData(NativeArray<TFrom> input, NativeArray<TTo> output);
+    }
+
+    public interface IWeighted<T> where T : struct
+    {
+        void SetWeight(T weight);
+    }
     
     [BurstCompile]
-    public struct GreyscaleByLuminanceFloatJob : IJobParallelFor
+    public struct GreyscaleByLuminanceFloatJob : IFormatConversionJob<Color96, float>, IWeighted<Color96>
     {
         public Color96 Weights;
         
-        [ReadOnly] public NativeArray<Color96> InputTexture;
+        [ReadOnly] public NativeArray<Color96> Input;
     
-        [WriteOnly] public NativeArray<float> Grayscale;
+        [WriteOnly] public NativeArray<float> Output;
 
         public GreyscaleByLuminanceFloatJob(NativeArray<Color96> input, 
-            NativeArray<float> grayscale, 
+            NativeArray<float> output, 
             Color96 weights)
         {
-            InputTexture = input;
-            Grayscale = grayscale;
+            Input = input;
+            Output = output;
             Weights = weights;
             if (Weights.Equals(default(Color96)))
                 Weights = LuminanceWeights.Float;
@@ -60,13 +72,24 @@ namespace VisionUnion.Jobs
         
         public void Execute(int index)
         {
-            var p = InputTexture[index];
-            Grayscale[index] = p.r * Weights.r + p.g * Weights.g + p.b * Weights.b;
+            var p = Input[index];
+            Output[index] = p.r * Weights.r + p.g * Weights.g + p.b * Weights.b;
+        }
+
+        public void SetData(NativeArray<Color96> input, NativeArray<float> output)
+        {
+            Input = input;
+            Output = output;
+        }
+
+        public void SetWeight(Color96 weight)
+        {
+            Weights = weight;
         }
     }
     
     [BurstCompile]
-    public struct GreyscaleByLuminanceFloatJob24 : IJobParallelFor
+    public struct GreyscaleByLuminanceFloatJob24 : IFormatConversionJob<Color24, float>, IWeighted<Color96>
     {
         public Color96 Weights;
         
@@ -90,6 +113,17 @@ namespace VisionUnion.Jobs
         {
             var p = InputTexture[index];
             Grayscale[index] = p.r * Weights.r + p.g * Weights.g + p.b * Weights.b;
+        }
+
+        public void SetData(NativeArray<Color24> input, NativeArray<float> output)
+        {
+            InputTexture = input;
+            Grayscale = output;
+        }
+
+        public void SetWeight(Color96 weight)
+        {
+            Weights = weight;
         }
     }
     

@@ -1,15 +1,17 @@
 {
-    "name": "VisionUnion.Tests",
+    "name": "VisionUnion.Tests.Runtime",
     "references": [
         "VisionUnion",
-        "VisionUnion.Editor",
-        "Unity.Mathematics"
+        "Unity.Mathematics",
+        "Unity.Burst"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
     "includePlatforms": [
-        "Editor"
+        "Editor",
+        "macOSStandalone",
+        "WindowsStandalone64"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

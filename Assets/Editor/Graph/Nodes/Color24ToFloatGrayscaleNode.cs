@@ -154,4 +154,79 @@ namespace VisionUnion.Graph.Nodes
             }
         }
     }
+    
+    public class FormatConversionNode<TFrom, TTo, TJob> : VisionNode
+        where TFrom: struct
+        where TTo: struct
+        where TJob : struct, IFormatConversionJob<TFrom, TTo>
+    {
+        TFrom m_Weights;
+        Image<TFrom> m_InputImage;
+        Image<TTo> m_OutputImage;
+        
+        public VisionPort<Image<TFrom>> input { get; }
+        public VisionPort<Image<TTo>> output { get; }
+
+        TJob m_Job;
+
+        public FormatConversionNode()
+        {
+            SetSize(new Vector2(288, 74 + style.marginTop));
+            inputContainer.style.width = 84;
+
+            var fromType = typeof(TFrom);
+            var toType = typeof(TTo);
+            title = string.Format("Convert {0} to {1}", fromType.Name, toType.Name);
+            
+            input = VisionPort.Create<Edge, Image<TFrom>>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single);
+            input.onUpdate += OnInputUpdate;
+            
+            input.portName = string.Format("Image<{0}>", fromType.Name);
+            inputContainer.Add(input);
+            
+            output = VisionPort.Create<Edge, Image<TTo>>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi);
+
+            output.portName = string.Format("Image<{0}>", toType.Name);
+            outputContainer.Add(output);
+        
+            titleButtonContainer.style.visibility = Visibility.Hidden;
+            RefreshExpandedState();
+        }
+
+        void OnInputUpdate(Image<TFrom> rgbImage, JobHandle dependency)
+        {
+            m_Dependency = dependency;
+            if (m_OutputImage == default(Image<TTo>))
+            {
+                m_OutputImage = new Image<TTo>(rgbImage.Width, rgbImage.Height);
+            }
+            else if (m_OutputImage.Width != rgbImage.Width || m_OutputImage.Height != rgbImage.Height)
+            {
+                Debug.Log("output image dimensions different from input");
+                m_OutputImage.Dispose();
+                m_OutputImage = new Image<TTo>(rgbImage.Width, rgbImage.Height);
+            }
+
+            Debug.Log("on input update event in grayscale conversion node");
+            m_InputImage = rgbImage;
+            
+            m_Job = new TJob();
+            m_Job.SetData(rgbImage.Buffer, m_OutputImage.Buffer);
+            UpdateData();
+        }
+        
+        // TODO - separate job execution from output passing
+        public override void UpdateData()
+        {
+            // TODO - not this, proper scheduling
+            m_JobHandle = m_Job.Schedule(m_InputImage.Buffer.Length, 4096, m_Dependency);
+            m_JobHandle.Complete();
+            
+            foreach(var edge in output.connections)
+            {
+                var edgeInput = edge.input as VisionPort<Image<TTo>>;
+                edgeInput?.UpdateData(m_OutputImage);
+            }
+        }
+    }
 }
