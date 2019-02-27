@@ -54,6 +54,7 @@ namespace VisionUnion.Graph.Nodes
         public abstract void Mix();
     }
     
+    [NodeCategory("Processing", "Mix")]
     public class FloatSquareMeanImageMixNode : ImageMixNode<float>
     {
         SquareCombineJobFloat m_Job;
@@ -124,6 +125,7 @@ namespace VisionUnion.Graph.Nodes
         }
     }
     
+    [NodeCategory("Processing", "Mix")]
     public class Float3SquareMeanImageMixNode : ImageMixNode<float3>
     {
         SquareCombineJobFloat3 m_Job;

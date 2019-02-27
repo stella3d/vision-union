@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using UnityEditor;
 using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
@@ -81,8 +82,10 @@ public class NodeSearchWindowProvider : ScriptableObject, ISearchWindowProvider
     public static NodeSearchWindowProvider Instance { get; private set; }
     
     static readonly List<SearchTreeEntry> k_Entries = new List<SearchTreeEntry>();
+    static readonly List<SearchTreeEntry> k_EntryBuffer = new List<SearchTreeEntry>();
 
     static readonly List<Type> k_VisionNodeTypes = new List<Type>();
+    static readonly List<Type> k_VisionNodeTypeBuffer = new List<Type>();
     static Assembly[] k_Assemblies;
 
     public NodeView view { get; internal set; }
@@ -110,9 +113,11 @@ public class NodeSearchWindowProvider : ScriptableObject, ISearchWindowProvider
     {
         Instance = this;
         k_Entries.Clear();
+        k_EntryBuffer.Clear();
         k_VisionNodeTypes.Clear();
+        k_VisionNodeTypeBuffer.Clear();
         m_TypeLookup.Clear();
-        SetupCategories();
+        m_Groups.Clear();
         
         var nodeType = typeof(VisionNode);
         k_Assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -124,9 +129,13 @@ public class NodeSearchWindowProvider : ScriptableObject, ISearchWindowProvider
                     continue;
 
                 // right now, we're sticking to explicit concrete implementations
-                if (type.IsGenericTypeDefinition)    
+                //if (type.IsGenericTypeDefinition)
+                //    continue;
+
+                NodeCategoryAttribute attribute;
+                if (!TryGetCategory(type, out attribute))
                     continue;
-                
+
                 if (type.IsSubclassOf(nodeType))
                     k_VisionNodeTypes.Add(type);
             }
@@ -134,29 +143,110 @@ public class NodeSearchWindowProvider : ScriptableObject, ISearchWindowProvider
 
         // the underlying code tries to add your first search tree entry as a group,
         // and gets a null ref if you don't because the cast. fails
-        var initialGroupEntry = new SearchTreeGroupEntry(new GUIContent("Vision Union"));
+        var initialGroupEntry = new SearchTreeGroupEntry(new GUIContent("Search"));
         k_Entries.Add(initialGroupEntry);
+        
         foreach (var t in k_VisionNodeTypes)
         {
             m_TypeLookup.Add(t.Name, t);
             var guiContent = new GUIContent(t.Name);
-            var entry = new SearchTreeEntry(guiContent) {level = 1, userData = new object()};
+
+            NodeCategoryAttribute attribute;
+            if (!TryGetCategory(t, out attribute)) 
+                continue;
+            
+            //Debug.Log(CategoryString(attribute));
+
+            var depth = attribute.Length;
+            var entry = new SearchTreeEntry(guiContent) {level = depth, userData = new object()};
+
+            List<SearchTreeEntry> entries;
+            SearchGroup searchGroup;
+            if (m_Groups.TryGetValue(attribute[0], out searchGroup))
+            {
+                searchGroup.AddEntry(entry);
+            }
+            else
+            {
+                var searchContent = new GUIContent(attribute[0]);
+                var firstEntry = new SearchTreeGroupEntry(searchContent) {level = 1};
+                var group = new SearchGroup(firstEntry);
+                group.AddEntry(entry);
+                m_Groups.Add(attribute[0], group);
+            }
+        }
+
+        foreach (var kvp in m_Groups)
+        {
+            AddGroup(kvp.Value);
+        }
+    }
+
+    void AddGroup(SearchGroup group)
+    {
+        if (group.children.Count > 0)
+        {
+            foreach (var child in group.children)
+            {
+                AddGroup(child);
+            }
+        }
+
+        foreach (var entry in group.entries)
+        {
             k_Entries.Add(entry);
         }
     }
 
-    void SetupCategories()
-    {
-        m_FirstLevelCategories.Clear();
+    readonly Dictionary<string, SearchGroup> m_Groups = new Dictionary<string, SearchGroup>();
 
-        var displayList = new List<SearchTreeEntry> {new SearchTreeGroupEntry(new GUIContent("Display"))};
-        m_FirstLevelCategories.Add("Display", displayList);
-        
-        var inputList = new List<SearchTreeEntry> {new SearchTreeGroupEntry(new GUIContent("Input"))};
-        m_FirstLevelCategories.Add("Input", inputList);
-        
-        var processList = new List<SearchTreeEntry> {new SearchTreeGroupEntry(new GUIContent("Processing"))};
-        m_FirstLevelCategories.Add("Processing", processList);
+    class SearchGroup
+    {
+        public int level;
+        public List<SearchTreeEntry> entries = new List<SearchTreeEntry>();
+        public List<SearchGroup> children = new List<SearchGroup>();
+
+        public SearchGroup(SearchTreeGroupEntry firstEntry)
+        {
+            level = firstEntry.level;
+            entries.Add(firstEntry);
+        }
+
+        public void AddEntry(SearchTreeEntry entry)
+        {
+            entries.Add(entry);
+        }
+    }
+
+    static string CategoryString(NodeCategoryAttribute attribute)
+    {
+        var n = 0;
+        s_String.Clear();
+        s_String.Append("node category: ");
+        while (n < attribute.Length - 1)
+        {
+            s_String.AppendFormat("{0}/", attribute[n]);
+            n++;
+        }
+
+        s_String.Append(attribute[attribute.Length - 1]);
+        return s_String.ToString();
+    }
+
+    static StringBuilder s_String = new StringBuilder();
+
+    static readonly Type k_CategoryAttributeType = typeof(NodeCategoryAttribute);
+    
+    static bool TryGetCategory(Type t, out NodeCategoryAttribute value)
+    {
+        if (!Attribute.IsDefined(t, k_CategoryAttributeType))
+        {
+            value = null;
+            return false;
+        }
+            
+        value = (NodeCategoryAttribute)Attribute.GetCustomAttribute(t, k_CategoryAttributeType);
+        return value != null;
     }
 
     public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)

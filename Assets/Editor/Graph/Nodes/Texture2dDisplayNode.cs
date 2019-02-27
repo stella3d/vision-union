@@ -52,6 +52,7 @@ namespace VisionUnion.Graph.Nodes
         }
     }
 
+    [NodeCategory("Display", "Preview Image")]
     public class Texture2dDisplayNode<T> : VisionNode
         where T: struct
     {
@@ -139,6 +140,7 @@ namespace VisionUnion.Graph.Nodes
         }
     }
     
+    [NodeCategory("Display", "Preview Image")]
     public class Texture2dDisplayNodeFloat3 : Texture2dDisplayNode<float3>
     {
         Float3ToFloat4Job m_Float4ConvertJob;

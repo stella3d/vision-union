@@ -83,6 +83,7 @@ namespace VisionUnion.Graph.Nodes
         }
     }
     
+    [NodeCategory("Processing", "Format Conversion")]
     public class Color24ToFloat3Node : VisionNode
     {
         Image<Color24> m_InputImage;
@@ -155,6 +156,7 @@ namespace VisionUnion.Graph.Nodes
         }
     }
     
+    [NodeCategory("Processing", "Format Conversion")]
     public class FormatConversionNode<TFrom, TTo, TJob> : VisionNode
         where TFrom: struct
         where TTo: struct
