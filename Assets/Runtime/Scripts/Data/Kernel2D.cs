@@ -1,5 +1,6 @@
 using System;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace VisionUnion
@@ -131,6 +132,90 @@ namespace VisionUnion
         public void Dispose()
         {
             Weights.DisposeIfCreated();
+        }
+    }
+
+    public struct SpecialKernelFloat3x3 : IDisposable
+    {
+        public const int Width = 3;
+        public const int Height = 3;
+        public float3x3 Weights;
+
+        static float3[] tempRows = new float3[3];
+
+        public SpecialKernelFloat3x3(float[,] weights)
+        {
+            Weights = new float3x3();
+            SetWeights(weights);
+        }
+
+        public void SetWeights(float[,] weights)
+        {
+            var weightsWidth = weights.GetLength(0);
+            var weightsHeight = weights.GetLength(1);
+            
+            if (weightsWidth != Width || weightsHeight != Height)
+            {
+                var message = string.Format("weights matrix must be 3x3, but was {2}x{3}",
+                    weightsWidth, weightsHeight);
+                
+                throw new ArgumentException(message);
+            }
+
+            for (var y = 0; y < Height; y++)
+            {
+                var weightRow = weights.GetRow(y);
+                tempRows[y] = new float3(weightRow[0], weightRow[1], weightRow[2]);;
+            }
+            
+            Weights = new float3x3(tempRows[0], tempRows[1], tempRows[2]);
+            Debug.LogFormat("special kernel weights: {0}", Weights);
+        }
+        
+        public void Dispose()
+        {
+        }
+    }
+
+
+    public static class SpecialKernelAccumulateMethods
+    {
+        public static float3x4 AccumulateFour(this SpecialKernelFloat3x3 kernel, Image<float3> image, int centerPixelIndex)
+        {
+            var kernelIndex = 0;
+            var sum = new float3x4();
+            var pixelBuffer = image.Buffer;
+            var negativeBound = new int2(-1);
+            var positiveBound = new int2(1);
+            for (var y = negativeBound.y; y <= positiveBound.y; y++)
+            {
+                var rowOffset = y * image.Width;
+                var rowIndex = centerPixelIndex + rowOffset;
+
+                var kernelMultiplier = kernel.Weights[kernelIndex];
+                var wideMultiplier = new float3x3(kernelMultiplier, kernelMultiplier, kernelMultiplier);
+
+                var endIndex = positiveBound.x - 3;
+                for (var x = negativeBound.x; x <= endIndex; x += 4)
+                {
+                    var pixelChunkStartIndex = rowIndex + x;
+                    var pw = pixelBuffer[pixelChunkStartIndex];
+                    var px = pixelBuffer[pixelChunkStartIndex + 1];
+                    var py = pixelBuffer[pixelChunkStartIndex + 2];
+                    var pz = pixelBuffer[pixelChunkStartIndex + 3];
+                    var fourChunk = new float3x4(pw, px, py, pz);
+
+                    var multiplied = math.mul(wideMultiplier, fourChunk);
+                    
+                    
+                    //var inputPixelValue = pixelBuffer[pixelIndex];
+                    //sum += inputPixelValue * kernelMultiplier;
+                }
+
+                kernelIndex++;
+            }
+
+            return sum;
         }
     }
 }
