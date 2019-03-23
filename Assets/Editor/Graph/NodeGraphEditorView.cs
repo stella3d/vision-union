@@ -155,15 +155,18 @@ public class NodeSearchWindowProvider : ScriptableObject, ISearchWindowProvider
             if (!TryGetCategory(t, out attribute)) 
                 continue;
             
-            //Debug.Log(CategoryString(attribute));
+            Debug.Log(CategoryString(attribute));
+            //var depth = attribute.Length + 1;
+            //var entry = new SearchTreeEntry(guiContent) {level = depth, userData = new object()};
 
-            var depth = attribute.Length;
-            var entry = new SearchTreeEntry(guiContent) {level = depth, userData = new object()};
-
-            List<SearchTreeEntry> entries;
-            SearchGroup searchGroup;
-            if (m_Groups.TryGetValue(attribute[0], out searchGroup))
+            NestInsert(attribute, t.Name);
+            /*
+            Dictionary<string, Dictionary<string, List<string>>> topLevelEntries;
+            if (m_Nest.TryGetValue(attribute[0], out topLevelEntries))
             {
+                var secondDict = new Dictionary<string, Dictionary<string, List<string>>>();
+                var thirdDict = new Dictionary<string, List<string>>();
+                var leafList = new List<string>();
                 searchGroup.AddEntry(entry);
             }
             else
@@ -172,13 +175,80 @@ public class NodeSearchWindowProvider : ScriptableObject, ISearchWindowProvider
                 var firstEntry = new SearchTreeGroupEntry(searchContent) {level = 1};
                 var group = new SearchGroup(firstEntry);
                 group.AddEntry(entry);
-                m_Groups.Add(attribute[0], group);
+
+                if (depth <= 1)
+                    continue;
+
+                var depthCount = 0;
+                while(depthCount < depth - 1)
+                {
+                    var newEntry = new SearchTreeGroupEntry(new GUIContent(attribute[depthCount]))
+                    {
+                        level = depthCount + 2
+                    };
+                    depthCount++;
+                }
+
+                m_Nest.Add(attribute[0], group);
             }
+            */
         }
 
-        foreach (var kvp in m_Groups)
+        foreach (var topLevelKvp in m_Nest)
         {
-            AddGroup(kvp.Value);
+            var firstLevelLabel = topLevelKvp.Key;
+            var firstLevelGroupEntry = new SearchTreeGroupEntry(new GUIContent(firstLevelLabel), 1);
+            k_Entries.Add(firstLevelGroupEntry);
+            foreach (var secondLevelKvp in topLevelKvp.Value)
+            {
+                var secondLevelLabel = secondLevelKvp.Key;
+                var secondLevelGroupEntry = new SearchTreeGroupEntry(new GUIContent(secondLevelLabel), 2);
+                k_Entries.Add(secondLevelGroupEntry);
+                foreach (var thirdLevelKvp in secondLevelKvp.Value)
+                {
+                    var thirdLevelLabel = thirdLevelKvp.Key;
+                    var thirdLevelGroupEntry = new SearchTreeGroupEntry(new GUIContent(thirdLevelLabel), 3);
+                    k_Entries.Add(thirdLevelGroupEntry);
+                    foreach (var label in thirdLevelKvp.Value)
+                    {
+                        var entry = new SearchTreeEntry(new GUIContent(label)) { level = 4 };
+                        k_Entries.Add(entry);
+                    }
+                }
+            }
+        }
+    }
+
+    void NestInsert(NodeCategoryAttribute attribute, string typeLabel)
+    {
+        Dictionary<string, Dictionary<string, List<string>>> topLevelEntry;
+        if (m_Nest.TryGetValue(attribute[0], out topLevelEntry))
+        {
+            Dictionary<string, List<string>> secondLevel;
+            if(topLevelEntry.TryGetValue(attribute[1], out secondLevel))
+            {
+                List<string> thirdLevel;
+                if (secondLevel.TryGetValue(attribute[2], out thirdLevel))
+                {
+                    thirdLevel.Add(typeLabel);
+                }
+                else
+                {
+                    secondLevel.Add(attribute[2], new List<string>{typeLabel});
+                }
+
+            }
+            
+            //topLevelEntry[attribute[1]][attribute[2]].Add(typeLabel);
+        }
+        else
+        {
+            topLevelEntry = new Dictionary<string, Dictionary<string, List<string>>>();
+            var thirdDict = new Dictionary<string, List<string>>();
+            var leafList = new List<string> {typeLabel};
+            thirdDict.Add(attribute[2], leafList);
+            topLevelEntry.Add(attribute[1], thirdDict);
+            m_Nest.Add(attribute[0], topLevelEntry);
         }
     }
 
@@ -199,6 +269,11 @@ public class NodeSearchWindowProvider : ScriptableObject, ISearchWindowProvider
     }
 
     readonly Dictionary<string, SearchGroup> m_Groups = new Dictionary<string, SearchGroup>();
+    
+    // UI goes 4 levels deep.  this is ugly i know
+    readonly Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> m_Nest = 
+        new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>();
+
 
     class SearchGroup
     {

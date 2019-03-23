@@ -3,14 +3,14 @@
 [AttributeUsage(AttributeTargets.Class)]  
 public class NodeCategoryAttribute : Attribute
 {
-    public string[] categories;
+    public readonly string[] categories;
 
     public int Length => categories.Length;
-    
+
     public string this[int index] => categories[index];
   
-    public NodeCategoryAttribute(params string[] categories)
+    public NodeCategoryAttribute(string topLevel, string secondLevel, string thirdLevel)
     {
-        this.categories = categories;
+        categories = new [] {topLevel, secondLevel, thirdLevel};
     }
 }  
