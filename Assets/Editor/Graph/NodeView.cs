@@ -124,6 +124,9 @@ public class NodeView : GraphView
 
         var mixNode = new Float3SquareMeanImageMixNode();
         AddElement(mixNode);
+        
+        var hueNode = new HueAdjustNode();
+        AddElement(hueNode);
     }
 
     public void OnEnable()

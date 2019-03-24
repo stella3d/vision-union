@@ -172,6 +172,7 @@ namespace VisionUnion.Graph.Nodes
             m_JobHandle = m_Float4ConvertJob.Schedule(m_Float4ConvertJob.Output.Length, 4096, dependency);
             m_JobHandle.Complete();
             m_Texture.LoadImageData(m_Float4ConvertJob.Output);
+            
         }
     }
 }
