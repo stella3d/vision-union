@@ -5,8 +5,9 @@ Vision Union is a _collection of computer vision workers that becomes more power
 
 The 'workers' are image processing and 2D convolutional neural network building blocks, implemented as High-Performance C# jobs.
 
-This project is a prototype and proof of concept right now.
+This project is a prototype and proof of concept, which i'm unlikely to come back to.
 
+Look in `/Assets/Runtime/Scripts` for the code that actually implements CV stuff
 
 # Why ?
 
